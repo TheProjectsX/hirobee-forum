@@ -3,7 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { MongoClient, ServerApiVersion } from "mongodb";
 import { StatusCodes } from "http-status-codes";
-import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import authController from "./controllers/auth/index.js";
 
 // Configuring App
@@ -25,6 +25,13 @@ const client = new MongoClient(uri, {
 await client.connect();
 const db = client.db("hirobee");
 
+// Cookie control options
+const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+};
+
 /* Custom Middlewares */
 // Error Middleware
 const errorHandleMiddleware = (error, req, res, next) => {
@@ -36,12 +43,32 @@ const errorHandleMiddleware = (error, req, res, next) => {
     });
 };
 
+// Check Authentication Middleware
+const checkAuthentication = (req, res, next) => {
+    const { access_token = "" } = req.cookies;
+
+    try {
+        const decrypted = jwt.verify(access_token, process.env.JWT_SECRET);
+        req.user = decrypted;
+    } catch (error) {
+        res.clearCookie("access_token", cookieOptions)
+            .status(StatusCodes.UNAUTHORIZED)
+            .json({
+                success: false,
+                message: "Authentication Failed",
+                status_code: StatusCodes.UNAUTHORIZED,
+            });
+    }
+
+    next();
+};
+
 // Test route
 app.get("/test", (req, res) => {
     res.send({ success: true });
 });
 
-/* User Routes */
+/* Authentication Routes */
 // Register new User
 app.post("/auth/register", async (req, res, next) => {
     const body = req.body;
@@ -66,10 +93,33 @@ app.post("/auth/login", async (req, res, next) => {
             body,
             db.collection("users")
         );
-        res.status(response.status_code).json(response);
+
+        if (response.success) {
+            const token = jwt.sign(
+                { email: response.email, role: response.role },
+                process.env.JWT_SECRET,
+                {
+                    expiresIn: process.env.JWT_EXPIRES_IN || "2d",
+                }
+            );
+            res.cookie("access_token", token, cookieOptions)
+                .status(response.status_code)
+                .json(response);
+        } else {
+            res.status(response.status_code).json(response);
+        }
     } catch (error) {
         next(error);
     }
+});
+
+// Logout User
+app.get("/auth/logout", checkAuthentication, async (req, res, next) => {
+    res.clearCookie("access_token", cookieOptions).status(StatusCodes.OK).json({
+        success: true,
+        message: "Logout Successful",
+        status_code: StatusCodes.OK,
+    });
 });
 
 // Error Handling
