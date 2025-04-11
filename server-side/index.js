@@ -1,10 +1,14 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import { MongoClient, ServerApiVersion } from "mongodb";
 import { StatusCodes } from "http-status-codes";
 import jwt from "jsonwebtoken";
+
+// Controllers
 import authController from "./controllers/auth/index.js";
+import currentUserController from "./controllers/me/index.js";
 
 // Configuring App
 dotenv.config();
@@ -12,6 +16,7 @@ const port = process.env.PORT || 5000;
 const app = express();
 app.use(express.json());
 app.use(cors({ origin: ["http://localhost:3000"], credentials: true }));
+app.use(cookieParser());
 
 // Configuring Database
 const uri = process.env.MONGO_URI;
@@ -51,7 +56,8 @@ const checkAuthentication = (req, res, next) => {
         const decrypted = jwt.verify(access_token, process.env.JWT_SECRET);
         req.user = decrypted;
     } catch (error) {
-        res.clearCookie("access_token", cookieOptions)
+        return res
+            .clearCookie("access_token", cookieOptions)
             .status(StatusCodes.UNAUTHORIZED)
             .json({
                 success: false,
@@ -102,12 +108,12 @@ app.post("/auth/login", async (req, res, next) => {
                     expiresIn: process.env.JWT_EXPIRES_IN || "2d",
                 }
             );
-            res.cookie("access_token", token, cookieOptions)
+            return res
+                .cookie("access_token", token, cookieOptions)
                 .status(response.status_code)
                 .json(response);
-        } else {
-            res.status(response.status_code).json(response);
         }
+        res.status(response.status_code).json(response);
     } catch (error) {
         next(error);
     }
@@ -120,6 +126,45 @@ app.get("/auth/logout", checkAuthentication, async (req, res, next) => {
         message: "Logout Successful",
         status_code: StatusCodes.OK,
     });
+});
+
+/* Current User Routes */
+// Get current user Information
+app.get("/me", checkAuthentication, async (req, res, next) => {
+    const user = req.user;
+
+    try {
+        const response = await currentUserController.fetch_info(
+            user,
+            db.collection("users")
+        );
+        if (!response.success) {
+            return res
+                .clearCookie("access_token", cookieOptions)
+                .status(response.status_code)
+                .json(response);
+        }
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Update user Profile Information
+app.put("/me", checkAuthentication, async (req, res, next) => {
+    const body = req.body;
+
+    try {
+        const response = await currentUserController.update_info(
+            req.user,
+            body,
+            db.collection("users")
+        );
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
 });
 
 // Error Handling

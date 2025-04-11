@@ -42,8 +42,12 @@ const register = async (body, collection) => {
     const userInfo = {
         username: body.username,
         email: body.email,
-        password: hashedPassword,
+        profile_picture: "https://i.ibb.co.com/Dfp53bmp/user-avatar.png",
+        banner: null,
+        bio: null,
+        gender: null,
         role: "author",
+        password: hashedPassword,
         createdAt: Date.now(),
     };
 

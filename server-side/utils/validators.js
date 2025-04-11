@@ -17,3 +17,15 @@ export const userRegisterValidator = (
 
     return isEmailValid && isUsernameValid && isPasswordValid;
 };
+
+export const userInfoUpdateFilter = (body) => {
+    if (!body) return {};
+    const approved_keys = ["profile_picture", "banner", "gender", "bio"];
+
+    const filteredBody = approved_keys.reduce((acc, key) => {
+        if (key in body) acc[key] = body[key];
+        return acc;
+    }, {});
+
+    return filteredBody;
+};
