@@ -332,6 +332,24 @@ app.get("/posts/:id", async (req, res, next) => {
     }
 });
 
+// Get post Comments
+app.get("/posts/:id/comments", async (req, res, next) => {
+    const postId = req.params.id;
+    const query = req.query;
+
+    try {
+        const response = await postsController.fetch_comments(
+            postId,
+            query,
+            db.collection("comments")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
 /* Private Post Routes */
 // Update Votes
 app.put(

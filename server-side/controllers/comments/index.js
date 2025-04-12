@@ -17,6 +17,7 @@ const insert_comment = async (user, postId, body, collection) => {
         upvotedBy: [],
         downvotedBy: [],
         createdAt: Date.now(),
+        updatedAt: Date.now(),
     };
 
     const response = await collection.insertOne(doc);
@@ -36,7 +37,7 @@ const insert_comment = async (user, postId, body, collection) => {
     };
 };
 
-const delete_comment = async (user, commentId, collection) => {
+const update_comment = async (user, commentId, body, collection) => {
     let commentOid;
 
     try {
@@ -44,7 +45,7 @@ const delete_comment = async (user, commentId, collection) => {
     } catch (error) {
         return {
             success: false,
-            message: "Post not Found!",
+            message: "Comment not Found!",
             query: {
                 id: commentId,
             },
@@ -52,10 +53,23 @@ const delete_comment = async (user, commentId, collection) => {
         };
     }
 
-    const response = await collection.deleteOne({
-        authorId: user.username,
-        _id: commentOid,
-    });
+    if (!body?.content) {
+        return {
+            success: false,
+            message: "Invalid Body provided",
+            status_code: StatusCodes.BAD_REQUEST,
+        };
+    }
+
+    const response = await collection.updateOne(
+        {
+            authorId: user.username,
+            _id: commentOid,
+        },
+        {
+            $set: { content: body.content, updatedAt: Date.now() },
+        }
+    );
 
     if (response.matchedCount === 0) {
         return {
@@ -69,7 +83,7 @@ const delete_comment = async (user, commentId, collection) => {
     }
     return {
         success: true,
-        message: "Comment Deleted",
+        message: "Comment Updated",
         status_code: StatusCodes.OK,
     };
 };
@@ -121,4 +135,42 @@ const update_vote = async (user, commentId, meta, collection) => {
     };
 };
 
-export default { insert_comment, delete_comment, update_vote };
+const delete_comment = async (user, commentId, collection) => {
+    let commentOid;
+
+    try {
+        commentOid = new ObjectId(String(commentId));
+    } catch (error) {
+        return {
+            success: false,
+            message: "Post not Found!",
+            query: {
+                id: commentId,
+            },
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    }
+
+    const response = await collection.deleteOne({
+        authorId: user.username,
+        _id: commentOid,
+    });
+
+    if (response.matchedCount === 0) {
+        return {
+            success: false,
+            message: "Comment not Found!",
+            query: {
+                id: commentId,
+            },
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    }
+    return {
+        success: true,
+        message: "Comment Deleted",
+        status_code: StatusCodes.OK,
+    };
+};
+
+export default { insert_comment, update_comment, update_vote, delete_comment };

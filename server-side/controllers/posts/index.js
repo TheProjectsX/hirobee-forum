@@ -139,8 +139,28 @@ const update_vote = async (user, postId, meta, collection) => {
     };
 };
 
+const fetch_comments = async (postId, filters, collection) => {
+    const { page = 0, limit = 10 } = filters;
+
+    const skip = page * limit;
+
+    const response = await collection
+        .find({ postId })
+        .skip(skip)
+        .limit(limit)
+        .toArray();
+
+    return {
+        success: true,
+        message: "Comments Fetched",
+        data: response,
+        status_code: StatusCodes.OK,
+    };
+};
+
 export default {
     fetch_posts,
     fetch_single_post,
     update_vote,
+    fetch_comments,
 };
