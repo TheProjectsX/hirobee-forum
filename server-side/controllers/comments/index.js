@@ -1,0 +1,77 @@
+import { StatusCodes } from "http-status-codes";
+import { ObjectId } from "mongodb";
+
+const insert_comment = async (user, postId, body, collection) => {
+    if (!body?.content) {
+        return {
+            success: false,
+            message: "Invalid Body provided",
+            status_code: StatusCodes.BAD_REQUEST,
+        };
+    }
+
+    const doc = {
+        postId,
+        authorId: user.username,
+        content: body.content,
+        upvotedBy: [],
+        downvotedBy: [],
+        createdAt: Date.now(),
+    };
+
+    const response = await collection.insertOne(doc);
+    if (response.acknowledged === 0) {
+        return {
+            success: false,
+            message: "Failed to add Comment",
+            status_code: StatusCodes.INTERNAL_SERVER_ERROR,
+        };
+    }
+
+    return {
+        success: true,
+        message: "Comment Added",
+        id: response.insertedId,
+        status_code: StatusCodes.CREATED,
+    };
+};
+
+const delete_comment = async (user, commentId, collection) => {
+    let commentOid;
+
+    try {
+        commentOid = new ObjectId(String(commentId));
+    } catch (error) {
+        return {
+            success: false,
+            message: "Post not Found!",
+            query: {
+                id: commentId,
+            },
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    }
+
+    const response = await collection.deleteOne({
+        authorId: user.username,
+        _id: commentOid,
+    });
+
+    if (response.matchedCount === 0) {
+        return {
+            success: false,
+            message: "Comment not Found!",
+            query: {
+                id: commentId,
+            },
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    }
+    return {
+        success: true,
+        message: "Comment Deleted",
+        status_code: StatusCodes.OK,
+    };
+};
+
+export default { insert_comment, delete_comment };

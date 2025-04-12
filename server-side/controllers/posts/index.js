@@ -92,4 +92,55 @@ const fetch_single_post = async (postId, collection) => {
     };
 };
 
-export default { fetch_posts, fetch_single_post };
+const update_vote = async (user, postId, meta, collection) => {
+    let postOid;
+
+    try {
+        postOid = new ObjectId(String(postId));
+    } catch (error) {
+        return {
+            success: false,
+            message: "Post not Found!",
+            query: {
+                id: postId,
+            },
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    }
+
+    const doc = {};
+
+    doc[meta.action === "add" ? "$addToSet" : "$pull"] = {
+        [meta.target === "upvote" ? "upvotedBy" : "downvotedBy"]: user.username,
+    };
+
+    const response = await collection.updateOne({ _id: postOid }, doc);
+
+    if (response.matchedCount === 0) {
+        return {
+            success: false,
+            message: "Post not Found!",
+            query: {
+                id: postId,
+            },
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    } else if (response.modifiedCount === 0) {
+        return {
+            success: false,
+            message: "Already performed this action",
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    }
+    return {
+        success: true,
+        message: `Vote ${meta.action === "add" ? "Added" : "Removed"}`,
+        status_code: StatusCodes.OK,
+    };
+};
+
+export default {
+    fetch_posts,
+    fetch_single_post,
+    update_vote,
+};

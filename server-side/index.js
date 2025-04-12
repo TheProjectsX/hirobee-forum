@@ -11,6 +11,7 @@ import authController from "./controllers/auth/index.js";
 import currentUserController from "./controllers/me/index.js";
 import usersController from "./controllers/users/index.js";
 import postsController from "./controllers/posts/index.js";
+import commentsController from "./controllers/comments/index.js";
 
 // Configuring App
 dotenv.config();
@@ -298,7 +299,8 @@ app.get("/users/:username/posts", async (req, res, next) => {
     }
 });
 
-/* Public Posts Routes */
+/* Public Post Routes */
+// TODO: ADD GET_COMMENTS
 // Get all Posts
 app.get("/posts", async (req, res, next) => {
     const query = req.query;
@@ -315,13 +317,84 @@ app.get("/posts", async (req, res, next) => {
 });
 
 // Get a single Post
-app.get("/me/posts/:id", checkAuthentication, async (req, res, next) => {
+app.get("/posts/:id", async (req, res, next) => {
     const postId = req.params.id;
 
     try {
         const response = await postsController.fetch_single_post(
             postId,
             db.collection("posts")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+/* Private Post Routes */
+// Update Votes
+app.put(
+    "/posts/:id/:target/:action",
+    checkAuthentication,
+    async (req, res, next) => {
+        const user = req.user;
+        const { id: postId, target, action } = req.params;
+
+        if (
+            !["upvote", "downvote"].includes(target) ||
+            !["add", "remove"].includes(action)
+        ) {
+            return res.sendStatus(404);
+        }
+
+        try {
+            const response = await postsController.update_vote(
+                user,
+                postId,
+                { target, action },
+                db.collection("posts")
+            );
+
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+/* Private Comment Routes */
+
+// Add Comment
+app.post("/posts/:id/comments", checkAuthentication, async (req, res, next) => {
+    const user = req.user;
+    const postId = req.params.id;
+    const body = req.body;
+
+    try {
+        const response = await commentsController.insert_comment(
+            user,
+            postId,
+            body,
+            db.collection("comments")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Delete Comment
+app.delete("/comments/:id", checkAuthentication, async (req, res, next) => {
+    const user = req.user;
+    const commentId = req.params.id;
+
+    try {
+        const response = await commentsController.delete_comment(
+            user,
+            commentId,
+            db.collection("comments")
         );
 
         res.status(response.status_code).json(response);

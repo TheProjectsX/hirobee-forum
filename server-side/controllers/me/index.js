@@ -149,8 +149,8 @@ const create_post = async (user, body, collection) => {
     const postBody = {
         ...filteredBody,
         authorId: user.username,
-        upvotes: 0,
-        downvotes: 0,
+        upvotedBy: [],
+        downvotedBy: [],
         createdAt: Date.now(),
         updatedAt: Date.now(),
     };
