@@ -74,4 +74,51 @@ const delete_comment = async (user, commentId, collection) => {
     };
 };
 
-export default { insert_comment, delete_comment };
+const update_vote = async (user, commentId, meta, collection) => {
+    let commentOid;
+
+    try {
+        commentOid = new ObjectId(String(commentId));
+    } catch (error) {
+        return {
+            success: false,
+            message: "Post not Found!",
+            query: {
+                id: commentId,
+            },
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    }
+
+    const doc = {};
+
+    doc[meta.action === "add" ? "$addToSet" : "$pull"] = {
+        [meta.target === "upvote" ? "upvotedBy" : "downvotedBy"]: user.username,
+    };
+
+    const response = await collection.updateOne({ _id: commentOid }, doc);
+
+    if (response.matchedCount === 0) {
+        return {
+            success: false,
+            message: "Comment not Found!",
+            query: {
+                id: commentId,
+            },
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    } else if (response.modifiedCount === 0) {
+        return {
+            success: false,
+            message: "Already performed this action",
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    }
+    return {
+        success: true,
+        message: `Vote ${meta.action === "add" ? "Added" : "Removed"}`,
+        status_code: StatusCodes.OK,
+    };
+};
+
+export default { insert_comment, delete_comment, update_vote };

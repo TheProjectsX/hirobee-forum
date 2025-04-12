@@ -403,6 +403,36 @@ app.delete("/comments/:id", checkAuthentication, async (req, res, next) => {
     }
 });
 
+// Update Votes
+app.put(
+    "/comments/:id/:target/:action",
+    checkAuthentication,
+    async (req, res, next) => {
+        const user = req.user;
+        const { id: commentId, target, action } = req.params;
+
+        if (
+            !["upvote", "downvote"].includes(target) ||
+            !["add", "remove"].includes(action)
+        ) {
+            return res.sendStatus(404);
+        }
+
+        try {
+            const response = await commentsController.update_vote(
+                user,
+                commentId,
+                { target, action },
+                db.collection("comments")
+            );
+
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
 // Error Handling
 app.use(errorHandleMiddleware);
 
