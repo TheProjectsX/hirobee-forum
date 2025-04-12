@@ -10,6 +10,7 @@ import jwt from "jsonwebtoken";
 import authController from "./controllers/auth/index.js";
 import currentUserController from "./controllers/me/index.js";
 import usersController from "./controllers/users/index.js";
+import postsController from "./controllers/posts/index.js";
 
 // Configuring App
 dotenv.config();
@@ -173,13 +174,14 @@ app.put("/me", checkAuthentication, async (req, res, next) => {
 });
 
 // Get current user Posts
-// TODO: Add pagination and things
 app.get("/me/posts", checkAuthentication, async (req, res, next) => {
     const user = req.user;
+    const query = req.query;
 
     try {
         const response = await currentUserController.fetch_posts(
             user,
+            query,
             db.collection("posts")
         );
         res.status(response.status_code).json(response);
@@ -287,6 +289,38 @@ app.get("/users/:username/posts", async (req, res, next) => {
     try {
         const response = usersController.fetch_posts(
             username,
+            db.collection("posts")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+/* Public Posts Routes */
+// Get all Posts
+app.get("/posts", async (req, res, next) => {
+    const query = req.query;
+
+    try {
+        const response = await postsController.fetch_posts(
+            query,
+            db.collection("posts")
+        );
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Get a single Post
+app.get("/me/posts/:id", checkAuthentication, async (req, res, next) => {
+    const postId = req.params.id;
+
+    try {
+        const response = await postsController.fetch_single_post(
+            postId,
             db.collection("posts")
         );
 

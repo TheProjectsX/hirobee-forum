@@ -51,16 +51,48 @@ const update_info = async (user, body, collection) => {
     };
 };
 
-const fetch_posts = async (user, collection) => {
+const fetch_posts = async (user, filters, collection) => {
+    const { search, page = 0, limit = 10, subhiro, sortBy = "new" } = filters;
+
+    const query = {
+        authorId: user.username,
+    };
+    const sort = {};
+
+    if (search) {
+        query.$or = [
+            { title: { $regex: search, $options: "i" } },
+            { body: { $regex: search, $options: "i" } },
+        ];
+    }
+
+    if (subhiro) query.subhiro = subhiro;
+
+    sort.createdAt = sortBy === "old" ? 1 : -1;
+
+    const skip = page * limit;
     const response = await collection
-        .find({ authorId: user.username })
+        .find(query)
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
         .toArray();
+
+    const totalCount = await collection.countDocuments(query);
+    const pagination = {
+        has_next_page: totalCount > skip + response.length,
+        current_page: page,
+        current_count: response.length,
+        total_count: totalCount,
+        limit,
+    };
 
     return {
         success: true,
-        data: response,
-        message: "Posts fetched",
+        message: "Posts Fetched",
         status_code: StatusCodes.OK,
+        pagination,
+        data: response,
     };
 };
 
