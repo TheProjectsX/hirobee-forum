@@ -102,7 +102,10 @@ app.post("/auth/login", async (req, res, next) => {
 
         if (response.success) {
             const token = jwt.sign(
-                { email: response.email, role: response.role },
+                {
+                    email: response.email,
+                    username: response.username,
+                },
                 process.env.JWT_SECRET,
                 {
                     expiresIn: process.env.JWT_EXPIRES_IN || "2d",
@@ -153,14 +156,105 @@ app.get("/me", checkAuthentication, async (req, res, next) => {
 
 // Update user Profile Information
 app.put("/me", checkAuthentication, async (req, res, next) => {
+    const user = req.user;
     const body = req.body;
 
     try {
         const response = await currentUserController.update_info(
-            req.user,
+            user,
             body,
             db.collection("users")
         );
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Get current user Posts
+// TODO: Add pagination and things
+app.get("/me/posts", checkAuthentication, async (req, res, next) => {
+    const user = req.user;
+
+    try {
+        const response = await currentUserController.fetch_posts(
+            user,
+            db.collection("posts")
+        );
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Get a single Post
+app.get("/me/posts/:id", checkAuthentication, async (req, res, next) => {
+    const user = req.user;
+    const postId = req.params.id;
+
+    try {
+        const response = await currentUserController.fetch_single_post(
+            user,
+            postId,
+            db.collection("posts")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Create new Post
+app.post("/me/posts", checkAuthentication, async (req, res, next) => {
+    const user = req.user;
+    const body = req.body;
+
+    try {
+        const response = await currentUserController.create_post(
+            user,
+            body,
+            db.collection("posts")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Update post
+app.put("/me/posts/:id", checkAuthentication, async (req, res, next) => {
+    const user = req.user;
+    const postId = req.params.id;
+    const body = req.body;
+
+    try {
+        const response = await currentUserController.update_post(
+            user,
+            postId,
+            body,
+            db.collection("posts")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Delete Post
+app.delete("/me/posts/:id", checkAuthentication, async (req, res, next) => {
+    const user = req.user;
+    const postId = req.params.id;
+
+    try {
+        const response = await currentUserController.delete_post(
+            user,
+            postId,
+            db.collection("posts")
+        );
+
         res.status(response.status_code).json(response);
     } catch (error) {
         next(error);

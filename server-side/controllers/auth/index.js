@@ -51,8 +51,8 @@ const register = async (body, collection) => {
         createdAt: Date.now(),
     };
 
-    const serverResponse = await collection.insertOne(userInfo);
-    if (serverResponse.acknowledged) {
+    const response = await collection.insertOne(userInfo);
+    if (response.acknowledged) {
         return {
             success: true,
             message: "User Created Successfully!",

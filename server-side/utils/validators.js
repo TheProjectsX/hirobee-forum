@@ -29,3 +29,27 @@ export const userInfoUpdateFilter = (body) => {
 
     return filteredBody;
 };
+
+export const postCreateFilter = (body) => {
+    if (!body) return {};
+    const approved_keys = ["title", "body", "subhiro"];
+
+    const filteredBody = approved_keys.reduce((acc, key) => {
+        if (key in body) acc[key] = body[key];
+        return acc;
+    }, {});
+
+    return filteredBody;
+};
+
+export const postUpdateFilter = (body) => {
+    if (!body) return {};
+    const approved_keys = ["title", "body"];
+
+    const filteredBody = approved_keys.reduce((acc, key) => {
+        if (key in body) acc[key] = body[key];
+        return acc;
+    }, {});
+
+    return filteredBody;
+};
