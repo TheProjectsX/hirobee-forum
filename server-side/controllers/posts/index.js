@@ -4,7 +4,7 @@ import { ObjectId } from "mongodb";
 const fetch_posts = async (filters, collection) => {
     const {
         search,
-        page = 0,
+        page = 1,
         limit = 10,
         subhiro,
         author,
@@ -47,9 +47,9 @@ const fetch_posts = async (filters, collection) => {
     return {
         success: true,
         message: "Posts Fetched",
-        status_code: StatusCodes.OK,
         pagination,
         data: response,
+        status_code: StatusCodes.OK,
     };
 };
 
@@ -140,7 +140,7 @@ const update_vote = async (user, postId, meta, collection) => {
 };
 
 const fetch_comments = async (postId, filters, collection) => {
-    const { page = 0, limit = 10 } = filters;
+    const { page = 1, limit = 10 } = filters;
 
     const skip = page * limit;
 
@@ -150,9 +150,20 @@ const fetch_comments = async (postId, filters, collection) => {
         .limit(limit)
         .toArray();
 
+    const totalCount = await collection.countDocuments({ postId });
+
+    const pagination = {
+        has_next_page: totalCount > skip + response.length,
+        current_page: page,
+        current_count: response.length,
+        total_count: totalCount,
+        limit,
+    };
+
     return {
         success: true,
         message: "Comments Fetched",
+        pagination,
         data: response,
         status_code: StatusCodes.OK,
     };

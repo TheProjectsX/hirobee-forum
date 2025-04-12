@@ -12,6 +12,7 @@ import currentUserController from "./controllers/me/index.js";
 import usersController from "./controllers/users/index.js";
 import postsController from "./controllers/posts/index.js";
 import commentsController from "./controllers/comments/index.js";
+import subhiroController from "./controllers/subhiro/index.js";
 
 // Configuring App
 dotenv.config();
@@ -69,6 +70,15 @@ const checkAuthentication = (req, res, next) => {
             });
     }
 
+    next();
+};
+
+// Check Role
+const checkAdminPrivilege = (req, res, next) => {
+    next();
+};
+
+const checkModPrivilege = (req, res, next) => {
     next();
 };
 
@@ -450,6 +460,43 @@ app.put(
         }
     }
 );
+
+/* Public SubHiro Routes */
+// Get SubHiro Details
+app.get("/subhiro/:id", async (req, res, next) => {
+    const subhiroId = req.params.id;
+
+    try {
+        const response = await subhiroController.fetch_details(
+            subhiroId,
+            db.collection("subhiro")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Get SubHiro Posts
+app.get("/subhiro/:id/posts", async (req, res, next) => {
+    const subhiroId = req.params.id;
+    const query = req.query;
+
+    try {
+        const response = await subhiroController.fetch_posts(
+            subhiroId,
+            query,
+            db.collection("posts")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Create new Subhiro
 
 // Error Handling
 app.use(errorHandleMiddleware);
