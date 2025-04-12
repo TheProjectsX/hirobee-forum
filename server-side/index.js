@@ -9,6 +9,7 @@ import jwt from "jsonwebtoken";
 // Controllers
 import authController from "./controllers/auth/index.js";
 import currentUserController from "./controllers/me/index.js";
+import usersController from "./controllers/users/index.js";
 
 // Configuring App
 dotenv.config();
@@ -252,6 +253,40 @@ app.delete("/me/posts/:id", checkAuthentication, async (req, res, next) => {
         const response = await currentUserController.delete_post(
             user,
             postId,
+            db.collection("posts")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+/* Public User Routes */
+// Get User via Username
+app.get("/users/:username", async (req, res, next) => {
+    const username = req.params.username;
+
+    try {
+        const response = await usersController.get_specific(
+            username,
+            db.collection("users"),
+            db.collection("posts")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Get User's Posts
+app.get("/users/:username/posts", async (req, res, next) => {
+    const username = req.params.username;
+
+    try {
+        const response = usersController.fetch_posts(
+            username,
             db.collection("posts")
         );
 
