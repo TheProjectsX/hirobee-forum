@@ -75,12 +75,68 @@ const checkAuthentication = (req, res, next) => {
 };
 
 // Check Role
-const checkAdminPrivilege = (req, res, next) => {
-    next();
+const checkAdminPrivilege = async (req, res, next) => {
+    const user = req.user;
+
+    try {
+        const targetUser = await db
+            .collection("users")
+            .findOne({ username: user.username });
+
+        if (!targetUser) {
+            return res
+                .clearCookie("access_token", cookieOptions)
+                .status(StatusCodes.UNAUTHORIZED)
+                .json({
+                    success: false,
+                    message: "Authentication Failed!",
+                    status_code: StatusCodes.UNAUTHORIZED,
+                });
+        }
+        if (targetUser.role !== "admin") {
+            return res.status(StatusCodes.FORBIDDEN).json({
+                success: false,
+                message: "Forbidden Request",
+                status_code: StatusCodes.FORBIDDEN,
+            });
+        }
+
+        next();
+    } catch (error) {
+        next(error);
+    }
 };
 
-const checkModPrivilege = (req, res, next) => {
-    next();
+const checkModPrivilege = async (req, res, next) => {
+    const user = req.user;
+
+    try {
+        const targetUser = await db
+            .collection("users")
+            .findOne({ username: user.username });
+
+        if (!targetUser) {
+            return res
+                .clearCookie("access_token", cookieOptions)
+                .status(StatusCodes.UNAUTHORIZED)
+                .json({
+                    success: false,
+                    message: "Authentication Failed!",
+                    status_code: StatusCodes.UNAUTHORIZED,
+                });
+        }
+        if (!["admin", "moderator"].includes(targetUser.role)) {
+            return res.status(StatusCodes.FORBIDDEN).json({
+                success: false,
+                message: "Forbidden Request",
+                status_code: StatusCodes.FORBIDDEN,
+            });
+        }
+
+        next();
+    } catch (error) {
+        next(error);
+    }
 };
 
 // Test route
@@ -500,74 +556,94 @@ app.get("/subhiro/:id/posts", async (req, res, next) => {
 /* Protected SubHiro Routes */
 
 // Create new Subhiro
-app.post("/subhiro", checkModPrivilege, async (req, res, next) => {
-    const user = req.user;
-    const body = req.body;
+app.post(
+    "/subhiro",
+    checkAuthentication,
+    checkModPrivilege,
+    async (req, res, next) => {
+        const user = req.user;
+        const body = req.body;
 
-    try {
-        const response = await subhiroController.create_subhiro(
-            user,
-            body,
-            db.collection("subhiro")
-        );
+        try {
+            const response = await subhiroController.create_subhiro(
+                user,
+                body,
+                db.collection("subhiro")
+            );
 
-        res.status(response.status_code).json(response);
-    } catch (error) {
-        next(error);
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
     }
-});
+);
 
 /* Protected Admin Routes */
 
 // Get Stats of Forum
-app.get("/admin/stats", checkAdminPrivilege, async (req, res, next) => {
-    try {
-        const response = await adminController.fetch_stats(
-            db.collection("users"),
-            db.collection("posts"),
-            db.collection("comments"),
-            db.collection("subhiro")
-        );
+app.get(
+    "/admin/stats",
+    checkAuthentication,
+    checkAdminPrivilege,
+    async (req, res, next) => {
+        try {
+            const response = await adminController.fetch_stats(
+                db.collection("users"),
+                db.collection("posts"),
+                db.collection("comments"),
+                db.collection("subhiro")
+            );
 
-        res.status(response.status_code).json(response);
-    } catch (error) {
-        next(error);
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
     }
-});
+);
 
 // Get All Users
-app.get("/admin/users", checkAdminPrivilege, async (req, res, next) => {
-    const query = req.query;
+app.get(
+    "/admin/users",
+    checkAuthentication,
+    checkAdminPrivilege,
+    async (req, res, next) => {
+        const query = req.query;
 
-    try {
-        const response = await adminController.fetch_users(
-            query,
-            {},
-            db.collection("users")
-        );
+        try {
+            const response = await adminController.fetch_users(
+                query,
+                {},
+                db.collection("users")
+            );
 
-        res.status(response.status_code).json(response);
-    } catch (error) {
-        next(error);
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
     }
-});
+);
 
 // Get Banned Users
-app.get("/admin/users/banned", checkAdminPrivilege, async (req, res, next) => {
-    const query = req.query;
+app.get(
+    "/admin/users/banned",
+    checkAuthentication,
+    checkAdminPrivilege,
+    async (req, res, next) => {
+        const query = req.query;
 
-    try {
-        const response = await adminController.fetch_users(
-            query,
-            { status: "banned" },
-            db.collection("users")
-        );
+        try {
+            const response = await adminController.fetch_users(
+                query,
+                { status: "banned" },
+                db.collection("users")
+            );
 
-        res.status(response.status_code).json(response);
-    } catch (error) {
-        next(error);
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
     }
-});
+);
 
 // Change User Role
 app.put(

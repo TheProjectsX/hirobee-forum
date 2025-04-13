@@ -2,7 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import {
     subhiroCreateFilter,
     subhiroCreateValidator,
-} from "../../utils/validators";
+} from "../../utils/validators.js";
 
 const fetch_details = async (subhiroId, collection) => {
     const response = await collection.findOne({ hironame: subhiroId });
