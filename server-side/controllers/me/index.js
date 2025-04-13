@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import {
     postCreateFilter,
+    postCreateValidator,
     postUpdateFilter,
     userInfoUpdateFilter,
 } from "../../utils/validators.js";
@@ -138,7 +139,7 @@ const fetch_single_post = async (user, postId, collection) => {
 
 const create_post = async (user, body, collection) => {
     const filteredBody = postCreateFilter(body);
-    if (Object.keys(filteredBody).length === 0) {
+    if (!postCreateValidator(filteredBody)) {
         return {
             success: false,
             message: "Invalid Body provided",

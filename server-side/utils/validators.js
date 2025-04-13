@@ -42,6 +42,19 @@ export const postCreateFilter = (body) => {
     return filteredBody;
 };
 
+export const postCreateValidator = (body) => {
+    const required_keys = ["title", "body", "subhiro"];
+    const minLength = new RegExp(`^.{${10},}$`);
+
+    if (!body || typeof body !== "object") return false;
+
+    if (!minLength.test(body.title) || !minLength.test(body.body)) {
+        return false;
+    }
+
+    return required_keys.every((key) => key in body);
+};
+
 export const postUpdateFilter = (body) => {
     if (!body) return {};
     const approved_keys = ["title", "body"];
@@ -52,4 +65,41 @@ export const postUpdateFilter = (body) => {
     }, {});
 
     return filteredBody;
+};
+
+export const subhiroCreateFilter = (body) => {
+    if (!body) return {};
+    const approved_keys = [
+        "hironame",
+        "description",
+        "rules",
+        "profile_picture",
+        "banner",
+    ];
+
+    const filteredBody = approved_keys.reduce((acc, key) => {
+        if (key in body) acc[key] = body[key];
+        return acc;
+    }, {});
+
+    return filteredBody;
+};
+
+export const subhiroCreateValidator = (body) => {
+    const required_keys = [
+        "hironame",
+        "description",
+        "rules",
+        "profile_picture",
+        "banner",
+    ];
+    const minLength = new RegExp(`^.{${5},}$`);
+
+    if (!body || typeof body !== "object") return false;
+
+    if (!minLength.test(body.title) || !minLength.test(body.body)) {
+        return false;
+    }
+
+    return required_keys.every((key) => key in body);
 };

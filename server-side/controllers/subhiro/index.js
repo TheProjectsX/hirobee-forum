@@ -1,4 +1,8 @@
 import { StatusCodes } from "http-status-codes";
+import {
+    subhiroCreateFilter,
+    subhiroCreateValidator,
+} from "../../utils/validators";
 
 const fetch_details = async (subhiroId, collection) => {
     const response = await collection.findOne({ hironame: subhiroId });
@@ -52,4 +56,40 @@ const fetch_posts = async (subhiroId, filters, collection) => {
     };
 };
 
-export default { fetch_details, fetch_posts };
+const create_subhiro = async (user, body, collection) => {
+    const filteredBody = subhiroCreateFilter(body);
+
+    if (!subhiroCreateValidator(filteredBody)) {
+        return {
+            success: false,
+            message: "Invalid Body provided",
+            status_code: StatusCodes.BAD_REQUEST,
+        };
+    }
+
+    const doc = {
+        creator: user.username,
+        ...filteredBody,
+        moderators: [],
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+    };
+
+    const response = await collection.insertOne(doc);
+    if (!response.acknowledged) {
+        return {
+            success: false,
+            message: "Failed to Create SubHiro",
+            status_code: StatusCodes.INTERNAL_SERVER_ERROR,
+        };
+    }
+
+    return {
+        success: true,
+        message: "SubHiro Created",
+        id: filteredBody.hironame,
+        status_code: StatusCodes.CREATED,
+    };
+};
+
+export default { fetch_details, fetch_posts, create_subhiro };

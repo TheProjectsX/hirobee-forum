@@ -496,7 +496,25 @@ app.get("/subhiro/:id/posts", async (req, res, next) => {
     }
 });
 
+/* Protected SubHiro Routes */
+
 // Create new Subhiro
+app.post("/subhiro", checkModPrivilege, async (req, res, next) => {
+    const user = req.user;
+    const body = req.body;
+
+    try {
+        const response = await subhiroController.create_subhiro(
+            user,
+            body,
+            db.collection("subhiro")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
 
 // Error Handling
 app.use(errorHandleMiddleware);
