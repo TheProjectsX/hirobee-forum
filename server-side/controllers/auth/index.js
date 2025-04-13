@@ -47,6 +47,8 @@ const register = async (body, collection) => {
         bio: null,
         gender: null,
         role: "author",
+        status: "active",
+        meta: {},
         password: hashedPassword,
         createdAt: Date.now(),
     };

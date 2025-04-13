@@ -13,6 +13,7 @@ import usersController from "./controllers/users/index.js";
 import postsController from "./controllers/posts/index.js";
 import commentsController from "./controllers/comments/index.js";
 import subhiroController from "./controllers/subhiro/index.js";
+import adminController from "./controllers/admin/index.js";
 
 // Configuring App
 dotenv.config();
@@ -515,6 +516,121 @@ app.post("/subhiro", checkModPrivilege, async (req, res, next) => {
         next(error);
     }
 });
+
+/* Protected Admin Routes */
+
+// Get Stats of Forum
+app.get("/admin/stats", checkAdminPrivilege, async (req, res, next) => {
+    try {
+        const response = await adminController.fetch_stats(
+            db.collection("users"),
+            db.collection("posts"),
+            db.collection("comments"),
+            db.collection("subhiro")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Get All Users
+app.get("/admin/users", checkAdminPrivilege, async (req, res, next) => {
+    const query = req.query;
+
+    try {
+        const response = await adminController.fetch_users(
+            query,
+            {},
+            db.collection("users")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Get Banned Users
+app.get("/admin/users/banned", checkAdminPrivilege, async (req, res, next) => {
+    const query = req.query;
+
+    try {
+        const response = await adminController.fetch_users(
+            query,
+            { status: "banned" },
+            db.collection("users")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Change User Role
+app.put(
+    "/admin/users/:id/role/:role",
+    checkAdminPrivilege,
+    async (req, res, next) => {
+        const user = req.user;
+        const targetId = req.params.id;
+        const role = req.params.role;
+
+        if (!["author", "moderator"].includes(role)) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: "Only role to `author` and `moderator` is changeable",
+                status_code: StatusCodes.BAD_REQUEST,
+            });
+        }
+
+        try {
+            const response = await adminController.change_user_role(
+                user,
+                targetId,
+                role,
+                db.collection("users")
+            );
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+/* Protected Moderator Routes (Also access-able by Admin) */
+app.put(
+    "/moderator/users/:id/status/:status",
+    checkModPrivilege,
+    async (req, res, next) => {
+        const user = req.user;
+        const targetId = req.params.id;
+        const status = req.params.status;
+
+        if (!["active", "banned"].includes(status)) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: "Only status to `active` and `banned` is changeable",
+                status_code: StatusCodes.BAD_REQUEST,
+            });
+        }
+
+        try {
+            const response = await adminController.change_user_status(
+                user,
+                targetId,
+                status,
+                db.collection("users")
+            );
+
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
 
 // Error Handling
 app.use(errorHandleMiddleware);
