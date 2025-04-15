@@ -15,7 +15,7 @@ export default function RootLayout({ children }) {
                 <Navbar setDrawerOpened={setDrawerOpened} />
 
                 {/* Main Section */}
-                <main className="flex-1 grow">
+                <main className="flex-1 grow overflow-x-hidden">
                     <Drawer
                         drawerOpened={drawerOpened}
                         setDrawerOpened={setDrawerOpened}

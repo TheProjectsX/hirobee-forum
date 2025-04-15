@@ -1,7 +1,11 @@
 import React from "react";
 import Button from "../Button";
 import { RiMenuLine } from "react-icons/ri";
-import { MdArrowBackIosNew } from "react-icons/md";
+import {
+    MdArrowBackIosNew,
+    MdKeyboardDoubleArrowLeft,
+    MdKeyboardDoubleArrowRight,
+} from "react-icons/md";
 
 const Drawer = ({
     children,
@@ -23,40 +27,49 @@ const Drawer = ({
             className={`relative h-full flex`}
         >
             {/* Drawer */}
-            <div className={`w-fit h-full relative`}>
+            <div
+                className={`relative transition-[width] ease-in-out duration-300 delay-100 h-full z-10 ${
+                    drawerOpened
+                        ? "w-0 lg:w-[var(--drawer-size)]"
+                        : "w-0 lg:w-[var(--expand-visible)]"
+                }`}
+            >
                 {/* Drawer Content */}
                 <div
-                    className={`overflow-hidden transition-all duration-300 border-r border-neutral-300 h-full ${
+                    className={`h-full bg-white transition-[translate] ease-in-out duration-300 delay-100 border-r border-neutral-300 ${
                         drawerOpened
-                            ? "w-[var(--drawer-size)]"
-                            : "w-[var(--expand-visible)]"
+                            ? ""
+                            : "-translate-x-[var(--drawer-size)] lg:-translate-x-[calc(var(--drawer-size)-var(--expand-visible))]"
                     }`}
-                    // style={{ width: "var(--drawer-size)" }}
+                    style={{ width: "var(--drawer-size)" }}
                 >
-                    <div
-                        className={`w-full h-full transition-opacity duration-200 ${
-                            drawerOpened ? "delay-300 opacity-100" : "opacity-0"
-                        }`}
-                    >
-                        Content
-                    </div>
+                    Content
                 </div>
-
                 {/* Controller */}
                 <Button
-                    className="absolute top-5 -right-4 bg-white border border-neutral-400 !px-1.5 !py-1.5"
+                    className={`absolute top-5 -right-4 bg-white border border-neutral-400 !px-1.5 !py-1.5 hidden lg:block`}
                     onClick={(e) => setDrawerOpened((prev) => !prev)}
                 >
                     {drawerOpened ? (
-                        <MdArrowBackIosNew className="text-lg" />
+                        <MdKeyboardDoubleArrowLeft className="text-lg" />
                     ) : (
-                        <RiMenuLine className="text-lg" />
+                        <MdKeyboardDoubleArrowRight className="text-lg" />
                     )}
                 </Button>
             </div>
 
             {/* Content */}
-            <div className="w-full">{children}</div>
+            <div className="grow relative">
+                {children}
+
+                {/* Black cover for Drawer */}
+                <div
+                    className={`absolute inset-0 bg-black/10 ${
+                        drawerOpened ? "lg:hidden" : "hidden"
+                    }`}
+                    onClick={() => setDrawerOpened(false)}
+                ></div>
+            </div>
         </div>
     );
 };
