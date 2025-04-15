@@ -6,14 +6,22 @@ import { IoSearchOutline } from "react-icons/io5";
 import { LuMessageCircleMore } from "react-icons/lu";
 import { FiPlus } from "react-icons/fi";
 import { IoMdNotificationsOutline } from "react-icons/io";
-import Button from "./Button";
+import Button from "../Button";
 
-const Navbar = () => {
+const Navbar = ({
+    setDrawerOpened,
+}: {
+    setDrawerOpened: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
     return (
-        <header className="px-2 py-2 flex justify-between items-center gap-4 border-b border-neutral-300 mb-5">
+        <header className="px-2 py-2 flex justify-between items-center gap-4 border-b border-neutral-300">
             {/* Logo and Menu */}
             <div className="flex items-center gap-2">
-                <Button>
+                <Button
+                    onClick={(e) => {
+                        setDrawerOpened((prev) => !prev);
+                    }}
+                >
                     <RiMenuLine className="text-2xl" />
                 </Button>
 
