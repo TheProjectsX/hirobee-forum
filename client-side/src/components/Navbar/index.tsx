@@ -5,6 +5,7 @@ import { RiMenuLine } from "react-icons/ri";
 import { IoSearchOutline } from "react-icons/io5";
 import { LuMessageCircleMore } from "react-icons/lu";
 import { FiPlus } from "react-icons/fi";
+import { IoMdNotificationsOutline } from "react-icons/io";
 import Button from "./Button";
 
 const Navbar = () => {
@@ -52,12 +53,26 @@ const Navbar = () => {
 
             {/* Extra */}
             <div className="flex items-center gap-0.5">
-                <button className="text-2xl p-2 rounded-full hover:bg-slate-200 cursor-pointer">
+                <Button className="hidden sm:block">
                     <LuMessageCircleMore className="text-2xl" />
-                </button>
+                </Button>
                 <Button>
                     <FiPlus className="text-2xl" />
-                    <span className="text-sm font-medium px-0.5">Create</span>
+                    <span className="text-sm font-medium px-0.5 hidden sm:inline">
+                        Create
+                    </span>
+                </Button>
+
+                <Button className="hidden sm:block">
+                    <IoMdNotificationsOutline className="text-2xl" />
+                </Button>
+
+                <Button className="!p-1">
+                    <img
+                        src="https://i.ibb.co.com/Dfp53bmp/user-avatar.png"
+                        alt="Profile Picture"
+                        className="w-10 rounded-full"
+                    />
                 </Button>
             </div>
         </header>
