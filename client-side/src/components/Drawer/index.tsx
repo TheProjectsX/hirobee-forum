@@ -20,19 +20,27 @@ const Drawer = ({
                     "--expand-visible": "35px",
                 } as React.CSSProperties
             }
-            className={`relative h-full flex transition-transform duration-300 ${
-                drawerOpened
-                    ? ""
-                    : "-translate-x-[calc(var(--drawer-size)-var(--expand-visible)))]"
-            }`}
+            className={`relative h-full flex`}
         >
             {/* Drawer */}
-            <div className={`hidden md:block h-full relative`}>
+            <div className={`w-fit h-full relative`}>
                 {/* Drawer Content */}
                 <div
-                    className={`border-r border-neutral-300 h-full`}
-                    style={{ width: "var(--drawer-size)" }}
-                ></div>
+                    className={`overflow-hidden transition-all duration-300 border-r border-neutral-300 h-full ${
+                        drawerOpened
+                            ? "w-[var(--drawer-size)]"
+                            : "w-[var(--expand-visible)]"
+                    }`}
+                    // style={{ width: "var(--drawer-size)" }}
+                >
+                    <div
+                        className={`w-full h-full transition-opacity duration-200 ${
+                            drawerOpened ? "delay-300 opacity-100" : "opacity-0"
+                        }`}
+                    >
+                        Content
+                    </div>
+                </div>
 
                 {/* Controller */}
                 <Button
