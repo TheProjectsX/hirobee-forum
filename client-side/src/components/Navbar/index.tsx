@@ -18,6 +18,7 @@ const Navbar = ({
             {/* Logo and Menu */}
             <div className="flex items-center gap-2">
                 <Button
+                    className="lg:hidden"
                     onClick={(e) => {
                         setDrawerOpened((prev) => !prev);
                     }}

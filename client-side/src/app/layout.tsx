@@ -15,12 +15,12 @@ export default function RootLayout({
 
     return (
         <html lang="en">
-            <body className="font-ubuntu h-screen flex flex-col">
+            <body className="h-screen flex flex-col">
                 {/* Navbar */}
                 <Navbar setDrawerOpened={setDrawerOpened} />
 
                 {/* Main Section */}
-                <main className="flex-1 grow overflow-x-hidden">
+                <div className="flex-1 grow overflow-x-hidden">
                     <Drawer
                         drawerContent={<DrawerContent />}
                         drawerOpened={drawerOpened}
@@ -28,7 +28,7 @@ export default function RootLayout({
                     >
                         {children}
                     </Drawer>
-                </main>
+                </div>
             </body>
         </html>
     );
