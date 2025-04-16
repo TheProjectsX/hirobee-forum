@@ -6,38 +6,49 @@ import { FaRegComment } from "react-icons/fa";
 import { SlBadge } from "react-icons/sl";
 import { RiShareForwardLine } from "react-icons/ri";
 import { TbArrowBigDown, TbArrowBigUp } from "react-icons/tb";
+import { HiOutlineDotsHorizontal } from "react-icons/hi";
+
 import GalleryCarousel from "../GalleryCarousel";
+import Button from "../Button";
 
 const PreviewPost = () => {
     const images: Array<string> = [];
 
     return (
         <article className="px-3 py-1.5 rounded-2xl hover:bg-slate-100">
-            <header className="flex items-center gap-2 text-xs mb-3">
-                <Link href={"/r/"} className="flex gap-1.5 items-center">
-                    <span className="w-6 h-6 rounded-full overflow-hidden">
-                        <img
-                            src="https://placehold.co/24"
-                            alt="SubHiro Picture"
-                            className="w-full h-full"
-                            loading="lazy"
-                        />
+            <header className="flex items-center justify-between gap-2 text-xs">
+                <div className="flex items-center gap-2">
+                    <Link href={"/r/"} className="flex gap-1.5 items-center">
+                        <span className="w-6 h-6 rounded-full overflow-hidden">
+                            <img
+                                src="https://placehold.co/24"
+                                alt="SubHiro Picture"
+                                className="w-full h-full"
+                                loading="lazy"
+                            />
+                        </span>
+                        <span className="hover:text-blue-800 font-medium">
+                            r/ChatGPT
+                        </span>
+                    </Link>
+                    <span className="text-neutral-500">•</span>
+                    <span className="text-neutral-500">
+                        {formatDistanceToNow(new Date(1744814420921), {
+                            addSuffix: true,
+                        })}
                     </span>
-                    <span className="hover:text-blue-800 font-medium">
-                        r/ChatGPT
-                    </span>
-                </Link>
-                <span className="text-neutral-500">•</span>
-                <span className="text-neutral-500">
-                    {formatDistanceToNow(new Date(1744814420921), {
-                        addSuffix: true,
-                    })}
-                </span>
+                </div>
+
+                <div className="flex items-center gap-2 justify-end">
+                    <Button>
+                        <HiOutlineDotsHorizontal className="text-lg" />
+                    </Button>
+                </div>
             </header>
 
             {/* The Hirobee */}
             <div className="mb-3">
-                <h3 className="text-lg mb-2 font-medium">
+                <h3 className="text-lg mb-0.5 font-medium">
                     What to do if I am Home sick?
                 </h3>
                 <p className="line-clamp-4 text-sm">
