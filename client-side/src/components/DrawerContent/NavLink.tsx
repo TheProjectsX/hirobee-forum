@@ -7,13 +7,15 @@ import { IconType } from "react-icons";
 import { UrlObject } from "url";
 
 const NavLink = ({
+    children,
     href,
     label,
     Icon,
 }: {
+    children?: React.ReactNode;
     href: string | UrlObject;
-    label: string | React.ReactElement;
-    Icon: IconType;
+    label?: string | React.ReactElement;
+    Icon?: IconType;
 }) => {
     const currentPathname = usePathname();
 
@@ -24,10 +26,8 @@ const NavLink = ({
                 href === currentPathname ? "active" : ""
             }`}
         >
-            <span className="w-6">
-                <Icon className="text-xl" />
-            </span>
-            <span className="text-sm">{label}</span>
+            <span className="w-6">{Icon && <Icon className="text-xl" />}</span>
+            <span className="text-sm">{children ?? label}</span>
         </Link>
     );
 };

@@ -38,10 +38,10 @@ const Drawer = ({
             >
                 {/* Drawer Content */}
                 <div
-                    className={`h-full bg-white transition-[translate] ease-in-out duration-300 delay-100 border-r border-neutral-300 pl-4 pr-[var(--shrink-visible)] py-3 ${
+                    className={`h-full bg-white transition-[translate] ease-in-out duration-300 delay-100 border-r border-neutral-300 pl-4 pr-[var(--shrink-visible)] py-3 overflow-y-auto ${
                         drawerOpened
-                            ? ""
-                            : "-translate-x-[var(--drawer-size)] lg:-translate-x-[calc(var(--drawer-size)-var(--shrink-visible))]"
+                            ? "scrollbar-thin"
+                            : "-translate-x-[var(--drawer-size)] lg:-translate-x-[calc(var(--drawer-size)-var(--shrink-visible))] scrollbar-none"
                     }`}
                     style={{ width: "var(--drawer-size)" }}
                 >

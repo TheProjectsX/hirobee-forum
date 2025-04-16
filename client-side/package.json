@@ -20,6 +20,7 @@
         "@tailwindcss/postcss": "^4",
         "@types/node": "^22.14.1",
         "@types/react": "^19.1.2",
+        "tailwind-scrollbar": "^4.0.2",
         "tailwindcss": "^4",
         "typescript": "^5.8.3"
     }

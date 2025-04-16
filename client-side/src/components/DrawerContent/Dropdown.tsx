@@ -7,15 +7,21 @@ const Dropdown = ({
     children,
     className,
     label,
+    border = false,
 }: {
-    children: React.ReactNode;
+    children?: React.ReactNode;
     className?: string;
     label: string;
+    border?: boolean;
 }) => {
     const uid = useId();
 
     return (
-        <div className={className ?? ""}>
+        <div
+            className={`${className ?? ""} ${
+                border ? "pb-4 mb-3 border-b border-neutral-400" : ""
+            }`}
+        >
             <input
                 type="checkbox"
                 id={uid}

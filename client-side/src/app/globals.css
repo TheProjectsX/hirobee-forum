@@ -11,3 +11,6 @@
 .max-width {
     max-width: 1120px;
 }
+
+/* Plugins */
+@plugin "tailwind-scrollbar";
