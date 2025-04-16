@@ -6,8 +6,11 @@ import { FaRegComment } from "react-icons/fa";
 import { SlBadge } from "react-icons/sl";
 import { RiShareForwardLine } from "react-icons/ri";
 import { TbArrowBigDown, TbArrowBigUp } from "react-icons/tb";
+import GalleryCarousel from "../GalleryCarousel";
 
 const PreviewPost = () => {
+    const images: Array<string> = [];
+
     return (
         <article className="px-3 py-1.5 rounded-2xl hover:bg-slate-100">
             <header className="flex items-center gap-2 text-xs mb-3">
@@ -17,6 +20,7 @@ const PreviewPost = () => {
                             src="https://placehold.co/24"
                             alt="SubHiro Picture"
                             className="w-full h-full"
+                            loading="lazy"
                         />
                     </span>
                     <span className="hover:text-blue-800 font-medium">
@@ -52,6 +56,13 @@ const PreviewPost = () => {
                     ipsam dignissimos minus porro ratione! Fugiat laudantium
                     obcaecati totam facere mollitia.
                 </p>
+
+                {/* Images */}
+                {images && images.length > 0 && (
+                    <div className="w-full pt-3">
+                        <GalleryCarousel images={images} />
+                    </div>
+                )}
             </div>
 
             <div className="flex items-center gap-2">
@@ -71,10 +82,10 @@ const PreviewPost = () => {
                 <p className="rounded-full px-3.5 py-1.5 text-neutral-700 bg-slate-200 hover:bg-slate-300 active:bg-slate-400 flex items-center gap-1.5 cursor-pointer">
                     <SlBadge className="text-lg" />
                 </p>
-                <p className="rounded-full px-3.5 py-1.5 text-neutral-700 bg-slate-200 hover:bg-slate-300 active:bg-slate-400 flex items-center gap-1.5 cursor-pointer">
+                <button className="rounded-full px-3.5 py-1.5 text-neutral-700 bg-slate-200 hover:bg-slate-300 active:bg-slate-400 flex items-center gap-1.5 cursor-pointer">
                     <RiShareForwardLine className="text-lg" />
                     <span className="text-sm font-medium">Share</span>
-                </p>
+                </button>
             </div>
         </article>
     );
