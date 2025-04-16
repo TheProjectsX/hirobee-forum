@@ -4,8 +4,13 @@ import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import "./globals.css";
 import Drawer from "@/components/Drawer";
+import DrawerContent from "@/components/DrawerContent";
 
-export default function RootLayout({ children }) {
+export default function RootLayout({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
     const [drawerOpened, setDrawerOpened] = useState<boolean>(false);
 
     return (
@@ -17,6 +22,7 @@ export default function RootLayout({ children }) {
                 {/* Main Section */}
                 <main className="flex-1 grow overflow-x-hidden">
                     <Drawer
+                        drawerContent={<DrawerContent />}
                         drawerOpened={drawerOpened}
                         setDrawerOpened={setDrawerOpened}
                     >

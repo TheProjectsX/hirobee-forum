@@ -1,18 +1,20 @@
+"use client";
+
 import React from "react";
 import Button from "../Button";
-import { RiMenuLine } from "react-icons/ri";
 import {
-    MdArrowBackIosNew,
     MdKeyboardDoubleArrowLeft,
     MdKeyboardDoubleArrowRight,
 } from "react-icons/md";
 
 const Drawer = ({
     children,
+    drawerContent,
     drawerOpened,
     setDrawerOpened,
 }: {
     children: React.ReactNode;
+    drawerContent: React.ReactNode;
     drawerOpened: boolean;
     setDrawerOpened: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
@@ -20,8 +22,8 @@ const Drawer = ({
         <div
             style={
                 {
-                    "--drawer-size": "275px",
-                    "--expand-visible": "35px",
+                    "--drawer-size": "272px",
+                    "--shrink-visible": "24px",
                 } as React.CSSProperties
             }
             className={`relative h-full flex`}
@@ -31,19 +33,19 @@ const Drawer = ({
                 className={`relative transition-[width] ease-in-out duration-300 delay-100 h-full z-10 ${
                     drawerOpened
                         ? "w-0 lg:w-[var(--drawer-size)]"
-                        : "w-0 lg:w-[var(--expand-visible)]"
+                        : "w-0 lg:w-[var(--shrink-visible)]"
                 }`}
             >
                 {/* Drawer Content */}
                 <div
-                    className={`h-full bg-white transition-[translate] ease-in-out duration-300 delay-100 border-r border-neutral-300 ${
+                    className={`h-full bg-white transition-[translate] ease-in-out duration-300 delay-100 border-r border-neutral-300 pl-4 pr-[var(--shrink-visible)] py-3 ${
                         drawerOpened
                             ? ""
-                            : "-translate-x-[var(--drawer-size)] lg:-translate-x-[calc(var(--drawer-size)-var(--expand-visible))]"
+                            : "-translate-x-[var(--drawer-size)] lg:-translate-x-[calc(var(--drawer-size)-var(--shrink-visible))]"
                     }`}
                     style={{ width: "var(--drawer-size)" }}
                 >
-                    Content
+                    {drawerContent}
                 </div>
                 {/* Controller */}
                 <Button
@@ -64,7 +66,7 @@ const Drawer = ({
 
                 {/* Black cover for Drawer */}
                 <div
-                    className={`absolute inset-0 bg-black/10 ${
+                    className={`absolute inset-0 bg-black/15 ${
                         drawerOpened ? "lg:hidden" : "hidden"
                     }`}
                     onClick={() => setDrawerOpened(false)}

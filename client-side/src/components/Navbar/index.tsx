@@ -14,7 +14,7 @@ const Navbar = ({
     setDrawerOpened: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
     return (
-        <header className="px-2 py-2 flex justify-between items-center gap-4 border-b border-neutral-300">
+        <header className="px-3 py-1.5 flex justify-between items-center gap-4 border-b border-neutral-300">
             {/* Logo and Menu */}
             <div className="flex items-center gap-2">
                 <Button
