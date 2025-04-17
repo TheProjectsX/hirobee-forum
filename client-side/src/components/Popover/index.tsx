@@ -86,6 +86,7 @@ const Popover = ({
 
         // Give Axis
         // Check if axis and position are in same side, if so, change it to common 'center'
+
         const oppositeAxis: Record<
             "top" | "bottom" | "left" | "right" | "center",
             string[]
@@ -103,24 +104,29 @@ const Popover = ({
         const axisToUse =
             axis === "center" ? "center" : isSameAxis ? "center" : axis;
 
+        // TODO: NEED TO FIX THIS
         if (axisToUse !== "center") popoverActionStyles[axisToUse] = "0px";
         else {
+            const contentWidth = contentRect?.width ?? 0;
+            const contentHeight = contentRect?.height ?? 0;
+            const triggerWidth = triggerRect?.width ?? 0;
+            const triggerHeight = triggerRect?.height ?? 0;
+
             if (position === "top" || position === "bottom") {
                 // Algo: center = (content.width / 2) - (trigger.width / 2)
-                const offsetLeft =
-                    (contentRect?.width ?? 0) / 2 -
-                    (triggerRect?.width ?? 0) / 2;
-                popoverActionStyles["left"] = `-${offsetLeft}px`;
+                const offsetLeft = contentWidth / 2 - triggerWidth / 2;
+                popoverActionStyles["left"] = `${offsetLeft * -1}px`;
+
+                console.log(contentWidth, triggerWidth);
             } else {
                 // Algo: center = (content.height / 2) - (trigger.height / 2)
-                const offsetTop =
-                    (contentRect?.height ?? 0) / 2 -
-                    (triggerRect?.height ?? 0) / 2;
+                const offsetTop = contentHeight / 2 - triggerHeight / 2;
 
-                popoverActionStyles["top"] = `-${offsetTop}px`;
+                popoverActionStyles["top"] = `${offsetTop * -1}px`;
             }
         }
 
+        console.log(popoverActionStyles);
         setPopoverStyle((prev) => popoverActionStyles);
     }, [position, axis]);
 
@@ -130,7 +136,7 @@ const Popover = ({
 
             <div
                 data-name="popover-content"
-                className={`w-max absolute hidden peer-focus:block shadow-[0_0_10px_rgba(0,0,0,0.1)] bg-white ${className}`}
+                className={`w-max absolute invisible peer-focus:visible hover:visible focus:visible shadow-[0_0_10px_rgba(0,0,0,0.1)] bg-white ${className}`}
                 style={popoverStyle}
                 ref={contentRef}
             >
