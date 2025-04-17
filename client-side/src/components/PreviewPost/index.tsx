@@ -26,10 +26,13 @@ const PreviewPost = () => {
     const images: Array<string> = [];
 
     return (
-        <article className="px-3 py-1.5 rounded-2xl hover:bg-slate-100">
+        <article className="px-3 py-1.5 rounded-2xl hover:bg-slate-100 relative">
             <header className="flex items-center justify-between gap-2 text-xs">
                 <div className="flex items-center gap-2">
-                    <Link href={"/r/"} className="flex gap-1.5 items-center">
+                    <Link
+                        href={"/r/"}
+                        className="flex gap-1.5 items-center z-[1]"
+                    >
                         <span className="w-6 h-6 rounded-full overflow-hidden">
                             <img
                                 src="https://placehold.co/24"
@@ -83,7 +86,7 @@ const PreviewPost = () => {
                             </div>
                         }
                     >
-                        <RoundedButton>
+                        <RoundedButton className="z-[1]">
                             <HiOutlineDotsHorizontal className="text-lg" />
                         </RoundedButton>
                     </Popover>
@@ -121,7 +124,7 @@ const PreviewPost = () => {
             </div>
 
             <div className="flex items-center gap-2">
-                <p className="rounded-full text-neutral-700 bg-slate-200 flex items-center cursor-pointer">
+                <p className="rounded-full text-neutral-700 bg-slate-200 flex items-center cursor-pointer z-[1]">
                     <Button
                         className="!p-1.5 hover:[&_svg]:text-orange-600"
                         Icon={TbArrowBigUp}
@@ -132,8 +135,10 @@ const PreviewPost = () => {
                         Icon={TbArrowBigDown}
                     ></Button>
                 </p>
-                <Button Icon={FaRegComment}>310</Button>
-                <Button Icon={SlBadge}></Button>
+                <Button Icon={FaRegComment} className="z-[1]">
+                    310
+                </Button>
+                <Button Icon={SlBadge} className="z-[1]"></Button>
 
                 <Popover
                     position="bottom"
@@ -158,9 +163,13 @@ const PreviewPost = () => {
                         </div>
                     }
                 >
-                    <Button Icon={RiShareForwardLine}>Share</Button>
+                    <Button Icon={RiShareForwardLine} className="z-[1]">
+                        Share
+                    </Button>
                 </Popover>
             </div>
+
+            <Link href={"/"} className="absolute inset-0"></Link>
         </article>
     );
 };

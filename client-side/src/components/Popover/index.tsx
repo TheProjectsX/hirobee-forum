@@ -141,10 +141,6 @@ const Popover = ({
             }
         }
 
-        console.log({
-            content: popoverContentStyles,
-            indicator: popoverIndicatorStyles,
-        });
         setPopoverStyle((prev) => ({
             content: popoverContentStyles,
             indicator: popoverIndicatorStyles,

@@ -7,7 +7,7 @@ const RoundedButton = ({
 }: ButtonHTMLAttributes<HTMLButtonElement>) => {
     return (
         <button
-            className={`p-2 rounded-full hover:bg-slate-200 cursor-pointer flex items-center active:scale-90 transition-[scale] duration-300 ${className}`}
+            className={`p-2 rounded-full hover:bg-slate-200 cursor-pointer flex items-center active:scale-90 transition-[scale] duration-300 relative ${className}`}
             {...options}
         >
             {children}

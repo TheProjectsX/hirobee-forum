@@ -9,7 +9,12 @@ export default function Home() {
             <MainDiv className="">
                 {/* Contents */}
                 <div>
-                    <PreviewPost></PreviewPost>
+                    {[...Array(6)].map((i, idx) => (
+                        <React.Fragment key={idx}>
+                            <div className="pb-1 mb-1 border-b border-neutral-300"></div>
+                            <PreviewPost></PreviewPost>
+                        </React.Fragment>
+                    ))}
                 </div>
             </MainDiv>
             <Sidebar className="">I am where?</Sidebar>
