@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 const Popover = ({
     children,
@@ -31,7 +31,7 @@ const Popover = ({
         tabIndex: 0,
     });
 
-    useEffect(() => {
+    const updatePositions = () => {
         const gap = 10;
         const indicatorGap = 6;
         const triggerRect = triggerRef.current?.getBoundingClientRect();
@@ -145,7 +145,24 @@ const Popover = ({
             content: popoverContentStyles,
             indicator: popoverIndicatorStyles,
         }));
-    }, [position, axis]);
+    };
+
+    useLayoutEffect(() => {
+        const resizeObserver = new ResizeObserver(updatePositions);
+        triggerRef.current && resizeObserver.observe(triggerRef.current);
+        contentRef.current && resizeObserver.observe(contentRef.current);
+
+        window.addEventListener("resize", updatePositions);
+        window.addEventListener("scroll", updatePositions, true); // true = capture phase
+
+        updatePositions(); // initial call
+
+        return () => {
+            resizeObserver.disconnect();
+            window.removeEventListener("resize", updatePositions);
+            window.removeEventListener("scroll", updatePositions, true);
+        };
+    }, []);
 
     return (
         <div
