@@ -17,8 +17,9 @@ export default function Home() {
                     <p className="mb-10">Just a Test for the Hover Popover</p>
                     <Popover
                         content={<p className="p-4">Here Lies some content</p>}
-                        position="bottom"
-                        axis="center"
+                        position="right"
+                        axis="top"
+                        indicator={false}
                     >
                         <button className="px-5 py-2 rounded-2xl bg-neutral-200 cursor-pointer">
                             Click ME!

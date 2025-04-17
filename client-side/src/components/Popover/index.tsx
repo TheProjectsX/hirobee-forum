@@ -8,16 +8,21 @@ const Popover = ({
     className = "",
     position = "bottom",
     axis = "center",
+    indicator = true,
 }: {
     children: React.ReactElement<any, any>;
     content?: string | React.ReactNode;
     className?: string;
     position?: "top" | "bottom" | "left" | "right";
     axis?: "top" | "bottom" | "left" | "right" | "center";
+    indicator?: boolean;
 }) => {
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const contentRef = useRef<HTMLDivElement | null>(null);
-    const [popoverStyle, setPopoverStyle] = useState<{}>({});
+    const [popoverStyle, setPopoverStyle] = useState<{
+        content: {};
+        indicator: {};
+    }>({ content: {}, indicator: {} });
 
     const clonedTrigger = React.cloneElement(children, {
         ref: triggerRef,
@@ -26,11 +31,23 @@ const Popover = ({
     });
 
     useEffect(() => {
-        const gap = 6;
+        const gap = 10;
+        const indicatorGap = 6;
         const triggerRect = triggerRef.current?.getBoundingClientRect();
         const contentRect = contentRef.current?.getBoundingClientRect();
 
-        const popoverActionStyles: {
+        const contentWidth = contentRect?.width ?? 0;
+        const contentHeight = contentRect?.height ?? 0;
+        const triggerWidth = triggerRect?.width ?? 0;
+        const triggerHeight = triggerRect?.height ?? 0;
+
+        const popoverContentStyles: {
+            top?: string;
+            bottom?: string;
+            left?: string;
+            right?: string;
+        } = {};
+        const popoverIndicatorStyles: {
             top?: string;
             bottom?: string;
             left?: string;
@@ -40,17 +57,16 @@ const Popover = ({
         // Give Position
         const size =
             position === "top" || position === "bottom"
-                ? triggerRect?.height ?? 0
-                : triggerRect?.width ?? 0;
+                ? triggerHeight ?? 0
+                : triggerWidth ?? 0;
 
-        const offset = `${size + gap}px`;
-
-        const oppositeSide: Record<string, keyof typeof popoverActionStyles> = {
-            top: "bottom",
-            bottom: "top",
-            left: "right",
-            right: "left",
-        };
+        const oppositeSide: Record<string, keyof typeof popoverContentStyles> =
+            {
+                top: "bottom",
+                bottom: "top",
+                left: "right",
+                right: "left",
+            };
 
         const windowSize = {
             width: window.innerWidth,
@@ -68,21 +84,22 @@ const Popover = ({
         */
         if (
             (position === "top" &&
-                (triggerRect?.top ?? 0) - gap - (contentRect?.height ?? 0) <
-                    0) ||
+                (triggerRect?.top ?? 0) - gap - contentHeight < 0) ||
             (position === "bottom" &&
-                (triggerRect?.bottom ?? 0) + gap + (contentRect?.height ?? 0) >
+                (triggerRect?.bottom ?? 0) + gap + contentHeight >
                     windowSize.height) ||
             (position === "left" &&
-                (triggerRect?.left ?? 0) - gap - (contentRect?.width ?? 0) <
-                    0) ||
+                (triggerRect?.left ?? 0) - gap - contentWidth < 0) ||
             (position === "right" &&
-                (triggerRect?.right ?? 0) + gap + (contentRect?.width ?? 0) < 0)
+                (triggerRect?.right ?? 0) + gap + contentWidth < 0)
         ) {
             finalPosition = oppositeSide[position];
         }
 
-        popoverActionStyles[oppositeSide[finalPosition]] = offset;
+        popoverIndicatorStyles[oppositeSide[finalPosition]] = `${
+            indicatorGap * -1
+        }px`;
+        popoverContentStyles[oppositeSide[finalPosition]] = `${size + gap}px`;
 
         // Give Axis
         // Check if axis and position are in same side, if so, change it to common 'center'
@@ -104,43 +121,56 @@ const Popover = ({
         const axisToUse =
             axis === "center" ? "center" : isSameAxis ? "center" : axis;
 
-        // TODO: NEED TO FIX THIS
-        if (axisToUse !== "center") popoverActionStyles[axisToUse] = "0px";
-        else {
-            const contentWidth = contentRect?.width ?? 0;
-            const contentHeight = contentRect?.height ?? 0;
-            const triggerWidth = triggerRect?.width ?? 0;
-            const triggerHeight = triggerRect?.height ?? 0;
-
+        if (axisToUse !== "center") {
+            popoverContentStyles[axisToUse] = "0px";
+            popoverIndicatorStyles[axisToUse] = `${indicatorGap}px`;
+        } else {
             if (position === "top" || position === "bottom") {
                 // Algo: center = (content.width / 2) - (trigger.width / 2)
                 const offsetLeft = contentWidth / 2 - triggerWidth / 2;
-                popoverActionStyles["left"] = `${offsetLeft * -1}px`;
 
-                console.log(contentWidth, triggerWidth);
+                popoverContentStyles["left"] = `${offsetLeft * -1}px`;
+                popoverIndicatorStyles["left"] = `${contentWidth / 2 - 8}px`;
             } else {
                 // Algo: center = (content.height / 2) - (trigger.height / 2)
                 const offsetTop = contentHeight / 2 - triggerHeight / 2;
 
-                popoverActionStyles["top"] = `${offsetTop * -1}px`;
+                popoverContentStyles["top"] = `${offsetTop * -1}px`;
+                popoverIndicatorStyles["top"] = `${contentHeight / 2 - 8}px`;
             }
         }
 
-        console.log(popoverActionStyles);
-        setPopoverStyle((prev) => popoverActionStyles);
+        console.log({
+            content: popoverContentStyles,
+            indicator: popoverIndicatorStyles,
+        });
+        setPopoverStyle((prev) => ({
+            content: popoverContentStyles,
+            indicator: popoverIndicatorStyles,
+        }));
     }, [position, axis]);
 
     return (
         <div data-name="popover-container" className="w-fit relative">
             {clonedTrigger}
 
+            {/* Content */}
             <div
                 data-name="popover-content"
-                className={`w-max absolute invisible peer-focus:visible hover:visible focus:visible shadow-[0_0_10px_rgba(0,0,0,0.1)] bg-white ${className}`}
-                style={popoverStyle}
+                className={`w-max absolute invisible peer-focus:visible hover:visible focus:visible shadow-[0_0_10px_rgba(0,0,0,0.1)] bg-white z-[999] ${className}`}
+                style={popoverStyle.content}
                 ref={contentRef}
             >
                 {content}
+
+                {/* Indicator */}
+                {indicator && (
+                    <div
+                        data-name="popover-indicator"
+                        className="w-3 h-3 bg-white rotate-45 absolute z-[-10]"
+                        style={popoverStyle.indicator}
+                    ></div>
+                )}
             </div>
         </div>
     );
