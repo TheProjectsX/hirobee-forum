@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Button from "../Button";
+import RoundedButton from "../Buttons/Rounded";
 import {
     MdKeyboardDoubleArrowLeft,
     MdKeyboardDoubleArrowRight,
@@ -48,7 +48,7 @@ const Drawer = ({
                     {drawerContent}
                 </div>
                 {/* Controller */}
-                <Button
+                <RoundedButton
                     className={`absolute top-5 -right-4 bg-white border border-neutral-400 !px-1.5 !py-1.5 hidden lg:block`}
                     onClick={(e) => setDrawerOpened((prev) => !prev)}
                 >
@@ -57,7 +57,7 @@ const Drawer = ({
                     ) : (
                         <MdKeyboardDoubleArrowRight className="text-lg" />
                     )}
-                </Button>
+                </RoundedButton>
             </div>
 
             {/* Content */}

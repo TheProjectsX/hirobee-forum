@@ -8,8 +8,19 @@ import { RiShareForwardLine } from "react-icons/ri";
 import { TbArrowBigDown, TbArrowBigUp } from "react-icons/tb";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 
+import { GoBell } from "react-icons/go";
+import { BsBookmark } from "react-icons/bs";
+import { IoEyeOffOutline } from "react-icons/io5";
+import { IoFlagOutline } from "react-icons/io5";
+import { IoIosLink } from "react-icons/io";
+import { TbArrowsCross } from "react-icons/tb";
+import { ImEmbed2 } from "react-icons/im";
+
 import GalleryCarousel from "../GalleryCarousel";
-import Button from "../Button";
+import RoundedButton from "../Buttons/Rounded";
+import SquareButton from "../Buttons/Square";
+import Popover from "../Popover";
+import Button from "./Button";
 
 const PreviewPost = () => {
     const images: Array<string> = [];
@@ -40,9 +51,42 @@ const PreviewPost = () => {
                 </div>
 
                 <div className="flex items-center gap-2 justify-end">
-                    <Button>
-                        <HiOutlineDotsHorizontal className="text-lg" />
-                    </Button>
+                    <Popover
+                        position="bottom"
+                        axis="right"
+                        className="text-base rounded-xl overflow-hidden"
+                        indicator={false}
+                        content={
+                            <div className="min-w-36">
+                                <SquareButton className="w-full" Icon={GoBell}>
+                                    Follow Post
+                                </SquareButton>
+
+                                <SquareButton
+                                    className="w-full"
+                                    Icon={BsBookmark}
+                                >
+                                    Save
+                                </SquareButton>
+                                <SquareButton
+                                    className="w-full"
+                                    Icon={IoEyeOffOutline}
+                                >
+                                    Hide
+                                </SquareButton>
+                                <SquareButton
+                                    className="w-full"
+                                    Icon={IoFlagOutline}
+                                >
+                                    Report
+                                </SquareButton>
+                            </div>
+                        }
+                    >
+                        <RoundedButton>
+                            <HiOutlineDotsHorizontal className="text-lg" />
+                        </RoundedButton>
+                    </Popover>
                 </div>
             </header>
 
@@ -78,25 +122,44 @@ const PreviewPost = () => {
 
             <div className="flex items-center gap-2">
                 <p className="rounded-full text-neutral-700 bg-slate-200 flex items-center cursor-pointer">
-                    <button className="rounded-full bg-slate-200 hover:bg-slate-300 active:bg-slate-400 px-1.5 py-1.5 cursor-pointer hover:[&_svg]:text-orange-600">
-                        <TbArrowBigUp className="text-lg" />
-                    </button>
+                    <Button
+                        className="!p-1.5 hover:[&_svg]:text-orange-600"
+                        Icon={TbArrowBigUp}
+                    ></Button>
                     <span className="text-sm font-medium">310</span>
-                    <button className="rounded-full bg-slate-200 hover:bg-slate-300 active:bg-slate-400 px-1.5 py-1.5 cursor-pointer hover:[&_svg]:text-purple-600">
-                        <TbArrowBigDown className="text-lg" />
-                    </button>
+                    <Button
+                        className="!p-1.5 hover:[&_svg]:text-purple-600"
+                        Icon={TbArrowBigDown}
+                    ></Button>
                 </p>
-                <p className="rounded-full px-3.5 py-1.5 text-neutral-700 bg-slate-200 hover:bg-slate-300 active:bg-slate-400 flex items-center gap-1.5 cursor-pointer">
-                    <FaRegComment className="text-lg" />
-                    <span className="text-sm font-medium">310</span>
-                </p>
-                <p className="rounded-full px-3.5 py-1.5 text-neutral-700 bg-slate-200 hover:bg-slate-300 active:bg-slate-400 flex items-center gap-1.5 cursor-pointer">
-                    <SlBadge className="text-lg" />
-                </p>
-                <button className="rounded-full px-3.5 py-1.5 text-neutral-700 bg-slate-200 hover:bg-slate-300 active:bg-slate-400 flex items-center gap-1.5 cursor-pointer">
-                    <RiShareForwardLine className="text-lg" />
-                    <span className="text-sm font-medium">Share</span>
-                </button>
+                <Button Icon={FaRegComment}>310</Button>
+                <Button Icon={SlBadge}></Button>
+
+                <Popover
+                    position="bottom"
+                    axis="left"
+                    className="text-base rounded-xl overflow-hidden"
+                    indicator={false}
+                    content={
+                        <div className="min-w-36">
+                            <SquareButton className="w-full" Icon={IoIosLink}>
+                                Copy Link
+                            </SquareButton>
+
+                            <SquareButton
+                                className="w-full"
+                                Icon={TbArrowsCross}
+                            >
+                                Crosspost
+                            </SquareButton>
+                            <SquareButton className="w-full" Icon={ImEmbed2}>
+                                Embed
+                            </SquareButton>
+                        </div>
+                    }
+                >
+                    <Button Icon={RiShareForwardLine}>Share</Button>
+                </Popover>
             </div>
         </article>
     );

@@ -1,6 +1,6 @@
 import React, { ButtonHTMLAttributes } from "react";
 
-const Button = ({
+const RoundedButton = ({
     children,
     className,
     ...options
@@ -15,4 +15,4 @@ const Button = ({
     );
 };
 
-export default Button;
+export default RoundedButton;

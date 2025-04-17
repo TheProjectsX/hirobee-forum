@@ -6,7 +6,7 @@ import { IoSearchOutline } from "react-icons/io5";
 import { LuMessageCircleMore } from "react-icons/lu";
 import { FiPlus } from "react-icons/fi";
 import { IoMdNotificationsOutline } from "react-icons/io";
-import Button from "../Button";
+import RoundedButton from "@/components/Buttons/Rounded";
 
 const Navbar = ({
     setDrawerOpened,
@@ -17,14 +17,14 @@ const Navbar = ({
         <header className="px-3 py-1.5 flex justify-between items-center gap-4 border-b border-neutral-300">
             {/* Logo and Menu */}
             <div className="flex items-center gap-2">
-                <Button
+                <RoundedButton
                     className="lg:hidden"
                     onClick={(e) => {
                         setDrawerOpened((prev) => !prev);
                     }}
                 >
                     <RiMenuLine className="text-2xl" />
-                </Button>
+                </RoundedButton>
 
                 <a href="/" className="flex gap-1.5 items-center">
                     <img
@@ -62,27 +62,27 @@ const Navbar = ({
 
             {/* Extra */}
             <div className="flex items-center gap-0.5">
-                <Button className="hidden sm:block">
+                <RoundedButton className="hidden sm:block">
                     <LuMessageCircleMore className="text-2xl" />
-                </Button>
-                <Button>
+                </RoundedButton>
+                <RoundedButton>
                     <FiPlus className="text-2xl" />
                     <span className="text-sm font-medium px-0.5 hidden sm:inline">
                         Create
                     </span>
-                </Button>
+                </RoundedButton>
 
-                <Button className="hidden sm:block">
+                <RoundedButton className="hidden sm:block">
                     <IoMdNotificationsOutline className="text-2xl" />
-                </Button>
+                </RoundedButton>
 
-                <Button className="!p-1">
+                <RoundedButton className="!p-1">
                     <img
                         src="https://i.ibb.co.com/Dfp53bmp/user-avatar.png"
                         alt="Profile Picture"
                         className="w-10 rounded-full"
                     />
-                </Button>
+                </RoundedButton>
             </div>
         </header>
     );
