@@ -49,7 +49,7 @@ const Drawer = ({
                 </div>
                 {/* Controller */}
                 <RoundedButton
-                    className={`absolute top-5 -right-4 bg-white border border-neutral-400 !px-1.5 !py-1.5 hidden lg:block`}
+                    className={`!absolute top-5 -right-4 bg-white border border-neutral-400 !px-1.5 !py-1.5 hidden lg:block`}
                     onClick={(e) => setDrawerOpened((prev) => !prev)}
                 >
                     {drawerOpened ? (
@@ -61,7 +61,7 @@ const Drawer = ({
             </div>
 
             {/* Content */}
-            <div className="grow relative">
+            <div className="grow relative h-full overflow-y-auto scrollbar-thin">
                 {children}
 
                 {/* Black cover for Drawer */}

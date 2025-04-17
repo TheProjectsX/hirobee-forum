@@ -29,9 +29,11 @@ const Footer = () => {
                         User Agreement
                     </Link>
                 </li>
-            </ul>
 
-            <div className="flex items-center justify-center px-2">•</div>
+                <li>
+                    <div className="flex items-center justify-center">•</div>
+                </li>
+            </ul>
 
             <p>
                 <a
