@@ -23,14 +23,20 @@ import Popover from "../Popover";
 import Button from "./Button";
 import { MdArrowBack } from "react-icons/md";
 
-const PreviewPost = ({ fullPreview = false }: { fullPreview?: boolean }) => {
+const PreviewPost = ({
+    fullPreview = false,
+    className = "",
+}: {
+    fullPreview?: boolean;
+    className?: string;
+}) => {
     const images: Array<string> = [];
 
     return (
         <article
-            className={`px-3 py-1.5 rounded-2xl relative ${
-                fullPreview ? "" : "hover:bg-slate-100"
-            }`}
+            className={`py-1.5 rounded-2xl relative ${
+                fullPreview ? "" : "hover:bg-slate-100 px-3"
+            } ${className ?? ""}`}
         >
             <header
                 className={`flex  justify-between gap-2 text-xs ${
