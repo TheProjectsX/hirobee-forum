@@ -29,12 +29,17 @@ export const MainDiv = ({
 
 export const Sidebar = ({
     children,
+    breakpoint = "950px",
     className = "",
     ...options
-}: HTMLAttributes<HTMLElement>) => {
+}: HTMLAttributes<HTMLElement> & { breakpoint?: "950px" | "770px" }) => {
     return (
         <aside
-            className={`w-[320px] shrink-0 hidden min-[950px]:block ${className}`}
+            className={`w-[320px] shrink-0 hidden ${
+                breakpoint === "770px"
+                    ? "min-[770px]:block"
+                    : "min-[950px]:block"
+            } ${className}`}
             {...options}
         >
             {children}

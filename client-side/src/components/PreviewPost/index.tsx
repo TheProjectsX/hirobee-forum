@@ -169,7 +169,7 @@ const PreviewPost = ({
                     What to do if I am Home sick?
                 </h3>
                 <p
-                    className={`text-sm text-neutral-700 ${
+                    className={`text-sm text-neutral-700 whitespace-pre-line ${
                         fullPreview ? "mb-4" : "mb-3 line-clamp-4"
                     }`}
                 >

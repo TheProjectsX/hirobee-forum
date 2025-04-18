@@ -5,9 +5,13 @@ import PageLayout, { MainDiv, Sidebar } from "@/components/PageLayout";
 import PreviewPost from "@/components/PreviewPost";
 import Button from "@/components/PreviewPost/Button";
 import React, { useState } from "react";
+import Comment from "./comment";
 
 const Post = () => {
-    const [commentBoxOpened, setCommentBoxOpened] = useState<boolean>(false);
+    const [commentBoxStatus, setCommentBoxStatus] = useState<{
+        opened: boolean;
+        content: string;
+    }>({ opened: false, content: "" });
 
     return (
         <PageLayout>
@@ -19,22 +23,34 @@ const Post = () => {
 
                 {/* Comment Box */}
                 <div className="mb-2.5">
-                    {!commentBoxOpened && (
+                    {!commentBoxStatus.opened && (
                         <button
                             className="block w-full outline-none border border-neutral-400 rounded-full px-4 py-2.5 text-slate-500 text-left text-sm cursor-text"
-                            onClick={(e) => setCommentBoxOpened(true)}
+                            onClick={(e) =>
+                                setCommentBoxStatus((prev) => ({
+                                    ...prev,
+                                    opened: true,
+                                }))
+                            }
                         >
                             Add a comment
                         </button>
                     )}
 
-                    {commentBoxOpened && (
+                    {commentBoxStatus.opened && (
                         <div className="p-2 rounded-[1.25rem] border border-neutral-300 focus-within:border-neutral-500">
                             <form onSubmit={(e) => e.preventDefault()}>
                                 <textarea
                                     name="comment"
                                     rows={2}
                                     className="w-full outline-none border-none mb-3 text-sm px-1.5"
+                                    value={commentBoxStatus.content}
+                                    onChange={(e) =>
+                                        setCommentBoxStatus((prev) => ({
+                                            ...prev,
+                                            content: e.target.value,
+                                        }))
+                                    }
                                     autoFocus
                                 ></textarea>
 
@@ -46,7 +62,10 @@ const Post = () => {
                                     <div className="flex items-center gap-2">
                                         <Button
                                             onClick={(e) =>
-                                                setCommentBoxOpened(false)
+                                                setCommentBoxStatus((prev) => ({
+                                                    ...prev,
+                                                    opened: false,
+                                                }))
                                             }
                                         >
                                             <span className="text-xs">
@@ -69,10 +88,14 @@ const Post = () => {
                 </div>
 
                 {/* Comments Preview */}
-                <div>Comments</div>
+                <div>
+                    {[...Array(4)].map((i, idx) => (
+                        <Comment key={idx} />
+                    ))}
+                </div>
             </MainDiv>
 
-            <Sidebar>Where am I?</Sidebar>
+            <Sidebar breakpoint="770px">Where am I?</Sidebar>
         </PageLayout>
     );
 };
