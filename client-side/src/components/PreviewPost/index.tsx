@@ -46,7 +46,7 @@ const PreviewPost = ({
                 {!fullPreview && (
                     <div className="flex items-center gap-2">
                         <Link
-                            href={"/r/"}
+                            href={"/h/"}
                             className="flex gap-1.5 items-center z-[1]"
                         >
                             <span className="w-6 h-6 rounded-full overflow-hidden">
@@ -71,14 +71,14 @@ const PreviewPost = ({
                 )}
                 {fullPreview && (
                     <div className="flex items-center gap-2 mb-1.5">
-                        <Link href={"/r/"}>
+                        <Link href={"/h/"}>
                             <Button
                                 Icon={MdArrowBack}
                                 className="!p-1.5 [&_svg]:text-xl"
                             ></Button>
                         </Link>
                         <Link
-                            href={"/r/"}
+                            href={"/h/"}
                             className="flex gap-1.5 items-center z-[1] h-full"
                         >
                             <span className="w-8 h-8 rounded-full overflow-hidden">
@@ -92,7 +92,7 @@ const PreviewPost = ({
                         </Link>
                         <div>
                             <p className="flex items-center gap-1">
-                                <Link href={"/r/"}>
+                                <Link href={"/h/"}>
                                     <span className="hover:text-blue-800 font-medium">
                                         r/ChatGPT
                                     </span>

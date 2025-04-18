@@ -19,7 +19,7 @@ export default function Home() {
                     ))}
                 </div>
             </MainDiv>
-            <Sidebar className=" h-fit">
+            <Sidebar className="h-fit">
                 {/* Sidebar Content */}
                 <div className="p-5 bg-slate-100/80 rounded-2xl">
                     <div className="flex justify-between items-center">

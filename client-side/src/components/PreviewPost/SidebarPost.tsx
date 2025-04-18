@@ -10,7 +10,7 @@ const SidebarPost = () => {
                 <div>
                     <header className="mb-1">
                         <Link
-                            href={"/r/"}
+                            href={"/h/"}
                             className="flex gap-2 items-center z-[1]"
                         >
                             <span className="w-6 h-6 rounded-full overflow-hidden">
