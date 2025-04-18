@@ -21,37 +21,95 @@ import RoundedButton from "../Buttons/Rounded";
 import SquareButton from "../Buttons/Square";
 import Popover from "../Popover";
 import Button from "./Button";
+import { MdArrowBack } from "react-icons/md";
 
-const PreviewPost = () => {
+const PreviewPost = ({ fullPreview = false }: { fullPreview?: boolean }) => {
     const images: Array<string> = [];
 
     return (
-        <article className="px-3 py-1.5 rounded-2xl hover:bg-slate-100 relative">
-            <header className="flex items-center justify-between gap-2 text-xs">
-                <div className="flex items-center gap-2">
-                    <Link
-                        href={"/r/"}
-                        className="flex gap-1.5 items-center z-[1]"
-                    >
-                        <span className="w-6 h-6 rounded-full overflow-hidden">
-                            <img
-                                src="https://placehold.co/24"
-                                alt="SubHiro Picture"
-                                className="w-full h-full"
-                                loading="lazy"
-                            />
+        <article
+            className={`px-3 py-1.5 rounded-2xl relative ${
+                fullPreview ? "" : "hover:bg-slate-100"
+            }`}
+        >
+            <header
+                className={`flex  justify-between gap-2 text-xs ${
+                    fullPreview ? "items-start" : "items-center"
+                }`}
+            >
+                {!fullPreview && (
+                    <div className="flex items-center gap-2">
+                        <Link
+                            href={"/r/"}
+                            className="flex gap-1.5 items-center z-[1]"
+                        >
+                            <span className="w-6 h-6 rounded-full overflow-hidden">
+                                <img
+                                    src="https://placehold.co/24"
+                                    alt="SubHiro Picture"
+                                    className="w-full h-full"
+                                    loading="lazy"
+                                />
+                            </span>
+                            <span className="hover:text-blue-800 font-medium">
+                                r/ChatGPT
+                            </span>
+                        </Link>
+                        <span className="text-neutral-500">•</span>
+                        <span className="text-neutral-500">
+                            {formatDistanceToNow(new Date(1744814420921), {
+                                addSuffix: true,
+                            })}
                         </span>
-                        <span className="hover:text-blue-800 font-medium">
-                            r/ChatGPT
-                        </span>
-                    </Link>
-                    <span className="text-neutral-500">•</span>
-                    <span className="text-neutral-500">
-                        {formatDistanceToNow(new Date(1744814420921), {
-                            addSuffix: true,
-                        })}
-                    </span>
-                </div>
+                    </div>
+                )}
+                {fullPreview && (
+                    <div className="flex items-center gap-2 mb-1.5">
+                        <Link href={"/r/"}>
+                            <Button
+                                Icon={MdArrowBack}
+                                className="!p-1.5 [&_svg]:text-xl"
+                            ></Button>
+                        </Link>
+                        <Link
+                            href={"/r/"}
+                            className="flex gap-1.5 items-center z-[1] h-full"
+                        >
+                            <span className="w-8 h-8 rounded-full overflow-hidden">
+                                <img
+                                    src="https://placehold.co/32"
+                                    alt="SubHiro Picture"
+                                    className="w-full h-full"
+                                    loading="lazy"
+                                />
+                            </span>
+                        </Link>
+                        <div>
+                            <p className="flex items-center gap-1">
+                                <Link href={"/r/"}>
+                                    <span className="hover:text-blue-800 font-medium">
+                                        r/ChatGPT
+                                    </span>
+                                </Link>
+                                <span className="text-neutral-500">•</span>
+                                <span className="text-neutral-500">
+                                    {formatDistanceToNow(
+                                        new Date(1744814420921),
+                                        {
+                                            addSuffix: true,
+                                        }
+                                    )}
+                                </span>
+                            </p>
+                            <Link
+                                href={"/user/"}
+                                className="font-this text-neutral-600 hover:text-blue-800"
+                            >
+                                SomeUserFrom1999
+                            </Link>
+                        </div>
+                    </div>
+                )}
 
                 <div className="flex items-center gap-2 justify-end">
                     <Popover
@@ -93,12 +151,22 @@ const PreviewPost = () => {
                 </div>
             </header>
 
-            {/* The Hirobee */}
-            <div className="mb-3">
-                <h3 className="text-lg mb-0.5 font-medium">
+            {/* The Content */}
+            <div className="">
+                <h3
+                    className={`${
+                        fullPreview
+                            ? "text-lg md:text-2xl mb-2 font-semibold"
+                            : "text-lg mb-0.5 font-medium"
+                    }`}
+                >
                     What to do if I am Home sick?
                 </h3>
-                <p className="line-clamp-4 text-sm">
+                <p
+                    className={`text-sm text-neutral-700 ${
+                        fullPreview ? "mb-4" : "mb-3 line-clamp-4"
+                    }`}
+                >
                     Lorem ipsum dolor sit amet consectetur adipisicing elit.
                     Fugit reprehenderit quos sed illum vero dolore aliquam,
                     suscipit eius veritatis, vitae, laboriosam nostrum. Corrupti
@@ -123,13 +191,14 @@ const PreviewPost = () => {
                 )}
             </div>
 
+            {/* Content Control Buttons */}
             <div className="flex items-center gap-2">
                 <p className="rounded-full text-neutral-700 bg-slate-200 flex items-center cursor-pointer z-[1]">
                     <Button
                         className="!p-1.5 hover:[&_svg]:text-orange-600"
                         Icon={TbArrowBigUp}
                     ></Button>
-                    <span className="text-sm font-medium">310</span>
+                    <span className="text-xs font-semibold">310</span>
                     <Button
                         className="!p-1.5 hover:[&_svg]:text-purple-600"
                         Icon={TbArrowBigDown}
@@ -169,7 +238,10 @@ const PreviewPost = () => {
                 </Popover>
             </div>
 
-            <Link href={"/"} className="absolute inset-0"></Link>
+            {/* The Link to the Post. Active only in homepage preview */}
+            {!fullPreview && (
+                <Link href={"/"} className="absolute inset-0"></Link>
+            )}
         </article>
     );
 };

@@ -8,6 +8,7 @@ const Popover = ({
     className = "",
     position = "bottom",
     axis = "center",
+    viewOnHover = false,
     indicator = true,
 }: {
     children: React.ReactElement<any, any>;
@@ -15,6 +16,7 @@ const Popover = ({
     className?: string;
     position?: "top" | "bottom" | "left" | "right";
     axis?: "top" | "bottom" | "left" | "right" | "center";
+    viewOnHover?: boolean;
     indicator?: boolean;
 }) => {
     const triggerRef = useRef<HTMLDivElement | null>(null);
@@ -175,7 +177,11 @@ const Popover = ({
             {/* Content */}
             <div
                 data-name="popover-content"
-                className={`w-max absolute invisible peer-focus:visible group-focus-within:visible shadow-[0_0_10px_rgba(0,0,0,0.1)] bg-white z-[999] ${className}`}
+                className={`w-max absolute invisible shadow-[0_0_10px_rgba(0,0,0,0.1)] bg-white z-[999] ${
+                    viewOnHover
+                        ? " transition-[visibility] delay-200 peer-hover:visible group-hover:visible hover:visible"
+                        : "peer-focus:visible group-focus-within:visible"
+                } ${className}`}
                 style={popoverStyle.content}
                 ref={contentRef}
                 tabIndex={0}

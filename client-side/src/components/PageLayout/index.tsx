@@ -7,7 +7,7 @@ const PageLayout = ({
 }: HTMLAttributes<HTMLDivElement>) => {
     return (
         <div
-            className={`flex gap-6 w-full h-full max-width mx-auto px-5 pt-3 ${className}`}
+            className={`flex gap-6 w-full h-full max-width mx-auto px-2.5 pt-3 ${className}`}
             {...options}
         >
             {children}
@@ -34,7 +34,7 @@ export const Sidebar = ({
 }: HTMLAttributes<HTMLElement>) => {
     return (
         <aside
-            className={`w-[300px] shrink-0 hidden min-[950px]:block ${className}`}
+            className={`w-[320px] shrink-0 hidden min-[950px]:block ${className}`}
             {...options}
         >
             {children}

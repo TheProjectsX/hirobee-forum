@@ -15,7 +15,9 @@ const Button = ({ children, className, label, Icon }: ButtonProps) => {
         >
             {Icon && <Icon className="text-lg" />}
             {(children || label) && (
-                <span className="text-sm font-medium">{children ?? label}</span>
+                <span className="text-xs font-semibold">
+                    {children ?? label}
+                </span>
             )}
         </button>
     );

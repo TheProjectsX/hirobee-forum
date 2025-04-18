@@ -7,6 +7,7 @@ import { LuMessageCircleMore } from "react-icons/lu";
 import { FiPlus } from "react-icons/fi";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import RoundedButton from "@/components/Buttons/Rounded";
+import Link from "next/link";
 
 const Navbar = ({
     setDrawerOpened,
@@ -26,7 +27,7 @@ const Navbar = ({
                     <RiMenuLine className="text-2xl" />
                 </RoundedButton>
 
-                <a href="/" className="flex gap-1.5 items-center">
+                <Link href="/" className="flex gap-1.5 items-center">
                     <img
                         src="/icons/logo.png"
                         alt="Logo"
@@ -35,7 +36,7 @@ const Navbar = ({
                     <p className="text-primary font-semibold text-2xl hidden lg:inline">
                         hirobee
                     </p>
-                </a>
+                </Link>
             </div>
 
             {/* Search */}

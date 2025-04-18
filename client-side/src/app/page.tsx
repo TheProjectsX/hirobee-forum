@@ -1,7 +1,7 @@
 import Footer from "@/components/Footer";
 import PageLayout, { MainDiv, Sidebar } from "@/components/PageLayout";
-import PreviewPost from "@/components/PostPreview";
-import SidebarPost from "@/components/PostPreview/SidebarPost";
+import PreviewPost from "@/components/PreviewPost";
+import SidebarPost from "@/components/PreviewPost/SidebarPost";
 
 import React from "react";
 
@@ -14,7 +14,7 @@ export default function Home() {
                     {[...Array(6)].map((i, idx) => (
                         <React.Fragment key={idx}>
                             <div className="pb-1 mb-1 border-b border-neutral-300"></div>
-                            <PreviewPost></PreviewPost>
+                            <PreviewPost />
                         </React.Fragment>
                     ))}
                 </div>
@@ -22,11 +22,11 @@ export default function Home() {
             <Sidebar className=" h-fit">
                 {/* Sidebar Content */}
                 <div className="p-5 bg-slate-100/80 rounded-2xl">
-                    <div className="flex justify-between items-center text-sm">
-                        <h3 className="uppercase text-neutral-500">
+                    <div className="flex justify-between items-center">
+                        <h3 className="uppercase text-neutral-500 font-medium text-xs">
                             Recent Posts
                         </h3>
-                        <button className="outline-none text-blue-700 cursor-pointer">
+                        <button className="outline-none text-blue-700 cursor-pointer text-sm">
                             Clear
                         </button>
                     </div>
