@@ -46,7 +46,7 @@ const PreviewPost = ({
                 {!fullPreview && (
                     <div className="flex items-center gap-2">
                         <Link
-                            href={"/h/"}
+                            href={"/h/someid"}
                             className="flex gap-1.5 items-center z-[1]"
                         >
                             <span className="w-6 h-6 rounded-full overflow-hidden">
@@ -71,14 +71,14 @@ const PreviewPost = ({
                 )}
                 {fullPreview && (
                     <div className="flex items-center gap-2 mb-1.5">
-                        <Link href={"/h/"}>
+                        <Link href={"/h/someid"}>
                             <Button
                                 Icon={MdArrowBack}
                                 className="!p-1.5 [&_svg]:text-xl"
                             ></Button>
                         </Link>
                         <Link
-                            href={"/h/"}
+                            href={"/h/someid"}
                             className="flex gap-1.5 items-center z-[1] h-full"
                         >
                             <span className="w-8 h-8 rounded-full overflow-hidden">
@@ -92,7 +92,7 @@ const PreviewPost = ({
                         </Link>
                         <div>
                             <p className="flex items-center gap-1">
-                                <Link href={"/h/"}>
+                                <Link href={"/h/someid"}>
                                     <span className="hover:text-blue-800 font-medium">
                                         r/ChatGPT
                                     </span>
@@ -246,7 +246,10 @@ const PreviewPost = ({
 
             {/* The Link to the Post. Active only in homepage preview */}
             {!fullPreview && (
-                <Link href={"/"} className="absolute inset-0"></Link>
+                <Link
+                    href={"/posts/someid"}
+                    className="absolute inset-0"
+                ></Link>
             )}
         </article>
     );

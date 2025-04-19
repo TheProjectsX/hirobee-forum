@@ -7,7 +7,7 @@ const PageLayout = ({
 }: HTMLAttributes<HTMLDivElement>) => {
     return (
         <div
-            className={`flex gap-6 w-full h-full max-width mx-auto px-5 pt-3 ${className}`}
+            className={`flex gap-6 w-full h-full max-width mx-auto px-3 pt-3 ${className}`}
             {...options}
         >
             {children}
