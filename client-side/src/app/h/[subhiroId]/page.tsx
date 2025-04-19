@@ -1,6 +1,16 @@
-import RoundedButton from "@/components/Buttons/Rounded";
 import React from "react";
+
+import RoundedButton from "@/components/Buttons/Rounded";
+import Dropdown from "@/components/Dropdown";
+import Footer from "@/components/Footer";
+import PageLayout, { MainDiv, Sidebar } from "@/components/PageLayout";
+import PreviewPost from "@/components/PreviewPost";
+
+import { CiGlobe } from "react-icons/ci";
 import { FiPlus } from "react-icons/fi";
+import { PiCakeThin } from "react-icons/pi";
+import { BsPinAngle } from "react-icons/bs";
+import Highlights from "./Highlights";
 
 const SubHiro = () => {
     const user = {
@@ -67,6 +77,100 @@ const SubHiro = () => {
                     </div>
                 </header>
             </div>
+
+            <PageLayout>
+                <MainDiv className="py-4">
+                    {/* Community Highlights */}
+                    <Dropdown
+                        label={
+                            <p className="flex items-center gap-2">
+                                <BsPinAngle className="text-lg" />{" "}
+                                <span className="text-black text-sm normal-case font-medium">
+                                    Community highlights
+                                </span>
+                            </p>
+                        }
+                    >
+                        <div className="py-2 grid sm:grid-cols-2 gap-3">
+                            <Highlights />
+                            <Highlights images={["https://placehold.co/404"]} />
+                        </div>
+                    </Dropdown>
+
+                    <div className="py-3">
+                        {[...Array(6)].map((i, idx) => (
+                            <React.Fragment key={idx}>
+                                <div className="pb-1 mb-1 border-b border-neutral-300"></div>
+                                <PreviewPost />
+                            </React.Fragment>
+                        ))}
+                    </div>
+                </MainDiv>
+                <Sidebar className="h-fit">
+                    <div className="px-3.5 py-5 bg-slate-100/80 rounded-md">
+                        {/* Description */}
+                        <div className="text-sm">
+                            <h2 className="font-bold text-lg">Ask Hirobee</h2>
+                            <div className="whitespace-pre-line text-neutral-500 mb-1">
+                                Ask Anything about Anything. {"\n"}
+                                Your Questions, {"\n"}
+                                Hirobee will Anser!
+                            </div>
+
+                            <p className="flex items-center gap-1 text-neutral-500">
+                                <PiCakeThin className="text-base" />
+                                Created Jun 4, 2025
+                            </p>
+                            <p className="flex items-center gap-1 text-neutral-500">
+                                <CiGlobe className="text-base" />
+                                Public
+                            </p>
+
+                            <div className="flex items-center gap-3 pt-4 justify-around">
+                                <p className="flex flex-col">
+                                    <span className="font-semibold text-base">
+                                        44K
+                                    </span>
+                                    <span className="text-neutral-500">
+                                        Members
+                                    </span>
+                                </p>
+                                <p className="flex flex-col">
+                                    <span className="font-semibold text-base">
+                                        452K
+                                    </span>
+                                    <span className="text-neutral-500">
+                                        Posts
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="pb-4 mb-4 border-b border-neutral-400"></div>
+
+                        {/* Disclaimer */}
+                        <div className="text-sm text-neutral-500">
+                            <h3 className="uppercase font-semibold mb-2">
+                                Disclaimer
+                            </h3>
+
+                            <div className="whitespace-pre-line">
+                                Lorem ipsum dolor sit amet, consectetur
+                                adipisicing elit. Repellat tenetur aspernatur
+                                voluptatibus ipsa blanditiis harum accusantium
+                                minima sed voluptatem incidunt rerum, molestiae,
+                                {"\n"}fugit aut quaerat iure inventore vero eum
+                                saepe neque fuga provident sit pariatur
+                                consequuntur fugiat. Cupiditate maxime eaque
+                                architecto dolorem possimus adipisci, assumenda
+                                labore ipsum dicta quis beatae a! Beatae,
+                                commodi ab? Molestias.
+                            </div>
+                        </div>
+                    </div>
+                    <Footer />
+                </Sidebar>
+            </PageLayout>
         </div>
     );
 };

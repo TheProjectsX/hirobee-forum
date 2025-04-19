@@ -11,7 +11,7 @@ const Dropdown = ({
 }: {
     children?: React.ReactNode;
     className?: string;
-    label: string;
+    label: React.ReactNode;
     border?: boolean;
 }) => {
     const uid = useId();
@@ -31,12 +31,11 @@ const Dropdown = ({
             />
             <label
                 htmlFor={uid}
-                className="flex items-center justify-between px-5 py-2.5 hover:bg-slate-100 rounded-sm uppercase text-sm text-neutral-600 cursor-pointer font-thin peer-checked:[&_span]:rotate-180"
+                className="flex items-center justify-between px-5 py-2.5 hover:bg-slate-100 rounded-sm uppercase text-sm text-neutral-600 cursor-pointer font-thin peer-checked:[&_>svg]:rotate-180"
             >
                 {label}
-                <span className=" transition-all duration-150">
-                    <IoIosArrowDown className="text-xl" />
-                </span>
+
+                <IoIosArrowDown className="text-xl transition-all duration-150" />
             </label>
 
             {/* Contents */}

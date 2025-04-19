@@ -15,7 +15,7 @@ import { LuCheckCheck } from "react-icons/lu";
 import { LuScanSearch } from "react-icons/lu";
 
 import NavLink from "./NavLink";
-import Dropdown from "./Dropdown";
+import Dropdown from "../Dropdown";
 
 const DrawerContent = () => {
     const userData = true;
