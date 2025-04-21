@@ -15,6 +15,7 @@ import { CgDarkMode, CgProfile } from "react-icons/cg";
 import { TbMoodEdit } from "react-icons/tb";
 import { MdLogout } from "react-icons/md";
 import { GoGear, GoMegaphone } from "react-icons/go";
+import { GrUserAdmin } from "react-icons/gr";
 
 const Navbar = ({
     setDrawerOpened,
@@ -73,7 +74,7 @@ const Navbar = ({
                 <RoundedButton className="hidden sm:block">
                     <LuMessageCircleMore className="text-2xl" />
                 </RoundedButton>
-                <Link href={"/me/submit"}>
+                <Link href={"/posts/submit"}>
                     <RoundedButton>
                         <FiPlus className="text-2xl" />
                         <span className="text-sm font-medium px-0.5 hidden sm:inline">
@@ -135,6 +136,19 @@ const Navbar = ({
                             >
                                 <span className="text-slate-700">Logout</span>
                             </SquareButton>
+
+                            <div className="pb-2 mb-2 mx-2 border-b border-neutral-300"></div>
+
+                            <Link href={"/admin"}>
+                                <SquareButton
+                                    className="w-full !py-4"
+                                    Icon={GrUserAdmin}
+                                >
+                                    <span className="text-slate-700">
+                                        Admin Dashboard
+                                    </span>
+                                </SquareButton>
+                            </Link>
 
                             <div className="pb-2 mb-2 mx-2 border-b border-neutral-300"></div>
                             <Link href={"#"}>

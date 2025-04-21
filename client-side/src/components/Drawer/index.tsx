@@ -26,11 +26,11 @@ const Drawer = ({
                     "--shrink-visible": "24px",
                 } as React.CSSProperties
             }
-            className={`relative h-full flex`}
+            className={`relative h-full flex overflow-hidden`}
         >
             {/* Drawer */}
             <div
-                className={`relative transition-[width] ease-in-out duration-300 delay-100 h-full z-10 ${
+                className={`relative transition-[width] ease-in-out duration-300 delay-100 h-full z-20 ${
                     drawerOpened
                         ? "w-0 lg:w-[var(--drawer-size)]"
                         : "w-0 lg:w-[var(--shrink-visible)]"
@@ -61,7 +61,11 @@ const Drawer = ({
             </div>
 
             {/* Content */}
-            <div className="grow relative h-full overflow-y-auto scrollbar-thin">
+            <div
+                className={`grow relative h-full scrollbar-thin ${
+                    drawerOpened ? "lg:overflow-y-auto" : "overflow-y-auto"
+                }`}
+            >
                 {children}
 
                 {/* Black cover for Drawer */}
@@ -70,6 +74,7 @@ const Drawer = ({
                         drawerOpened ? "lg:hidden" : "hidden"
                     }`}
                     onClick={() => setDrawerOpened(false)}
+                    onScroll={(e) => e.preventDefault()}
                 ></div>
             </div>
         </div>
