@@ -15,7 +15,7 @@ import { TbShare3 } from "react-icons/tb";
 
 const UserLayout = ({ children }: { children: React.ReactNode }) => {
     return (
-        <PageLayout>
+        <PageLayout breakpoint="770px">
             <MainDiv>
                 <div className="flex items-center gap-4 px-6 mb-5">
                     <div className="w-20 h-20 flex items-center justify-center rounded-full p-1 overflow-hidden bg-slate-300">
@@ -54,7 +54,7 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
 
                 {children}
             </MainDiv>
-            <Sidebar breakpoint="770px">
+            <Sidebar>
                 <div className="bg-slate-100/80 rounded-2xl">
                     <div className="w-full max-h-14 min-h-[1px] mb-5">
                         {/* <img

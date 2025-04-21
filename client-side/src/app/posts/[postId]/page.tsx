@@ -19,7 +19,7 @@ const Post = () => {
     }>({ opened: false, content: "" });
 
     return (
-        <PageLayout>
+        <PageLayout breakpoint="770px">
             <MainDiv className="py-2">
                 {/* Post Preview */}
                 <PreviewPost className="mb-3" fullPreview />
@@ -101,7 +101,7 @@ const Post = () => {
             </MainDiv>
 
             {/* About SubHiro */}
-            <Sidebar breakpoint="770px" className="h-fit">
+            <Sidebar className="h-fit">
                 <div className="px-3.5 py-5 bg-slate-100/80 rounded-md">
                     <header className="flex items-center gap-2 justify-between mb-3">
                         <Link href={"/h/"} className="font-semibold text-lg">
