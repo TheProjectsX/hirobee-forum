@@ -1,13 +1,30 @@
 import React, { HTMLAttributes } from "react";
 
+let global__breakpoint: string;
+let global__wrap: boolean;
+
 const PageLayout = ({
     children,
     className = "",
+    breakpoint = "950px",
+    wrap = false,
     ...options
-}: HTMLAttributes<HTMLDivElement>) => {
+}: HTMLAttributes<HTMLDivElement> & {
+    breakpoint?: "950px" | "770px";
+    wrap?: boolean;
+}) => {
+    global__breakpoint = breakpoint;
+    global__wrap = wrap;
+
     return (
         <div
-            className={`flex gap-6 w-full h-full max-width mx-auto px-3 pt-3 ${className}`}
+            className={`flex gap-6 w-full h-full max-width mx-auto px-3 pt-3 ${
+                wrap
+                    ? global__breakpoint === "770px"
+                        ? "max-[770px]:flex-col"
+                        : "max-[950px]:flex-col"
+                    : ""
+            } ${className}`}
             {...options}
         >
             {children}
@@ -29,17 +46,33 @@ export const MainDiv = ({
 
 export const Sidebar = ({
     children,
-    breakpoint = "950px",
+
     className = "",
+    breakpoint = "950px",
+    wrap = false,
     ...options
-}: HTMLAttributes<HTMLElement> & { breakpoint?: "950px" | "770px" }) => {
+}: HTMLAttributes<HTMLElement> & {
+    breakpoint?: "950px" | "770px";
+    wrap?: boolean;
+}) => {
     return (
         <aside
-            className={`w-[320px] shrink-0 hidden ${
-                breakpoint === "770px"
+            className={`
+            shrink-0 w-[320px]
+            ${
+                global__breakpoint === "770px"
                     ? "min-[770px]:block"
                     : "min-[950px]:block"
-            } ${className}`}
+            }
+            ${global__wrap ? "block" : "hidden"}
+            ${
+                global__wrap &&
+                (global__breakpoint === "770px"
+                    ? "max-[770px]:w-full"
+                    : "max-[950px]:w-full")
+            }
+            ${className}
+          `}
             {...options}
         >
             {children}

@@ -5,22 +5,32 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 const Popover = ({
     children,
     content,
+    parentStyles = {},
     className = "",
     position = "bottom",
     axis = "center",
+    triggerType = "auto",
+    contentVisible = false,
+    onWrapperBlur = () => {},
     viewOnHover = false,
     indicator = true,
 }: {
     children: React.ReactElement<any, any>;
     content?: string | React.ReactNode;
+    parentStyles?: React.CSSProperties;
     className?: string;
     position?: "top" | "bottom" | "left" | "right";
     axis?: "top" | "bottom" | "left" | "right" | "center";
+    triggerType?: "auto" | "manual";
+    contentVisible?: boolean;
+    onWrapperBlur?: () => void;
     viewOnHover?: boolean;
     indicator?: boolean;
 }) => {
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const contentRef = useRef<HTMLDivElement | null>(null);
+
     const [popoverStyle, setPopoverStyle] = useState<{
         content: {};
         indicator: {};
@@ -33,6 +43,7 @@ const Popover = ({
         tabIndex: 0,
     });
 
+    // This func will calculate the positions of the content
     const updatePositions = () => {
         const gap = 10;
         const indicatorGap = 6;
@@ -149,6 +160,7 @@ const Popover = ({
         }));
     };
 
+    // Observe any Changes in the doc
     useLayoutEffect(() => {
         const resizeObserver = new ResizeObserver(updatePositions);
         triggerRef.current && resizeObserver.observe(triggerRef.current);
@@ -166,11 +178,35 @@ const Popover = ({
         };
     }, []);
 
+    // Check if container blurred
+    useEffect(() => {
+        const handleWindowClick = (e: MouseEvent) => {
+            const target = e.target as Node;
+
+            if (
+                wrapperRef.current &&
+                contentRef.current &&
+                !wrapperRef.current.contains(target) &&
+                !contentRef.current.contains(target)
+            ) {
+                onWrapperBlur();
+            }
+        };
+
+        window.addEventListener("click", handleWindowClick);
+
+        return () => {
+            document.removeEventListener("click", handleWindowClick);
+        };
+    }, []);
+
     return (
         <div
             data-name="popover-container"
             className="w-fit relative group"
             tabIndex={-1}
+            style={parentStyles}
+            ref={wrapperRef}
         >
             {clonedTrigger}
 
@@ -178,9 +214,13 @@ const Popover = ({
             <div
                 data-name="popover-content"
                 className={`w-max absolute invisible shadow-[0_0_10px_rgba(0,0,0,0.1)] bg-white z-[999] ${
-                    viewOnHover
-                        ? " transition-[visibility] delay-200 peer-hover:visible group-hover:visible hover:visible"
-                        : "peer-focus:visible group-focus-within:visible"
+                    triggerType === "auto"
+                        ? viewOnHover
+                            ? "transition-[visibility] delay-200 peer-hover:visible group-hover:visible hover:visible"
+                            : "peer-focus:visible group-focus-within:visible"
+                        : contentVisible
+                        ? "!visible"
+                        : ""
                 } ${className}`}
                 style={popoverStyle.content}
                 ref={contentRef}
