@@ -535,6 +535,21 @@ app.put(
 );
 
 /* Public SubHiro Routes */
+// Search for Subhiro
+app.get("/subhiro/search", async (req, res, next) => {
+    const query = req.query;
+
+    try {
+        const response = await subhiroController.search_subhiro(
+            query,
+            db.collection("subhiro")
+        );
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
 // Get SubHiro Details
 app.get("/subhiro/:id", async (req, res, next) => {
     const subhiroId = req.params.id;

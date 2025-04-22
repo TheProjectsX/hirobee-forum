@@ -7,7 +7,7 @@ import {
 
 const fetch_posts = async (filters, collection) => {
     const {
-        search,
+        query: search,
         page = 0,
         limit = 10,
         subhiro,

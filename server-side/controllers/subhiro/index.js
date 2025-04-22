@@ -5,6 +5,24 @@ import {
 } from "../../utils/validators.js";
 import { postAggregationPipeline } from "../../utils/variables.js";
 
+const search_subhiro = async (filters, collection) => {
+    const { query: search, limit = 5 } = filters;
+    const query = {};
+
+    if (search) {
+        query.$or = [{ hironame: { $regex: search, $options: "i" } }];
+    }
+
+    const response = await collection.find(query).limit(limit).toArray();
+
+    return {
+        success: true,
+        message: "SubHiro Searched",
+        data: response,
+        status_code: StatusCodes.OK,
+    };
+};
+
 const fetch_details = async (subhiroId, collection) => {
     const response = await collection.findOne({ hironame: subhiroId });
 
@@ -96,4 +114,4 @@ const create_subhiro = async (user, body, collection) => {
     };
 };
 
-export default { fetch_details, fetch_posts, create_subhiro };
+export default { fetch_details, fetch_posts, create_subhiro, search_subhiro };
