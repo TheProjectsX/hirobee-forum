@@ -15,7 +15,7 @@ export default function RootLayout({
 
     return (
         <html lang="en">
-            <body className="h-screen flex flex-col">
+            <body className="h-screen flex flex-col overflow-hidden">
                 {/* Navbar */}
                 <Navbar setDrawerOpened={setDrawerOpened} />
 
