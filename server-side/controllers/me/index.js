@@ -6,6 +6,7 @@ import {
     userInfoUpdateFilter,
 } from "../../utils/validators.js";
 import { ObjectId } from "mongodb";
+import { postAggregationPipeline } from "../../utils/variables.js";
 
 const fetch_info = async (user, collection) => {
     const { email } = user;
@@ -73,10 +74,13 @@ const fetch_posts = async (user, filters, collection) => {
 
     const skip = page * limit;
     const response = await collection
-        .find(query)
-        .sort(sort)
-        .skip(skip)
-        .limit(limit)
+        .aggregate([
+            { $match: query },
+            ...postAggregationPipeline,
+            { $sort: sort },
+            { $skip: skip },
+            { $limit: limit },
+        ])
         .toArray();
 
     const totalCount = await collection.countDocuments(query);
@@ -113,10 +117,20 @@ const fetch_single_post = async (user, postId, collection) => {
         };
     }
 
-    const response = await collection.findOne({
-        authorId: user.username,
-        _id: postOid,
-    });
+    const response = await collection
+        .aggregate([
+            {
+                $match: {
+                    authorId: user.username,
+                    _id: postOid,
+                },
+            },
+            ...postAggregationPipeline,
+            {
+                $limit: 1,
+            },
+        ])
+        .toArray();
 
     if (!response) {
         return {
@@ -150,16 +164,8 @@ const create_post = async (user, body, collection) => {
     const postBody = {
         title: filteredBody.title,
         content: filteredBody.content,
-        author: {
-            username: user.username,
-            profile_picture: user.profile_picture,
-        },
-        subhiro: filteredBody.subhiro
-            ? {
-                  hironame: filteredBody.subhiro?.hironame,
-                  profile_picture: filteredBody.subhiro?.profile_picture,
-              }
-            : null,
+        authorId: user.username,
+        subhiroId: filteredBody.subhiro ?? null,
         upvotedBy: [],
         downvotedBy: [],
         createdAt: Date.now(),

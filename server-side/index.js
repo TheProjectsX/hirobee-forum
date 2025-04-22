@@ -693,6 +693,8 @@ app.put(
 );
 
 /* Protected Moderator Routes (Also access-able by Admin) */
+
+// Change User Statue
 app.put(
     "/moderator/users/:id/status/:status",
     checkModPrivilege,

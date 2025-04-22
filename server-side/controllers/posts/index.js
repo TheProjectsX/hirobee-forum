@@ -1,10 +1,14 @@
 import { StatusCodes } from "http-status-codes";
 import { ObjectId } from "mongodb";
+import {
+    commentAggregationPipeline,
+    postAggregationPipeline,
+} from "../../utils/variables.js";
 
 const fetch_posts = async (filters, collection) => {
     const {
         search,
-        page = 1,
+        page = 0,
         limit = 10,
         subhiro,
         author,
@@ -29,10 +33,13 @@ const fetch_posts = async (filters, collection) => {
     const skip = page * limit;
 
     const response = await collection
-        .find(query)
-        .sort(sort)
-        .skip(skip)
-        .limit(limit)
+        .aggregate([
+            { $match: query },
+            ...postAggregationPipeline,
+            { $sort: sort },
+            { $skip: skip },
+            { $limit: limit },
+        ])
         .toArray();
 
     const totalCount = await collection.estimatedDocumentCount(query);
@@ -69,11 +76,21 @@ const fetch_single_post = async (postId, collection) => {
         };
     }
 
-    const response = await collection.findOne({
-        _id: postOid,
-    });
+    const response = await collection
+        .aggregate([
+            {
+                $match: {
+                    _id: postOid,
+                },
+            },
+            ...postAggregationPipeline,
+            {
+                $limit: 1,
+            },
+        ])
+        .toArray();
 
-    if (!response) {
+    if (response.length === 0) {
         return {
             success: false,
             message: "Post not Found!",
@@ -88,7 +105,7 @@ const fetch_single_post = async (postId, collection) => {
         success: true,
         message: "Post fetched",
         status_code: StatusCodes.OK,
-        ...response,
+        ...response[0],
     };
 };
 
@@ -145,9 +162,13 @@ const fetch_comments = async (postId, filters, collection) => {
     const skip = page * limit;
 
     const response = await collection
-        .find({ postId })
-        .skip(skip)
-        .limit(limit)
+
+        .aggregate([
+            { $match: { postId } },
+            ...commentAggregationPipeline,
+            { $skip: skip },
+            { $limit: limit },
+        ])
         .toArray();
 
     const totalCount = await collection.countDocuments({ postId });

@@ -41,6 +41,7 @@ const register = async (body, collection) => {
 
     const userInfo = {
         username: body.username,
+        displayname: body.username,
         email: body.email,
         profile_picture: "https://i.ibb.co.com/Dfp53bmp/user-avatar.png",
         banner: null,

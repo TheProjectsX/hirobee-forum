@@ -20,7 +20,13 @@ export const userRegisterValidator = (
 
 export const userInfoUpdateFilter = (body) => {
     if (!body) return {};
-    const approved_keys = ["profile_picture", "banner", "gender", "bio"];
+    const approved_keys = [
+        "displayname",
+        "profile_picture",
+        "banner",
+        "gender",
+        "bio",
+    ];
 
     const filteredBody = approved_keys.reduce((acc, key) => {
         if (key in body) acc[key] = body[key];
@@ -32,7 +38,7 @@ export const userInfoUpdateFilter = (body) => {
 
 export const postCreateFilter = (body) => {
     if (!body) return {};
-    const approved_keys = ["title", "body", "subhiro"];
+    const approved_keys = ["title", "content", "images", "subhiro"];
 
     const filteredBody = approved_keys.reduce((acc, key) => {
         if (key in body) acc[key] = body[key];

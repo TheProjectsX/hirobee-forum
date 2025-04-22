@@ -59,7 +59,7 @@ const change_user_status = async (user, targetId, status, collection) => {
         status,
     };
 
-    if (status === "ban") {
+    if (status === "banned") {
         doc["meta.bannerBy"] = user.username;
         doc["meta.bannerAt"] = Date.now();
     }

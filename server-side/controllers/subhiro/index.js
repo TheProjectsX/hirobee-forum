@@ -3,6 +3,7 @@ import {
     subhiroCreateFilter,
     subhiroCreateValidator,
 } from "../../utils/validators.js";
+import { postAggregationPipeline } from "../../utils/variables.js";
 
 const fetch_details = async (subhiroId, collection) => {
     const response = await collection.findOne({ hironame: subhiroId });
@@ -32,9 +33,12 @@ const fetch_posts = async (subhiroId, filters, collection) => {
     const skip = page * limit;
 
     const response = await collection
-        .find({ subhiro: subhiroId })
-        .skip(skip)
-        .limit(limit)
+        .aggregate([
+            { $match: { subhiro: subhiroId } },
+            ...postAggregationPipeline,
+            { $skip: skip },
+            { $limit: limit },
+        ])
         .toArray();
 
     const totalCount = await collection.countDocuments({ subhiro: subhiroId });
