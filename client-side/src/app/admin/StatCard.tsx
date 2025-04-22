@@ -1,6 +1,6 @@
 import { IconType } from "react-icons";
 
-export const StatCard = ({
+const StatCard = ({
     Icon,
     label,
     value,
@@ -17,3 +17,5 @@ export const StatCard = ({
         </div>
     </div>
 );
+
+export default StatCard;

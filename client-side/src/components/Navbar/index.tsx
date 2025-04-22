@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import RoundedButton from "@/components/Buttons/Rounded";
 import Link from "next/link";
 import Popover from "../Popover";
@@ -16,6 +16,7 @@ import { TbMoodEdit } from "react-icons/tb";
 import { MdLogout } from "react-icons/md";
 import { GoGear, GoMegaphone } from "react-icons/go";
 import { GrUserAdmin } from "react-icons/gr";
+import Auth from "../Auth";
 
 const Navbar = ({
     setDrawerOpened,
@@ -87,8 +88,11 @@ const Navbar = ({
                     <IoMdNotificationsOutline className="text-2xl" />
                 </RoundedButton>
 
+                {/* Auth (Login / Register) */}
+                <Auth />
+
                 {/* User Profile */}
-                <Popover
+                {/* <Popover
                     position="bottom"
                     axis="right"
                     className="rounded-xl"
@@ -183,7 +187,7 @@ const Navbar = ({
                             className="w-10 rounded-full"
                         />
                     </RoundedButton>
-                </Popover>
+                </Popover> */}
             </div>
         </header>
     );

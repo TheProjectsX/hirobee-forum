@@ -16,3 +16,6 @@
 
 /* Plugins */
 @plugin "tailwind-scrollbar";
+
+/* Enable manual Dark Mode */
+@custom-variant dark (&:where(.dark, .dark *));

@@ -1,5 +1,5 @@
 import React from "react";
-import { StatCard } from "./StatCard";
+import StatCard from "./StatCard";
 import { PiUsersThree } from "react-icons/pi";
 import { TbFileDescription, TbMessageCircle } from "react-icons/tb";
 import Title from "./Title";
