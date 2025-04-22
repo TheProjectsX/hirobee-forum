@@ -43,12 +43,12 @@ export const postCreateFilter = (body) => {
 };
 
 export const postCreateValidator = (body) => {
-    const required_keys = ["title", "body", "subhiro"];
-    const minLength = new RegExp(`^.{${10},}$`);
+    const required_keys = ["title"];
+    const minLength = new RegExp(`^.{${5},}$`);
 
     if (!body || typeof body !== "object") return false;
 
-    if (!minLength.test(body.title) || !minLength.test(body.body)) {
+    if (!minLength.test(body.title)) {
         return false;
     }
 
@@ -57,7 +57,7 @@ export const postCreateValidator = (body) => {
 
 export const postUpdateFilter = (body) => {
     if (!body) return {};
-    const approved_keys = ["title", "body"];
+    const approved_keys = ["title", "body", "subhiro"];
 
     const filteredBody = approved_keys.reduce((acc, key) => {
         if (key in body) acc[key] = body[key];

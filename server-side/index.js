@@ -54,12 +54,29 @@ const errorHandleMiddleware = (error, req, res, next) => {
 };
 
 // Check Authentication Middleware
-const checkAuthentication = (req, res, next) => {
+const checkAuthentication = async (req, res, next) => {
     const { access_token = "" } = req.cookies;
 
     try {
         const decrypted = jwt.verify(access_token, process.env.JWT_SECRET);
-        req.user = decrypted;
+        const targetUser = await db
+            .collection("users")
+            .findOne({ username: decrypted?.username });
+
+        if (!targetUser) {
+            return res
+                .clearCookie("access_token", cookieOptions)
+                .status(StatusCodes.UNAUTHORIZED)
+                .json({
+                    success: false,
+                    message: "Authentication Failed",
+                    status_code: StatusCodes.UNAUTHORIZED,
+                });
+        }
+
+        const { password, ...userInfo } = targetUser;
+
+        req.user = userInfo;
     } catch (error) {
         return res
             .clearCookie("access_token", cookieOptions)
@@ -173,7 +190,6 @@ app.post("/auth/login", async (req, res, next) => {
         if (response.success) {
             const token = jwt.sign(
                 {
-                    email: response.email,
                     username: response.username,
                 },
                 process.env.JWT_SECRET,
