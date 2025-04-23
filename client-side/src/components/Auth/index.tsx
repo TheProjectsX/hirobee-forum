@@ -5,11 +5,20 @@ import React, { useState } from "react";
 import RoundedButton from "../Buttons/Rounded";
 import Link from "next/link";
 import { toast } from "react-toastify";
-import { useLoginMutation } from "@/store/features/auth/authApiSlice";
+import {
+    useLoginMutation,
+    useRegisterMutation,
+} from "@/store/features/auth/authApiSlice";
 import { useFetchUserInfoQuery } from "@/store/features/userInfo/userInfoApiSlice";
 
 const Auth = () => {
     // Mutations
+
+    const [
+        registerUser,
+        { isLoading: isRegisterLoading, isSuccess: isRegisterSuccess },
+    ] = useRegisterMutation();
+
     const [
         loginUser,
         { isLoading: isLoginLoading, isSuccess: isLoginSuccess },
@@ -31,6 +40,39 @@ const Auth = () => {
     // TODO: Handle Register
     const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        const credentials = {
+            email: authValues.email,
+            username: authValues.username,
+            password: authValues.password,
+        };
+
+        // Check if Credentials Criteria does not match before sending request
+        if (
+            !credentials.email ||
+            credentials.email?.length < 5 ||
+            !credentials.username ||
+            credentials.username?.length < 5 ||
+            !credentials.password ||
+            credentials.password?.length < 6
+        ) {
+            toast.error("Bad Request. Recheck Your Input Data", {
+                autoClose: 3500,
+            });
+            return;
+        }
+
+        // Send Request
+        try {
+            const registerResponse = await registerUser(credentials).unwrap();
+            toast.success("Registration SuccessFul!");
+            setModalType("close");
+
+            const userInfoResponse = await fetchUserInfo().unwrap();
+            // Do other stuffs
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Invalid Credentials");
+        }
     };
 
     // Handle Login
@@ -163,11 +205,11 @@ const Auth = () => {
                                             ? "!cursor-not-allowed hover:!bg-blue-600"
                                             : "hover:!bg-blue-500"
                                     }`}
-                                    onClick={() => setModalType("login")}
                                     disabled={
                                         (isLoginLoading || isLoginSuccess) &&
                                         isFetchUserInfoSuccess
                                     }
+                                    type="submit"
                                 >
                                     {!isLoginLoading && !isLoginSuccess && (
                                         <span className="px-2 py-0.5 text-sm text-white font-semibold">
@@ -267,12 +309,38 @@ const Auth = () => {
                                 </p>
 
                                 <RoundedButton
-                                    className="!bg-blue-600 hover:!bg-blue-500 w-full justify-center"
-                                    onClick={() => setModalType("login")}
+                                    className={`!bg-blue-600 w-full justify-center ${
+                                        isRegisterLoading
+                                            ? "!cursor-progress hover:!bg-blue-600"
+                                            : "hover:!bg-blue-500"
+                                    } ${
+                                        isRegisterSuccess
+                                            ? "!cursor-not-allowed hover:!bg-blue-600"
+                                            : "hover:!bg-blue-500"
+                                    }`}
+                                    disabled={
+                                        (isRegisterLoading ||
+                                            isRegisterSuccess) &&
+                                        isFetchUserInfoSuccess
+                                    }
+                                    type="submit"
                                 >
-                                    <span className="px-2 text-sm text-white font-semibold">
-                                        Login
-                                    </span>
+                                    {!isRegisterLoading &&
+                                        !isRegisterSuccess && (
+                                            <span className="px-2 py-0.5 text-sm text-white font-semibold">
+                                                Register
+                                            </span>
+                                        )}
+
+                                    {isRegisterSuccess && (
+                                        <span className="px-2 text-sm text-white font-semibold">
+                                            Registration Successful!
+                                        </span>
+                                    )}
+
+                                    {isRegisterLoading && (
+                                        <Spinner size="sm" light />
+                                    )}
                                 </RoundedButton>
                             </form>
                         </div>

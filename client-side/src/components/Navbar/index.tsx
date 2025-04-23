@@ -211,7 +211,7 @@ const Navbar = ({
                     >
                         <RoundedButton
                             className="!p-0"
-                            title={userInfo.displayName}
+                            title={userInfo.displayname}
                         >
                             <img
                                 src={userInfo.profile_picture}
