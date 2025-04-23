@@ -22,16 +22,38 @@ import SquareButton from "../Buttons/Square";
 import Popover from "../Popover";
 import Button from "./Button";
 import { MdArrowBack } from "react-icons/md";
+import Clipboard from "../Clipboard";
+import { toast } from "react-toastify";
+
+export interface PostInterface {
+    _id: string;
+    title: string;
+    content: string;
+    images: Array<string> | null;
+    upvotedBy: Array<string>;
+    downBy: Array<string>;
+    createdAt: number;
+    updatedAt: number;
+    commentsCount: number;
+    author: {
+        username: string;
+        profile_picture: string;
+    };
+    subhiro: {
+        hironame: string | null;
+        profile_picture: string | null;
+    };
+}
 
 const PreviewPost = ({
     fullPreview = false,
     className = "",
+    postData,
 }: {
     fullPreview?: boolean;
+    postData: PostInterface;
     className?: string;
 }) => {
-    const images: Array<string> = [];
-
     return (
         <article
             className={`py-1.5 rounded-2xl relative ${
@@ -46,24 +68,34 @@ const PreviewPost = ({
                 {!fullPreview && (
                     <div className="flex items-center gap-2">
                         <Link
-                            href={"/h/someid"}
+                            href={
+                                postData.subhiro?.hironame
+                                    ? `/h/${postData.subhiro.hironame}`
+                                    : `/h/${postData.author.username}`
+                            }
                             className="flex gap-1.5 items-center z-[1]"
                         >
                             <span className="w-6 h-6 rounded-full overflow-hidden">
                                 <img
-                                    src="https://placehold.co/24"
-                                    alt="SubHiro Picture"
+                                    src={
+                                        postData.subhiro?.profile_picture
+                                            ? `${postData.subhiro.profile_picture}`
+                                            : `${postData.author.profile_picture}`
+                                    }
+                                    alt="SubHiro OR User Picture"
                                     className="w-full h-full"
                                     loading="lazy"
                                 />
                             </span>
                             <span className="hover:text-blue-800 font-medium">
-                                r/ChatGPT
+                                {postData.subhiro?.hironame
+                                    ? `h/${postData.subhiro.hironame}`
+                                    : `u/${postData.author.username}`}
                             </span>
                         </Link>
                         <span className="text-neutral-500">•</span>
                         <span className="text-neutral-500">
-                            {formatDistanceToNow(new Date(1744814420921), {
+                            {formatDistanceToNow(new Date(postData.createdAt), {
                                 addSuffix: true,
                             })}
                         </span>
@@ -71,20 +103,27 @@ const PreviewPost = ({
                 )}
                 {fullPreview && (
                     <div className="flex items-center gap-2 mb-1.5">
-                        <Link href={"/h/someid"}>
-                            <Button
-                                Icon={MdArrowBack}
-                                className="!p-1.5 [&_svg]:text-xl"
-                            ></Button>
-                        </Link>
+                        {postData.subhiro?.hironame && (
+                            <Link href={`/h/${postData.subhiro.hironame}`}>
+                                <Button
+                                    Icon={MdArrowBack}
+                                    className="!p-1.5 [&_svg]:text-xl"
+                                ></Button>
+                            </Link>
+                        )}
+
                         <Link
                             href={"/h/someid"}
                             className="flex gap-1.5 items-center z-[1] h-full"
                         >
                             <span className="w-8 h-8 rounded-full overflow-hidden">
                                 <img
-                                    src="https://placehold.co/32"
-                                    alt="SubHiro Picture"
+                                    src={
+                                        postData.subhiro?.profile_picture
+                                            ? `${postData.subhiro.profile_picture}`
+                                            : `${postData.author.profile_picture}`
+                                    }
+                                    alt="SubHiro OR User Picture"
                                     className="w-full h-full"
                                     loading="lazy"
                                 />
@@ -92,9 +131,17 @@ const PreviewPost = ({
                         </Link>
                         <div>
                             <p className="flex items-center gap-1">
-                                <Link href={"/h/someid"}>
+                                <Link
+                                    href={
+                                        postData.subhiro?.hironame
+                                            ? `/h/${postData.subhiro.hironame}`
+                                            : `/h/${postData.author.username}`
+                                    }
+                                >
                                     <span className="hover:text-blue-800 font-medium">
-                                        r/ChatGPT
+                                        {postData.subhiro?.hironame
+                                            ? `h/${postData.subhiro.hironame}`
+                                            : `u/${postData.author.username}`}
                                     </span>
                                 </Link>
                                 <span className="text-neutral-500">•</span>
@@ -107,17 +154,20 @@ const PreviewPost = ({
                                     )}
                                 </span>
                             </p>
-                            <Link
-                                href={"/user/"}
-                                className="font-this text-neutral-600 hover:text-blue-800"
-                            >
-                                SomeUserFrom1999
-                            </Link>
+                            {postData.subhiro?.hironame && (
+                                <Link
+                                    href={"/user/"}
+                                    className="font-this text-neutral-600 hover:text-blue-800"
+                                >
+                                    SomeUserFrom1999
+                                </Link>
+                            )}
                         </div>
                     </div>
                 )}
 
                 <div className="flex items-center gap-2 justify-end">
+                    {/* TODO: Add Actions */}
                     <Popover
                         position="bottom"
                         axis="right"
@@ -166,33 +216,20 @@ const PreviewPost = ({
                             : "text-lg mb-0.5 font-medium"
                     }`}
                 >
-                    What to do if I am Home sick?
+                    {postData.title}
                 </h3>
-                <p
+                <div
                     className={`text-sm text-neutral-700 whitespace-pre-line ${
                         fullPreview ? "mb-4" : "mb-3 line-clamp-4"
                     }`}
                 >
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Fugit reprehenderit quos sed illum vero dolore aliquam,
-                    suscipit eius veritatis, vitae, laboriosam nostrum. Corrupti
-                    natus dicta eos repellat, temporibus eaque adipisci a in, at
-                    porro soluta debitis, ipsum tenetur asperiores excepturi
-                    dolor iure? Voluptatum deleniti eaque tempore perspiciatis,
-                    ullam vitae ipsa tenetur eligendi similique natus quibusdam
-                    molestias omnis. Deleniti molestiae pariatur suscipit
-                    cupiditate amet ipsum, natus sint quaerat illum nostrum,
-                    dicta dolorem laudantium. Facilis, nobis dolorum dolores ad
-                    nemo eaque officia blanditiis repellendus voluptatibus,
-                    molestias voluptates quasi labore, praesentium laudantium
-                    ipsam dignissimos minus porro ratione! Fugiat laudantium
-                    obcaecati totam facere mollitia.
-                </p>
+                    {postData.content}
+                </div>
 
                 {/* Images */}
-                {images && images.length > 0 && (
+                {postData.images && postData.images.length > 0 && (
                     <div className="w-full pt-3">
-                        <GalleryCarousel images={images} />
+                        <GalleryCarousel images={postData.images} />
                     </div>
                 )}
             </div>
@@ -204,14 +241,16 @@ const PreviewPost = ({
                         className="!p-1.5 hover:[&_svg]:text-orange-600"
                         Icon={TbArrowBigUp}
                     ></Button>
-                    <span className="text-xs font-semibold">310</span>
+                    <span className="text-xs font-semibold">
+                        {postData.upvotedBy.length}
+                    </span>
                     <Button
                         className="!p-1.5 hover:[&_svg]:text-purple-600"
                         Icon={TbArrowBigDown}
                     ></Button>
                 </p>
                 <Button Icon={FaRegComment} className="z-[1]">
-                    310
+                    {postData.commentsCount}
                 </Button>
                 <Button Icon={SlBadge} className="z-[1]"></Button>
 
@@ -222,9 +261,19 @@ const PreviewPost = ({
                     indicator={false}
                     content={
                         <div className="min-w-36">
-                            <SquareButton className="w-full" Icon={IoIosLink}>
-                                Copy Link
-                            </SquareButton>
+                            <Clipboard
+                                value={`/posts/${postData._id}`}
+                                onCopied={() => {
+                                    toast.info("Copied!", { autoClose: 1000 });
+                                }}
+                            >
+                                <SquareButton
+                                    className="w-full"
+                                    Icon={IoIosLink}
+                                >
+                                    Copy Link
+                                </SquareButton>
+                            </Clipboard>
 
                             <SquareButton
                                 className="w-full"
@@ -247,7 +296,7 @@ const PreviewPost = ({
             {/* The Link to the Post. Active only in homepage preview */}
             {!fullPreview && (
                 <Link
-                    href={"/posts/someid"}
+                    href={`/posts/${postData._id}`}
                     className="absolute inset-0"
                 ></Link>
             )}

@@ -10,4 +10,5 @@ const postsApiSlice = baseApiSlice.injectEndpoints({
     }),
 });
 
+export const { useFetchPostsQuery } = postsApiSlice;
 export default postsApiSlice;

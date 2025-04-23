@@ -1,23 +1,36 @@
-import Footer from "@/components/Footer";
-import PageLayout, { MainDiv, Sidebar } from "@/components/PageLayout";
-import PreviewPost from "@/components/PreviewPost";
-import SidebarPost from "@/components/PreviewPost/SidebarPost";
+"use client";
 
 import React from "react";
 
+import Footer from "@/components/Footer";
+import PageLayout, { MainDiv, Sidebar } from "@/components/PageLayout";
+import PreviewPost, { PostInterface } from "@/components/PreviewPost";
+import SidebarPost from "@/components/PreviewPost/SidebarPost";
+import { useFetchPostsQuery } from "@/store/features/posts/postsApiSlice";
+
 export default function Home() {
+    const { data: postsData, isLoading, isSuccess } = useFetchPostsQuery({});
+
     return (
         <PageLayout>
             <MainDiv className="">
-                {/* Contents */}
-                <div>
-                    {[...Array(6)].map((i, idx) => (
-                        <React.Fragment key={idx}>
-                            <div className="pb-1 mb-1 border-b border-neutral-300"></div>
-                            <PreviewPost />
-                        </React.Fragment>
-                    ))}
-                </div>
+                {/* Posts */}
+                {isLoading && (
+                    <p className="text-center text-lg py-10 font-semibold italic">
+                        Fetching Posts...
+                    </p>
+                )}
+
+                {isSuccess && (
+                    <div>
+                        {postsData.data?.map((post: {}, idx: number) => (
+                            <React.Fragment key={idx}>
+                                <div className="pb-1 mb-1 border-b border-neutral-300"></div>
+                                <PreviewPost postData={post as PostInterface} />
+                            </React.Fragment>
+                        ))}
+                    </div>
+                )}
             </MainDiv>
             <Sidebar className="h-fit">
                 {/* Sidebar Content */}
