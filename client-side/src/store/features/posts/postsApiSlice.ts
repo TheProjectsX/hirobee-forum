@@ -1,7 +1,7 @@
 import baseApiSlice from "@/store/app/baseApi/baseApiSlice";
 
 const postsApiSlice = baseApiSlice.injectEndpoints({
-    endpoints: (builders) => ({}),
+    endpoints: (builder) => ({}),
 });
 
 export default postsApiSlice;

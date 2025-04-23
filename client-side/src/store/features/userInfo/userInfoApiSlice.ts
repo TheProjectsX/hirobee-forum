@@ -1,10 +1,10 @@
 import baseApiSlice from "@/store/app/baseApi/baseApiSlice";
 
 const userInfoApiSlice = baseApiSlice.injectEndpoints({
-    endpoints: (builders) => ({
-        fetchInfo: builders.query({ query: () => "/me" }),
+    endpoints: (builder) => ({
+        fetchUserInfo: builder.query({ query: () => "/me" }),
     }),
 });
 
-export const { useFetchInfoQuery } = userInfoApiSlice;
+export const { useFetchUserInfoQuery } = userInfoApiSlice;
 export default userInfoApiSlice;

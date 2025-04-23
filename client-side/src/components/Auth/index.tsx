@@ -1,20 +1,70 @@
 "use client";
 
-import { Modal, ModalBody, ModalFooter, ModalHeader } from "flowbite-react";
+import { Modal, ModalBody, ModalHeader, Spinner } from "flowbite-react";
 import React, { useState } from "react";
 import RoundedButton from "../Buttons/Rounded";
 import Link from "next/link";
+import { toast } from "react-toastify";
+import { useLoginMutation } from "@/store/features/auth/authApiSlice";
+import { useFetchUserInfoQuery } from "@/store/features/userInfo/userInfoApiSlice";
 
 const Auth = () => {
-    const [modalType, setModalType] = useState<"close" | "login" | "register">(
-        "close"
-    );
+    // Mutations
+    const [
+        loginUser,
+        { isLoading: isLoginLoading, isSuccess: isLoginSuccess },
+    ] = useLoginMutation();
+
+    const { refetch: fetchUserInfo, isSuccess: isFetchUserInfoSuccess } =
+        useFetchUserInfoQuery({});
+
+    const [modalType, setModalType] = useState<
+        "close" | "login" | "register" | "registration_complete"
+    >("close");
 
     const [authValues, setAuthValues] = useState<{
         email: string;
         username: string;
         password: string;
     }>({ email: "", username: "", password: "" });
+
+    // TODO: Handle Register
+    const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+    };
+
+    // Handle Login
+    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const credentials = {
+            email: authValues.email,
+            password: authValues.password,
+        };
+
+        // Check if Credentials Criteria does not match before sending request
+        if (
+            !credentials.email ||
+            credentials.email?.length < 5 ||
+            !credentials.password ||
+            credentials.password?.length < 6
+        ) {
+            toast.error("Invalid Credentials");
+            return;
+        }
+
+        // Send Request
+        try {
+            const loginResponse = await loginUser(credentials).unwrap();
+            toast.success("Login SuccessFul!");
+            setModalType("close");
+
+            const userInfoResponse = await fetchUserInfo().unwrap();
+            // Do other stuffs
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Invalid Credentials");
+        }
+    };
 
     return (
         <>
@@ -58,7 +108,7 @@ const Auth = () => {
                                 .
                             </p>
 
-                            <form onSubmit={(e) => e.preventDefault()}>
+                            <form onSubmit={handleLogin}>
                                 <input
                                     type="text"
                                     value={authValues.email}
@@ -104,12 +154,36 @@ const Auth = () => {
                                 </p>
 
                                 <RoundedButton
-                                    className="!bg-blue-600 hover:!bg-blue-500 w-full justify-center"
+                                    className={`!bg-blue-600 w-full justify-center ${
+                                        isLoginLoading
+                                            ? "!cursor-progress hover:!bg-blue-600"
+                                            : "hover:!bg-blue-500"
+                                    } ${
+                                        isLoginSuccess
+                                            ? "!cursor-not-allowed hover:!bg-blue-600"
+                                            : "hover:!bg-blue-500"
+                                    }`}
                                     onClick={() => setModalType("login")}
+                                    disabled={
+                                        (isLoginLoading || isLoginSuccess) &&
+                                        isFetchUserInfoSuccess
+                                    }
                                 >
-                                    <span className="px-2 text-sm text-white font-semibold">
-                                        Login
-                                    </span>
+                                    {!isLoginLoading && !isLoginSuccess && (
+                                        <span className="px-2 py-0.5 text-sm text-white font-semibold">
+                                            Login
+                                        </span>
+                                    )}
+
+                                    {isLoginSuccess && (
+                                        <span className="px-2 text-sm text-white font-semibold">
+                                            Login Successful!
+                                        </span>
+                                    )}
+
+                                    {isLoginLoading && (
+                                        <Spinner size="sm" light />
+                                    )}
                                 </RoundedButton>
                             </form>
                         </div>
@@ -138,7 +212,7 @@ const Auth = () => {
                                 .
                             </p>
 
-                            <form onSubmit={(e) => e.preventDefault()}>
+                            <form onSubmit={handleRegister}>
                                 <input
                                     type="text"
                                     value={authValues.username}

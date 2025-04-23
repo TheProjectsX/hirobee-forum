@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import RoundedButton from "@/components/Buttons/Rounded";
 import Link from "next/link";
 import Popover from "../Popover";
@@ -17,12 +17,37 @@ import { MdLogout } from "react-icons/md";
 import { GoGear, GoMegaphone } from "react-icons/go";
 import { GrUserAdmin } from "react-icons/gr";
 import Auth from "../Auth";
+import { useFetchUserInfoQuery } from "@/store/features/userInfo/userInfoApiSlice";
+import { useLogoutMutation } from "@/store/features/auth/authApiSlice";
+import { toast } from "react-toastify";
 
 const Navbar = ({
     setDrawerOpened,
 }: {
     setDrawerOpened: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
+    const {
+        data: userInfo,
+        refetch: refetchUserInfo,
+        isLoading,
+        isSuccess,
+        isError,
+    } = useFetchUserInfoQuery({});
+    const [logoutUser] = useLogoutMutation();
+
+    // Logout User
+    const handleLogoutUser = async () => {
+        try {
+            await logoutUser({});
+            await refetchUserInfo();
+            toast.success("Logout Successful!");
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Logout Failed");
+        }
+    };
+
+    // const
+
     return (
         <header className="px-3 py-1.5 flex justify-between items-center gap-4 border-b border-neutral-300">
             {/* Logo and Menu */}
@@ -89,105 +114,113 @@ const Navbar = ({
                 </RoundedButton>
 
                 {/* Auth (Login / Register) */}
-                <Auth />
+                {!isLoading && (!userInfo || isError) && <Auth />}
 
                 {/* User Profile */}
-                {/* <Popover
-                    position="bottom"
-                    axis="right"
-                    className="rounded-xl"
-                    indicator={false}
-                    content={
-                        <div className="py-2 min-w-60">
-                            <Link href={"/me"}>
+                {isSuccess && (
+                    <Popover
+                        position="bottom"
+                        axis="right"
+                        className="rounded-xl"
+                        indicator={false}
+                        content={
+                            <div className="py-2 min-w-60">
+                                <Link href={"/me"}>
+                                    <SquareButton
+                                        className="w-full !py-4"
+                                        Icon={CgProfile}
+                                    >
+                                        <span className="text-slate-700">
+                                            Visit Profile
+                                        </span>
+                                    </SquareButton>
+                                </Link>
+
                                 <SquareButton
                                     className="w-full !py-4"
-                                    Icon={CgProfile}
+                                    Icon={TbMoodEdit}
                                 >
                                     <span className="text-slate-700">
-                                        Visit Profile
+                                        Edit Avatar
                                     </span>
                                 </SquareButton>
-                            </Link>
-
-                            <SquareButton
-                                className="w-full !py-4"
-                                Icon={TbMoodEdit}
-                            >
-                                <span className="text-slate-700">
-                                    Edit Avatar
-                                </span>
-                            </SquareButton>
-                            <SquareButton
-                                className="w-full !py-4"
-                                Icon={IoTrophyOutline}
-                            >
-                                <span className="text-slate-700">
-                                    Achievements
-                                </span>
-                            </SquareButton>
-                            <SquareButton
-                                className="w-full !py-4"
-                                Icon={CgDarkMode}
-                            >
-                                <span className="text-slate-700">
-                                    Dark Mode
-                                </span>
-                            </SquareButton>
-                            <SquareButton
-                                className="w-full !py-4"
-                                Icon={MdLogout}
-                            >
-                                <span className="text-slate-700">Logout</span>
-                            </SquareButton>
-
-                            <div className="pb-2 mb-2 mx-2 border-b border-neutral-300"></div>
-
-                            <Link href={"/admin"}>
                                 <SquareButton
                                     className="w-full !py-4"
-                                    Icon={GrUserAdmin}
+                                    Icon={IoTrophyOutline}
                                 >
                                     <span className="text-slate-700">
-                                        Admin Dashboard
+                                        Achievements
                                     </span>
                                 </SquareButton>
-                            </Link>
-
-                            <div className="pb-2 mb-2 mx-2 border-b border-neutral-300"></div>
-                            <Link href={"#"}>
                                 <SquareButton
                                     className="w-full !py-4"
-                                    Icon={GoMegaphone}
+                                    Icon={CgDarkMode}
                                 >
                                     <span className="text-slate-700">
-                                        Advertise on Hirobee
+                                        Dark Mode
                                     </span>
                                 </SquareButton>
-                            </Link>
-
-                            <div className="pb-2 mb-2 mx-2 border-b border-neutral-300"></div>
-                            <Link href={"#"}>
                                 <SquareButton
                                     className="w-full !py-4"
-                                    Icon={GoGear}
+                                    Icon={MdLogout}
+                                    onClick={handleLogoutUser}
                                 >
                                     <span className="text-slate-700">
-                                        Settings
+                                        Logout
                                     </span>
                                 </SquareButton>
-                            </Link>
-                        </div>
-                    }
-                >
-                    <RoundedButton className="!p-1">
-                        <img
-                            src="https://i.ibb.co.com/Dfp53bmp/user-avatar.png"
-                            alt="Profile Picture"
-                            className="w-10 rounded-full"
-                        />
-                    </RoundedButton>
-                </Popover> */}
+
+                                <div className="pb-2 mb-2 mx-2 border-b border-neutral-300"></div>
+
+                                <Link href={"/admin"}>
+                                    <SquareButton
+                                        className="w-full !py-4"
+                                        Icon={GrUserAdmin}
+                                    >
+                                        <span className="text-slate-700">
+                                            Admin Dashboard
+                                        </span>
+                                    </SquareButton>
+                                </Link>
+
+                                <div className="pb-2 mb-2 mx-2 border-b border-neutral-300"></div>
+                                <Link href={"#"}>
+                                    <SquareButton
+                                        className="w-full !py-4"
+                                        Icon={GoMegaphone}
+                                    >
+                                        <span className="text-slate-700">
+                                            Advertise on Hirobee
+                                        </span>
+                                    </SquareButton>
+                                </Link>
+
+                                <div className="pb-2 mb-2 mx-2 border-b border-neutral-300"></div>
+                                <Link href={"#"}>
+                                    <SquareButton
+                                        className="w-full !py-4"
+                                        Icon={GoGear}
+                                    >
+                                        <span className="text-slate-700">
+                                            Settings
+                                        </span>
+                                    </SquareButton>
+                                </Link>
+                            </div>
+                        }
+                    >
+                        <RoundedButton
+                            className="!p-0"
+                            title={userInfo.displayName}
+                        >
+                            <img
+                                src={userInfo.profile_picture}
+                                alt="Profile Picture"
+                                className="w-10 rounded-full"
+                            />
+                        </RoundedButton>
+                    </Popover>
+                )}
             </div>
         </header>
     );
