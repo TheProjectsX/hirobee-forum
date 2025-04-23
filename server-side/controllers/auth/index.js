@@ -104,7 +104,12 @@ const login = async (body, collection) => {
         };
     }
 
-    return { success: true, status_code: StatusCodes.OK, ...userInfo };
+    return {
+        success: true,
+        status_code: StatusCodes.OK,
+        message: "Login Successful!",
+        username: userInfo.username,
+    };
 };
 
 export default { register, login };

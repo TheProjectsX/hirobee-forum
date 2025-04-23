@@ -209,7 +209,7 @@ app.post("/auth/login", async (req, res, next) => {
 });
 
 // Logout User
-app.get("/auth/logout", checkAuthentication, async (req, res, next) => {
+app.post("/auth/logout", checkAuthentication, async (req, res, next) => {
     res.clearCookie("access_token", cookieOptions).status(StatusCodes.OK).json({
         success: true,
         message: "Logout Successful",
