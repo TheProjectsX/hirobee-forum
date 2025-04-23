@@ -28,6 +28,19 @@ export const postAggregationPipeline = [
         },
     },
     {
+        $lookup: {
+            from: "comments",
+            localField: "_id",
+            foreignField: "postId",
+            as: "comments",
+        },
+    },
+    {
+        $addFields: {
+            commentsCount: { $size: "$comments" },
+        },
+    },
+    {
         $project: {
             title: 1,
             content: 1,
@@ -35,6 +48,7 @@ export const postAggregationPipeline = [
             downvotedBy: 1,
             createdAt: 1,
             updatedAt: 1,
+            commentsCount: 1,
             author: {
                 username: "$author.username",
                 profile_picture: "$author.profile_picture",

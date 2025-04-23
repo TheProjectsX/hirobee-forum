@@ -132,7 +132,7 @@ const fetch_single_post = async (user, postId, collection) => {
         ])
         .toArray();
 
-    if (!response) {
+    if (response.length === 0) {
         return {
             success: false,
             message: "Post not Found!",
@@ -147,7 +147,7 @@ const fetch_single_post = async (user, postId, collection) => {
         success: true,
         message: "Post fetched",
         status_code: StatusCodes.OK,
-        ...response,
+        ...response[0],
     };
 };
 

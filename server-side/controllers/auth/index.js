@@ -60,6 +60,7 @@ const register = async (body, collection) => {
             success: true,
             message: "User Created Successfully!",
             status_code: StatusCodes.CREATED,
+            username: userInfo.username,
         };
     } else {
         return {

@@ -171,6 +171,21 @@ app.post("/auth/register", async (req, res, next) => {
             db.collection("users")
         );
 
+        if (response.success) {
+            const token = jwt.sign(
+                {
+                    username: response.username,
+                },
+                process.env.JWT_SECRET,
+                {
+                    expiresIn: process.env.JWT_EXPIRES_IN || "2d",
+                }
+            );
+            return res
+                .cookie("access_token", token, cookieOptions)
+                .status(response.status_code)
+                .json(response);
+        }
         res.status(response.status_code).json(response);
     } catch (error) {
         next(error);
