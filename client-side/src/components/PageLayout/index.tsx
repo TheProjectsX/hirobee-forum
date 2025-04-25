@@ -57,8 +57,7 @@ export const Sidebar = ({
 }) => {
     return (
         <aside
-            className={`
-            shrink-0 w-[320px]
+            className={`max-h-full overflow-y-hidden pr-3.5 hover:pr-1 hover:overflow-y-auto scrollbar-thin scrollbar-track-transparent shrink-0 w-[320px]
             ${
                 global__breakpoint === "770px"
                     ? "min-[770px]:block"
