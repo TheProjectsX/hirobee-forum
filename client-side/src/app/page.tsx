@@ -23,10 +23,12 @@ export default function Home() {
 
                 {isSuccess && (
                     <div>
-                        {postsData.data?.map((post: {}, idx: number) => (
+                        {postsData.data?.map((postData: {}, idx: number) => (
                             <React.Fragment key={idx}>
                                 <div className="pb-1 mb-1 border-b border-neutral-300"></div>
-                                <PreviewPost postData={post as PostInterface} />
+                                <PreviewPost
+                                    postData={postData as PostInterface}
+                                />
                             </React.Fragment>
                         ))}
                     </div>
