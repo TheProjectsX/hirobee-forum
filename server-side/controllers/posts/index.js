@@ -171,7 +171,9 @@ const fetch_comments = async (postId, filters, collection) => {
         ])
         .toArray();
 
-    const totalCount = await collection.countDocuments({ postId });
+    const totalCount = await collection.countDocuments({
+        postId: new ObjectId(String(postId)),
+    });
 
     const pagination = {
         has_next_page: totalCount > skip + response.length,

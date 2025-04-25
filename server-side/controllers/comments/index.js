@@ -11,7 +11,7 @@ const insert_comment = async (user, postId, body, collection) => {
     }
 
     const doc = {
-        postId,
+        postId: new ObjectId(String(postId)),
         authorId: user.username,
         content: body.content,
         upvotedBy: [],
