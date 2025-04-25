@@ -87,10 +87,6 @@ export const commentAggregationPipeline = [
                 username: "$author.username",
                 profile_picture: "$author.profile_picture",
             },
-            subhiro: {
-                hironame: "$subhiro.hironame",
-                profile_picture: "$subhiro.profile_picture",
-            },
         },
     },
 ];

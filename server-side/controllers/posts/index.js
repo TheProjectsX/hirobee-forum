@@ -8,7 +8,7 @@ import {
 const fetch_posts = async (filters, collection) => {
     const {
         query: search,
-        page = 0,
+        page = 1,
         limit = 10,
         subhiro,
         author,
@@ -30,7 +30,7 @@ const fetch_posts = async (filters, collection) => {
 
     sort.createdAt = sortBy === "old" ? 1 : -1;
 
-    const skip = page * limit;
+    const skip = (page - 1) * limit;
 
     const response = await collection
         .aggregate([
@@ -159,7 +159,7 @@ const update_vote = async (user, postId, meta, collection) => {
 const fetch_comments = async (postId, filters, collection) => {
     const { page = 1, limit = 10 } = filters;
 
-    const skip = page * limit;
+    const skip = (page - 1) * limit;
 
     const response = await collection
 

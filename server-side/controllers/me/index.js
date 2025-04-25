@@ -54,7 +54,7 @@ const update_info = async (user, body, collection) => {
 };
 
 const fetch_posts = async (user, filters, collection) => {
-    const { search, page = 0, limit = 10, subhiro, sortBy = "new" } = filters;
+    const { search, page = 1, limit = 10, subhiro, sortBy = "new" } = filters;
 
     const query = {
         authorId: user.username,
@@ -72,7 +72,7 @@ const fetch_posts = async (user, filters, collection) => {
 
     sort.createdAt = sortBy === "old" ? 1 : -1;
 
-    const skip = page * limit;
+    const skip = (page - 1) * limit;
     const response = await collection
         .aggregate([
             { $match: query },
