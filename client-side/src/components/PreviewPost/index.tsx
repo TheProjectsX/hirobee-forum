@@ -26,6 +26,11 @@ import Button from "./Button";
 import { MdArrowBack } from "react-icons/md";
 import Clipboard from "../Clipboard";
 import { toast } from "react-toastify";
+import { useFetchUserInfoQuery } from "@/store/features/userInfo/userInfoApiSlice";
+import {
+    useAddDownvoteMutation,
+    useAddUpvoteMutation,
+} from "@/store/features/posts/postsApiSlice";
 
 export interface PostInterface {
     _id: string;
@@ -56,6 +61,26 @@ const PreviewPost = ({
     postData: PostInterface;
     className?: string;
 }) => {
+    const { isLoading, isError } = useFetchUserInfoQuery({});
+    const [addUpvote, { isLoading: isAddUpvoteLoading }] =
+        useAddUpvoteMutation();
+    const [addDownvote, { isLoading: isDownvoteLoading }] =
+        useAddDownvoteMutation();
+
+    const handleUpvote = async (postId: string) => {
+        if (!isLoading && isError) {
+            return false;
+        }
+
+        try {
+            const response = await addUpvote(postId);
+            return true;
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Failed to Add error");
+            return false;
+        }
+    };
+
     return (
         <article
             className={`py-1.5 rounded-2xl relative ${
@@ -158,10 +183,10 @@ const PreviewPost = ({
                             </p>
                             {postData.subhiro?.hironame && (
                                 <Link
-                                    href={"/user/"}
+                                    href={`/u/${postData.author.username}`}
                                     className="font-this text-neutral-600 hover:text-blue-800"
                                 >
-                                    SomeUserFrom1999
+                                    u/{postData.author.username}
                                 </Link>
                             )}
                         </div>
@@ -241,6 +266,21 @@ const PreviewPost = ({
                 <p className="rounded-full text-neutral-700 bg-slate-200 flex items-center cursor-pointer z-[1]">
                     <Button
                         className="!p-1.5 hover:[&_svg]:text-orange-600"
+                        onClick={async (e) => {
+                            const target = e.target as HTMLElement;
+                            const updated = await handleUpvote(postData._id);
+
+                            if (updated) {
+                                const span = target
+                                    .closest("p")
+                                    ?.querySelector("span");
+                                if (span) {
+                                    span.innerText = String(
+                                        Number(span?.innerText) + 1
+                                    );
+                                }
+                            }
+                        }}
                         Icon={TbArrowBigUp}
                     ></Button>
                     <span className="text-xs font-semibold">

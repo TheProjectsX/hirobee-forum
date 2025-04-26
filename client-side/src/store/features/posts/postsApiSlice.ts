@@ -7,8 +7,24 @@ const postsApiSlice = baseApiSlice.injectEndpoints({
                 url: "/posts",
             }),
         }),
+        addUpvote: builder.mutation({
+            query: (postId) => ({
+                url: `/posts/${postId}/upvote/add`,
+                method: "PUT",
+            }),
+        }),
+        addDownvote: builder.mutation({
+            query: (postId) => ({
+                url: `/posts/${postId}/downvote/add`,
+                method: "PUT",
+            }),
+        }),
     }),
 });
 
-export const { useFetchPostsQuery } = postsApiSlice;
+export const {
+    useFetchPostsQuery,
+    useAddUpvoteMutation,
+    useAddDownvoteMutation,
+} = postsApiSlice;
 export default postsApiSlice;
