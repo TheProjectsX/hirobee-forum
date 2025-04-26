@@ -298,12 +298,12 @@ const SubmitPost = () => {
                         </h3>
                     </div>
 
-                    {[...Array(2)].map((i, idx) => (
+                    {/* {[...Array(2)].map((i, idx) => (
                         <React.Fragment key={idx}>
                             <SidebarPost />
                             <div className="pb-0.5 mb-0.5 border-b border-neutral-300"></div>
                         </React.Fragment>
-                    ))}
+                    ))} */}
                 </div>
 
                 <Footer />

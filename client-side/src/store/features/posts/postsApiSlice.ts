@@ -7,15 +7,15 @@ const postsApiSlice = baseApiSlice.injectEndpoints({
                 url: "/posts",
             }),
         }),
-        addUpvote: builder.mutation({
-            query: (postId) => ({
-                url: `/posts/${postId}/upvote/add`,
+        updateUpvote: builder.mutation({
+            query: (data) => ({
+                url: `/posts/${data.postId}/upvote/${data.action}`,
                 method: "PUT",
             }),
         }),
-        addDownvote: builder.mutation({
-            query: (postId) => ({
-                url: `/posts/${postId}/downvote/add`,
+        updateDownvote: builder.mutation({
+            query: (data) => ({
+                url: `/posts/${data.postId}/downvote/${data.action}`,
                 method: "PUT",
             }),
         }),
@@ -24,7 +24,7 @@ const postsApiSlice = baseApiSlice.injectEndpoints({
 
 export const {
     useFetchPostsQuery,
-    useAddUpvoteMutation,
-    useAddDownvoteMutation,
+    useUpdateUpvoteMutation,
+    useUpdateDownvoteMutation,
 } = postsApiSlice;
 export default postsApiSlice;

@@ -28,8 +28,8 @@ import Clipboard from "../Clipboard";
 import { toast } from "react-toastify";
 import { useFetchUserInfoQuery } from "@/store/features/userInfo/userInfoApiSlice";
 import {
-    useAddDownvoteMutation,
-    useAddUpvoteMutation,
+    useUpdateDownvoteMutation,
+    useUpdateUpvoteMutation,
 } from "@/store/features/posts/postsApiSlice";
 
 export interface PostInterface {
@@ -38,7 +38,7 @@ export interface PostInterface {
     content: string;
     images: Array<string> | null;
     upvotedBy: Array<string>;
-    downBy: Array<string>;
+    downvotedBy: Array<string>;
     createdAt: number;
     updatedAt: number;
     commentsCount: number;
@@ -61,22 +61,52 @@ const PreviewPost = ({
     postData: PostInterface;
     className?: string;
 }) => {
-    const { isLoading, isError } = useFetchUserInfoQuery({});
-    const [addUpvote, { isLoading: isAddUpvoteLoading }] =
-        useAddUpvoteMutation();
-    const [addDownvote, { isLoading: isDownvoteLoading }] =
-        useAddDownvoteMutation();
+    const {
+        data: userInfo,
+        isLoading: isUserInfoLoading,
+        isError: isUserInfoError,
+    } = useFetchUserInfoQuery({});
+    const [updateUpvote, { isLoading: isAddUpvoteLoading }] =
+        useUpdateUpvoteMutation();
+    const [updateDownvote, { isLoading: isDownvoteLoading }] =
+        useUpdateDownvoteMutation();
 
-    const handleUpvote = async (postId: string) => {
-        if (!isLoading && isError) {
+    const handleUpvote = async () => {
+        if (!isUserInfoLoading && isUserInfoError) {
             return false;
         }
 
         try {
-            const response = await addUpvote(postId);
+            const action = postData.upvotedBy.includes(userInfo?.username)
+                ? "remove"
+                : "add";
+
+            await updateUpvote({
+                postId: postData._id,
+                action: action,
+            });
+            return action;
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Failed to Update Vote");
+            return false;
+        }
+    };
+
+    const handleDownvote = async () => {
+        if (!isUserInfoLoading && isUserInfoError) {
+            return false;
+        }
+
+        try {
+            await updateDownvote({
+                postId: postData._id,
+                action: postData.downvotedBy.includes(userInfo?.username)
+                    ? "remove"
+                    : "add",
+            });
             return true;
         } catch (error: any) {
-            toast.error(error?.data?.message ?? "Failed to Add error");
+            toast.error(error?.data?.message ?? "Failed to Update Vote");
             return false;
         }
     };
@@ -140,7 +170,11 @@ const PreviewPost = ({
                         )}
 
                         <Link
-                            href={"/h/someid"}
+                            href={
+                                postData.subhiro?.hironame
+                                    ? `/h/${postData.subhiro.hironame}`
+                                    : `/u/${postData.author.username}`
+                            }
                             className="flex gap-1.5 items-center z-[1] h-full"
                         >
                             <span className="w-8 h-8 rounded-full overflow-hidden">
@@ -162,7 +196,7 @@ const PreviewPost = ({
                                     href={
                                         postData.subhiro?.hironame
                                             ? `/h/${postData.subhiro.hironame}`
-                                            : `/h/${postData.author.username}`
+                                            : `/u/${postData.author.username}`
                                     }
                                 >
                                     <span className="hover:text-blue-800 font-medium">
@@ -265,21 +299,14 @@ const PreviewPost = ({
             <div className="flex items-center gap-2">
                 <p className="rounded-full text-neutral-700 bg-slate-200 flex items-center cursor-pointer z-[1]">
                     <Button
-                        className="!p-1.5 hover:[&_svg]:text-orange-600"
+                        className={`!p-1.5 hover:[&_svg]:text-orange-600 ${
+                            postData.upvotedBy.includes(userInfo?.username)
+                                ? "[&_svg]:text-orange-600"
+                                : ""
+                        }`}
                         onClick={async (e) => {
                             const target = e.target as HTMLElement;
-                            const updated = await handleUpvote(postData._id);
-
-                            if (updated) {
-                                const span = target
-                                    .closest("p")
-                                    ?.querySelector("span");
-                                if (span) {
-                                    span.innerText = String(
-                                        Number(span?.innerText) + 1
-                                    );
-                                }
-                            }
+                            const action = await handleUpvote();
                         }}
                         Icon={TbArrowBigUp}
                     ></Button>
@@ -287,7 +314,12 @@ const PreviewPost = ({
                         {postData.upvotedBy.length}
                     </span>
                     <Button
-                        className="!p-1.5 hover:[&_svg]:text-purple-600"
+                        onClick={handleDownvote}
+                        className={`!p-1.5 hover:[&_svg]:text-purple-600 ${
+                            postData.downvotedBy.includes(userInfo?.username)
+                                ? "[&_svg]:text-purple-600"
+                                : ""
+                        }`}
                         Icon={TbArrowBigDown}
                     ></Button>
                 </p>

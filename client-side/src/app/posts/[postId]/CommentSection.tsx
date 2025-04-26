@@ -5,24 +5,52 @@ import Comment, { CommentInterface } from "./comment";
 
 import RoundedButton from "@/components/Buttons/Rounded";
 import Button from "@/components/PreviewPost/Button";
-import { useFetchCommentsQuery } from "@/store/features/comments/commentsApiSlice";
+import {
+    useFetchCommentsQuery,
+    useSubmitCommentMutation,
+} from "@/store/features/comments/commentsApiSlice";
 import { useFetchUserInfoQuery } from "@/store/features/userInfo/userInfoApiSlice";
 import { toast } from "react-toastify";
 
 const CommentSection = ({ postId }: { postId: string }) => {
     const { data: UserInfo, isLoading: isUserInfoLoading } =
         useFetchUserInfoQuery({});
+    const [submitComment, { isLoading: isSubmitCommentLoading }] =
+        useSubmitCommentMutation();
+
+    const {
+        data: commentsData,
+        isLoading,
+        isSuccess,
+        refetch: refetchComments,
+    } = useFetchCommentsQuery({ postId });
 
     const [commentBoxStatus, setCommentBoxStatus] = useState<{
         opened: boolean;
         content: string;
     }>({ opened: false, content: "" });
 
-    const {
-        data: commentsData,
-        isLoading,
-        isSuccess,
-    } = useFetchCommentsQuery(postId);
+    const handleSubmitComment = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const data = {
+            postId,
+            body: {
+                content: commentBoxStatus.content,
+            },
+        };
+
+        try {
+            const response = await submitComment(data);
+            refetchComments();
+
+            toast.success("Comment Submitted");
+
+            setCommentBoxStatus({ content: "", opened: false });
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Failed to Submit Comment");
+        }
+    };
 
     return (
         <>
@@ -48,7 +76,7 @@ const CommentSection = ({ postId }: { postId: string }) => {
 
                 {commentBoxStatus.opened && (
                     <div className="p-2 rounded-[1.25rem] border border-neutral-300 focus-within:border-neutral-500">
-                        <form onSubmit={(e) => e.preventDefault()}>
+                        <form onSubmit={handleSubmitComment}>
                             <textarea
                                 name="comment"
                                 rows={2}
@@ -61,15 +89,18 @@ const CommentSection = ({ postId }: { postId: string }) => {
                                     }))
                                 }
                                 autoFocus
+                                required
+                                minLength={5}
                             ></textarea>
 
                             <div className="flex items-center gap-3 justify-between">
-                                <RoundedButton>
+                                <RoundedButton type="button">
                                     <span className="text-xs">Aa</span>
                                 </RoundedButton>
 
                                 <div className="flex items-center gap-2">
                                     <Button
+                                        type="button"
                                         onClick={(e) =>
                                             setCommentBoxStatus((prev) => ({
                                                 ...prev,
@@ -81,7 +112,12 @@ const CommentSection = ({ postId }: { postId: string }) => {
                                     </Button>
                                     <Button
                                         type="submit"
-                                        className="!bg-blue-700 hover:!bg-blue-800"
+                                        className={`!bg-blue-700 ${
+                                            isSubmitCommentLoading
+                                                ? "hover:!bg-blue-700 cursor-not-allowed"
+                                                : "hover:!bg-blue-800"
+                                        }`}
+                                        disabled={isSubmitCommentLoading}
                                     >
                                         <span className="text-xs text-white">
                                             Comment
