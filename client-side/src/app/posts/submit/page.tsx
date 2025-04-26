@@ -4,13 +4,33 @@ import RoundedButton from "@/components/Buttons/Rounded";
 import Footer from "@/components/Footer";
 import PageLayout, { MainDiv, Sidebar } from "@/components/PageLayout";
 import Popover from "@/components/Popover";
+import { PostInterface } from "@/components/PreviewPost";
 import SidebarPost from "@/components/PreviewPost/SidebarPost";
+import {
+    useFetchUserPostsQuery,
+    useSubmitPostMutation,
+} from "@/store/features/user/userApiSlice";
 import { Spinner } from "flowbite-react";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { MdClose } from "react-icons/md";
+import { toast } from "react-toastify";
 
 const SubmitPost = () => {
+    const {
+        data: userPosts,
+        isLoading: isUserPostsLoading,
+        isSuccess: isUserPostsSuccess,
+    } = useFetchUserPostsQuery({ limit: 8 });
+
+    const [
+        submitPost,
+        { isLoading: isSubmitPostLoading, isSuccess: isSubmitPostSuccess },
+    ] = useSubmitPostMutation();
+
+    const router = useRouter();
+
     const [communitySearch, setCommunitySearch] = useState<{
         visible: boolean;
         data: Array<{
@@ -29,12 +49,12 @@ const SubmitPost = () => {
             members: string;
         };
         title: string;
-        body: string;
+        content: string;
         images: Array<string>;
     }>({
         community: null,
         title: "",
-        body: "",
+        content: "",
         images: [],
     });
 
@@ -66,6 +86,22 @@ const SubmitPost = () => {
                 ],
             }));
         }, 300);
+    };
+
+    // Handle Submit Post
+    const handleSubmitPost = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const body = { ...postValues };
+
+        try {
+            const response = await submitPost(body).unwrap();
+            router.push(`/posts/${response.id}`);
+            toast.success("Post Successful!");
+        } catch (error: any) {
+            console.log(error);
+            toast.error(error?.data?.message ?? "Failed to Submit Post");
+        }
     };
 
     return (
@@ -213,7 +249,7 @@ const SubmitPost = () => {
 
                 {/* Post Box */}
                 <div>
-                    <form onSubmit={(e) => e.preventDefault()}>
+                    <form onSubmit={handleSubmitPost}>
                         <label className="flex flex-col gap-2 mb-5">
                             <p className="px-2 font-semibold">
                                 <span className="">Title</span>
@@ -249,11 +285,11 @@ const SubmitPost = () => {
                                 className="w-full px-3.5 py-2.5 border-2 border-neutral-500 focus:border-[dodgerBlue] rounded-2xl outline-none text-sm"
                                 placeholder="Write post title"
                                 rows={5}
-                                value={postValues.body}
+                                value={postValues.content}
                                 onChange={(e) =>
                                     setPostValues((prev) => ({
                                         ...prev,
-                                        body: e.target.value,
+                                        content: e.target.value,
                                     }))
                                 }
                             />
@@ -274,15 +310,24 @@ const SubmitPost = () => {
                             </RoundedButton> */}
                             <RoundedButton
                                 className={`!px-6 ${
-                                    postValues.title.length > 5
-                                        ? "!bg-blue-700 hover:!bg-blue-800 !text-white"
-                                        : "bg-neutral-300 !text-neutral-500 pointer-events-none"
+                                    postValues.title.length < 5
+                                        ? "bg-neutral-300 !text-neutral-500 pointer-events-none"
+                                        : "!bg-blue-700 hover:!bg-blue-800 !text-white"
                                 }`}
-                                disabled={postValues.title.length < 5}
+                                disabled={
+                                    postValues.title.length < 5 ||
+                                    isSubmitPostLoading ||
+                                    isSubmitPostSuccess
+                                }
                             >
-                                <span className="text-sm font-semibold">
-                                    Post
-                                </span>
+                                {!isSubmitPostLoading &&
+                                !isSubmitPostSuccess ? (
+                                    <span className="text-sm font-semibold">
+                                        Post
+                                    </span>
+                                ) : (
+                                    <Spinner size="sm" />
+                                )}
                             </RoundedButton>
                         </div>
                     </form>
@@ -298,12 +343,15 @@ const SubmitPost = () => {
                         </h3>
                     </div>
 
-                    {/* {[...Array(2)].map((i, idx) => (
-                        <React.Fragment key={idx}>
-                            <SidebarPost />
-                            <div className="pb-0.5 mb-0.5 border-b border-neutral-300"></div>
-                        </React.Fragment>
-                    ))} */}
+                    {isUserPostsSuccess &&
+                        userPosts.data.map(
+                            (postData: PostInterface, idx: number) => (
+                                <React.Fragment key={idx}>
+                                    <SidebarPost postData={postData} />
+                                    <div className="pb-0.5 mb-0.5 border-b border-neutral-300"></div>
+                                </React.Fragment>
+                            )
+                        )}
                 </div>
 
                 <Footer />

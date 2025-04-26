@@ -9,7 +9,7 @@ import {
     useLoginMutation,
     useRegisterMutation,
 } from "@/store/features/auth/authApiSlice";
-import { useFetchUserInfoQuery } from "@/store/features/userInfo/userInfoApiSlice";
+import { useFetchUserInfoQuery } from "@/store/features/user/userApiSlice";
 
 const Auth = () => {
     // Mutations

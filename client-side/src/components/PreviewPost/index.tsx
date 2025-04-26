@@ -26,7 +26,7 @@ import Button from "./Button";
 import { MdArrowBack } from "react-icons/md";
 import Clipboard from "../Clipboard";
 import { toast } from "react-toastify";
-import { useFetchUserInfoQuery } from "@/store/features/userInfo/userInfoApiSlice";
+import { useFetchUserInfoQuery } from "@/store/features/user/userApiSlice";
 import {
     useUpdateDownvoteMutation,
     useUpdateUpvoteMutation,
@@ -66,10 +66,8 @@ const PreviewPost = ({
         isLoading: isUserInfoLoading,
         isError: isUserInfoError,
     } = useFetchUserInfoQuery({});
-    const [updateUpvote, { isLoading: isAddUpvoteLoading }] =
-        useUpdateUpvoteMutation();
-    const [updateDownvote, { isLoading: isDownvoteLoading }] =
-        useUpdateDownvoteMutation();
+    const [updateUpvote] = useUpdateUpvoteMutation();
+    const [updateDownvote] = useUpdateDownvoteMutation();
 
     const handleUpvote = async () => {
         if (!isUserInfoLoading && isUserInfoError) {

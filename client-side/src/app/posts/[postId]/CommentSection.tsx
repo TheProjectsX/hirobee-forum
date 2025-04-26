@@ -9,7 +9,7 @@ import {
     useFetchCommentsQuery,
     useSubmitCommentMutation,
 } from "@/store/features/comments/commentsApiSlice";
-import { useFetchUserInfoQuery } from "@/store/features/userInfo/userInfoApiSlice";
+import { useFetchUserInfoQuery } from "@/store/features/user/userApiSlice";
 import { toast } from "react-toastify";
 
 const CommentSection = ({ postId }: { postId: string }) => {
