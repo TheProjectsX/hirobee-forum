@@ -7,27 +7,49 @@ import Popover from "@/components/Popover";
 import { PostInterface } from "@/components/PreviewPost";
 import SidebarPost from "@/components/PreviewPost/SidebarPost";
 import {
+    useFetchSinglePostQuery,
     useFetchUserPostsQuery,
-    useSubmitPostMutation,
+    useInsertPostMutation,
+    useUpdatePostMutation,
 } from "@/store/features/user/userApiSlice";
 import { Spinner } from "flowbite-react";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { MdClose } from "react-icons/md";
 import { toast } from "react-toastify";
 
-const SubmitPost = () => {
+const SubmitPost = ({
+    searchParams,
+}: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) => {
+    const targetPostId = use(searchParams).postId;
+
     const {
         data: userPosts,
         isLoading: isUserPostsLoading,
         isSuccess: isUserPostsSuccess,
     } = useFetchUserPostsQuery({ limit: 8 });
 
+    const {
+        data: targetPost,
+        isLoading: isTargetPostLoading,
+        isSuccess: isTargetPostSuccess,
+    } = useFetchSinglePostQuery(
+        { postId: targetPostId },
+        { skip: targetPostId === undefined }
+    );
+
     const [
-        submitPost,
-        { isLoading: isSubmitPostLoading, isSuccess: isSubmitPostSuccess },
-    ] = useSubmitPostMutation();
+        insertPost,
+        { isLoading: isInsertPostLoading, isSuccess: isInsertPostSuccess },
+    ] = useInsertPostMutation();
+
+    const [
+        updatePost,
+        { isLoading: isUpdatePostLoading, isSuccess: isUpdatePostSuccess },
+    ] = useUpdatePostMutation();
 
     const router = useRouter();
 
@@ -88,6 +110,18 @@ const SubmitPost = () => {
         }, 300);
     };
 
+    // Check if is in Post Edit Mode! and update data
+    useEffect(() => {
+        if (!isTargetPostSuccess) return;
+
+        setPostValues({
+            title: targetPost.title,
+            content: targetPost.content ?? "",
+            community: targetPost.subhiro?.hironame ? targetPost.subhiro : null,
+            images: targetPost.images ?? [],
+        });
+    }, [isTargetPostSuccess]);
+
     // Handle Submit Post
     const handleSubmitPost = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -95,9 +129,18 @@ const SubmitPost = () => {
         const body = { ...postValues };
 
         try {
-            const response = await submitPost(body).unwrap();
-            router.push(`/posts/${response.id}`);
-            toast.success("Post Successful!");
+            if (targetPostId === undefined) {
+                const response = await insertPost({ body }).unwrap();
+                router.push(`/posts/${response.id}`);
+                toast.success("Post Successful!");
+            } else {
+                const response = await updatePost({
+                    postId: targetPostId,
+                    body,
+                }).unwrap();
+                router.push(`/posts/${response.id}`);
+                toast.success("Post Updated!");
+            }
         } catch (error: any) {
             console.log(error);
             toast.error(error?.data?.message ?? "Failed to Submit Post");
@@ -183,18 +226,32 @@ const SubmitPost = () => {
                             }
                         >
                             <div
-                                className="bg-slate-200 hover:bg-slate-300 flex items-center gap-2 rounded-full px-3 py-2 cursor-text border-2 border-slate-200 hover:border-slate-300 has-[input:focus]:border-primary"
+                                className={`bg-slate-200 flex items-center gap-2 rounded-full px-3 py-2 border-2 border-slate-200 has-[input:focus]:border-primary ${
+                                    targetPostId === undefined
+                                        ? "cursor-text hover:bg-slate-300 hover:border-slate-300"
+                                        : ""
+                                }`}
                                 onClick={(e) => {
+                                    if (targetPostId !== undefined) return;
                                     const target = e.target as HTMLElement;
                                     target.querySelector("input")?.focus();
                                 }}
+                                title={
+                                    targetPostId !== undefined
+                                        ? "Can't Edit Community"
+                                        : undefined
+                                }
                             >
                                 <span className="text-gray-600 text-xl">
                                     <IoSearchOutline />
                                 </span>
                                 <input
                                     type="text"
-                                    className="border-none outline-none text-sm w-full"
+                                    className={`border-none outline-none text-sm w-full ${
+                                        targetPostId !== undefined
+                                            ? "pointer-events-none"
+                                            : ""
+                                    }`}
                                     placeholder="Search for Community"
                                     onFocus={() =>
                                         setCommunitySearch((prev) => ({
@@ -202,6 +259,7 @@ const SubmitPost = () => {
                                             visible: prev.data.length > 0,
                                         }))
                                     }
+                                    disabled={targetPostId !== undefined}
                                 />
                             </div>
                         </Popover>
@@ -310,20 +368,23 @@ const SubmitPost = () => {
                             </RoundedButton> */}
                             <RoundedButton
                                 className={`!px-6 ${
-                                    postValues.title.length < 5
+                                    postValues.title.length < 5 ||
+                                    isInsertPostLoading ||
+                                    isUpdatePostLoading
                                         ? "bg-neutral-300 !text-neutral-500 pointer-events-none"
                                         : "!bg-blue-700 hover:!bg-blue-800 !text-white"
                                 }`}
                                 disabled={
                                     postValues.title.length < 5 ||
-                                    isSubmitPostLoading ||
-                                    isSubmitPostSuccess
+                                    isInsertPostLoading ||
+                                    isUpdatePostLoading
                                 }
                             >
-                                {!isSubmitPostLoading &&
-                                !isSubmitPostSuccess ? (
+                                {!isInsertPostLoading || isUpdatePostLoading ? (
                                     <span className="text-sm font-semibold">
-                                        Post
+                                        {targetPostId === undefined
+                                            ? "Post"
+                                            : "Update"}
                                     </span>
                                 ) : (
                                     <Spinner size="sm" />

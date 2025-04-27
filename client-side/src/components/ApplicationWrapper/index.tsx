@@ -7,12 +7,14 @@ import DrawerContent from "../DrawerContent";
 import { Provider } from "react-redux";
 import store from "@/store/app/store";
 import { Bounce, ToastContainer } from "react-toastify";
+import NextTopLoader from "nextjs-toploader";
 
 const ApplicationWrapper = ({ children }: { children: React.ReactNode }) => {
     const [drawerOpened, setDrawerOpened] = useState<boolean>(false);
 
     return (
         <>
+            <NextTopLoader />
             <ToastContainer
                 position="top-center"
                 autoClose={3000}

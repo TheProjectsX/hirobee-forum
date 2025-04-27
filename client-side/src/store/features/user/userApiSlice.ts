@@ -12,11 +12,18 @@ const userApiSlice = baseApiSlice.injectEndpoints({
         fetchSinglePost: builder.query({
             query: (data) => `/me/posts/${data.postId}`,
         }),
-        submitPost: builder.mutation({
+        insertPost: builder.mutation({
             query: (data) => ({
                 url: "/me/posts",
                 method: "POST",
-                body: data,
+                body: data.body,
+            }),
+        }),
+        updatePost: builder.mutation({
+            query: (data) => ({
+                url: `/me/posts/${data.postId}`,
+                method: "PUT",
+                body: data.body,
             }),
         }),
     }),
@@ -26,6 +33,7 @@ export const {
     useFetchUserInfoQuery,
     useFetchUserPostsQuery,
     useFetchSinglePostQuery,
-    useSubmitPostMutation,
+    useInsertPostMutation,
+    useUpdatePostMutation,
 } = userApiSlice;
 export default userApiSlice;

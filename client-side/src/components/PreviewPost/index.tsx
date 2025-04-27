@@ -31,6 +31,8 @@ import {
     useUpdateDownvoteMutation,
     useUpdateUpvoteMutation,
 } from "@/store/features/posts/postsApiSlice";
+import { FiEdit3 } from "react-icons/fi";
+import { AiOutlineDelete } from "react-icons/ai";
 
 export interface PostInterface {
     _id: string;
@@ -65,6 +67,7 @@ const PreviewPost = ({
         data: userInfo,
         isLoading: isUserInfoLoading,
         isError: isUserInfoError,
+        isSuccess: isUserInfoSuccess,
     } = useFetchUserInfoQuery({});
     const [updateUpvote] = useUpdateUpvoteMutation();
     const [updateDownvote] = useUpdateDownvoteMutation();
@@ -234,28 +237,58 @@ const PreviewPost = ({
                         indicator={false}
                         content={
                             <div className="min-w-36">
-                                <SquareButton className="w-full" Icon={GoBell}>
-                                    Follow Post
-                                </SquareButton>
-
                                 <SquareButton
                                     className="w-full"
                                     Icon={BsBookmark}
                                 >
                                     Save
                                 </SquareButton>
-                                <SquareButton
-                                    className="w-full"
-                                    Icon={IoEyeOffOutline}
-                                >
-                                    Hide
-                                </SquareButton>
-                                <SquareButton
-                                    className="w-full"
-                                    Icon={IoFlagOutline}
-                                >
-                                    Report
-                                </SquareButton>
+
+                                {userInfo?.username ===
+                                    postData.author.username && (
+                                    <>
+                                        <Link
+                                            href={`/posts/submit?postId=${postData._id}`}
+                                        >
+                                            <SquareButton
+                                                className="w-full"
+                                                Icon={FiEdit3}
+                                            >
+                                                Edit Post
+                                            </SquareButton>
+                                        </Link>
+                                        <SquareButton
+                                            className="w-full"
+                                            Icon={AiOutlineDelete}
+                                        >
+                                            Delete Post
+                                        </SquareButton>
+                                    </>
+                                )}
+                                {userInfo?.username !==
+                                    postData.author.username && (
+                                    <>
+                                        <SquareButton
+                                            className="w-full"
+                                            Icon={GoBell}
+                                        >
+                                            Follow Post
+                                        </SquareButton>
+
+                                        <SquareButton
+                                            className="w-full"
+                                            Icon={IoEyeOffOutline}
+                                        >
+                                            Hide
+                                        </SquareButton>
+                                        <SquareButton
+                                            className="w-full"
+                                            Icon={IoFlagOutline}
+                                        >
+                                            Report
+                                        </SquareButton>
+                                    </>
+                                )}
                             </div>
                         }
                     >
