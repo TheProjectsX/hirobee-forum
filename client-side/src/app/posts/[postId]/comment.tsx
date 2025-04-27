@@ -15,7 +15,10 @@ import { FiEdit3 } from "react-icons/fi";
 import Swal from "sweetalert2";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { useDeleteCommentMutation } from "@/store/features/comments/commentsApiSlice";
+import {
+    useDeleteCommentMutation,
+    useUpdateCommentMutation,
+} from "@/store/features/comments/commentsApiSlice";
 
 export interface CommentInterface {
     _id: string;
@@ -32,15 +35,20 @@ export interface CommentInterface {
 
 const Comment = ({
     commentData,
+    onUpdate = () => {},
     onDelete = () => {},
 }: {
     commentData: CommentInterface;
-    onDelete: () => void;
+    onUpdate?: () => void;
+    onDelete?: () => void;
 }) => {
     const { data: userInfo } = useFetchUserInfoQuery({});
 
     const [deleteComment, { isLoading: isDeleteCommentLoading }] =
         useDeleteCommentMutation();
+
+    const [updateComment, { isLoading: isUpdateCommentLoading }] =
+        useUpdateCommentMutation();
 
     // Delete Comment
     const handleDeleteComment = async (commentId: string) => {
@@ -64,6 +72,37 @@ const Comment = ({
             onDelete();
         } catch (error: any) {
             toast.error(error?.data?.message ?? "Failed to Delete Comment");
+        }
+    };
+
+    const handleUpdateComment = async (commentId: string, content: string) => {
+        const result = await Swal.fire({
+            input: "textarea",
+            inputLabel: "Edit your Comment",
+            inputPlaceholder: "Enter Comment...",
+            inputAttributes: {
+                style: "font-size: 14px",
+            },
+            inputValue: content,
+            confirmButtonText: "Update",
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            showCancelButton: true,
+        });
+
+        if (result.isDismissed) return;
+
+        try {
+            const data = {
+                body: { content: result.value },
+                commentId,
+            };
+
+            const response = await updateComment(data).unwrap();
+            onUpdate();
+            toast.success("Comment Updated!");
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Failed to Update Comment");
         }
     };
 
@@ -144,6 +183,12 @@ const Comment = ({
                                             <SquareButton
                                                 className="w-full"
                                                 Icon={FiEdit3}
+                                                onClick={(e) =>
+                                                    handleUpdateComment(
+                                                        commentData._id,
+                                                        commentData.content
+                                                    )
+                                                }
                                             >
                                                 Edit Comment
                                             </SquareButton>

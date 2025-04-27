@@ -16,7 +16,7 @@ const commentsApiSlice = baseApiSlice.injectEndpoints({
         }),
         updateComment: builder.mutation({
             query: (data) => ({
-                url: `/comments/${data.postId}`,
+                url: `/comments/${data.commentId}`,
                 method: "PUT",
                 body: data.body,
             }),

@@ -152,6 +152,7 @@ const CommentSection = ({ postId }: { postId: string }) => {
                                 key={idx}
                                 commentData={commentData}
                                 onDelete={refetchComments}
+                                onUpdate={refetchComments}
                             />
                         )
                     )}
