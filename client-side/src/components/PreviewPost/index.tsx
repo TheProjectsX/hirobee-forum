@@ -90,42 +90,32 @@ const PreviewPost = ({
     // Private Route
     const handleUpvote = async () => {
         if (!isUserInfoLoading && isUserInfoError) {
-            return false;
+            return;
         }
 
         try {
-            const action = postData.upvotedBy.includes(userInfo?.username)
-                ? "remove"
-                : "add";
-
-            await updateUpvote({
+            const response = await updateUpvote({
                 postId: postData._id,
-                action: action,
             }).unwrap();
-            return action;
+            return { newCount: response.newCount, action: response.action };
         } catch (error: any) {
             toast.error(error?.data?.message ?? "Failed to Update Vote");
-            return false;
         }
     };
 
     // Private Route
     const handleDownvote = async () => {
         if (!isUserInfoLoading && isUserInfoError) {
-            return false;
+            return;
         }
 
         try {
-            await updateDownvote({
+            const response = await updateDownvote({
                 postId: postData._id,
-                action: postData.downvotedBy.includes(userInfo?.username)
-                    ? "remove"
-                    : "add",
             }).unwrap();
-            return true;
+            return { newCount: response.newCount, action: response.action };
         } catch (error: any) {
             toast.error(error?.data?.message ?? "Failed to Update Vote");
-            return false;
         }
     };
 
@@ -374,30 +364,77 @@ const PreviewPost = ({
             {/* Content Control Buttons */}
             <div className="flex items-center gap-2">
                 <p className="rounded-full text-neutral-700 bg-slate-200 flex items-center cursor-pointer z-[1]">
-                    <Button
-                        className={`!p-1.5 hover:[&_svg]:text-orange-600 ${
-                            postData.upvotedBy.includes(userInfo?.username)
-                                ? "[&_svg]:text-orange-600"
-                                : ""
-                        }`}
-                        onClick={async (e) => {
-                            const target = e.target as HTMLElement;
-                            const action = await handleUpvote();
-                        }}
-                        Icon={TbArrowBigUp}
-                    ></Button>
-                    <span className="text-xs font-semibold">
-                        {postData.upvotedBy.length}
+                    <span className="flex items-center">
+                        <Button
+                            className={`!p-1.5 hover:[&_svg]:text-orange-600 ${
+                                postData.upvotedBy.includes(userInfo?.username)
+                                    ? "[&_svg]:text-orange-600"
+                                    : ""
+                            }`}
+                            Icon={TbArrowBigUp}
+                            onClick={async (e) => {
+                                const target = e.currentTarget as HTMLElement;
+                                const span =
+                                    target.nextElementSibling as HTMLElement;
+                                const status = await handleUpvote();
+                                if (!status) return;
+
+                                if (span) {
+                                    span.innerText = status?.newCount;
+                                }
+
+                                if (status.action === "added") {
+                                    target.classList.add(
+                                        "[&_svg]:text-orange-600"
+                                    );
+                                } else if (status.action === "removed") {
+                                    target.classList.remove(
+                                        "[&_svg]:text-orange-600"
+                                    );
+                                }
+                            }}
+                        ></Button>
+                        <span className="text-xs font-semibold">
+                            {postData.upvotedBy.length}
+                        </span>
                     </span>
-                    <Button
-                        onClick={handleDownvote}
-                        className={`!p-1.5 hover:[&_svg]:text-purple-600 ${
-                            postData.downvotedBy.includes(userInfo?.username)
-                                ? "[&_svg]:text-purple-600"
-                                : ""
-                        }`}
-                        Icon={TbArrowBigDown}
-                    ></Button>
+                    <span className="pr-1.5 mr-1.5 border-r border-neutral-500 h-4"></span>
+                    <span className="flex items-center">
+                        <span className="text-xs font-semibold">
+                            {postData.downvotedBy.length}
+                        </span>
+                        <Button
+                            className={`!p-1.5 hover:[&_svg]:text-purple-600 ${
+                                postData.downvotedBy.includes(
+                                    userInfo?.username
+                                )
+                                    ? "[&_svg]:text-purple-600"
+                                    : ""
+                            }`}
+                            Icon={TbArrowBigDown}
+                            onClick={async (e) => {
+                                const target = e.currentTarget as HTMLElement;
+                                const span =
+                                    target.previousElementSibling as HTMLElement;
+                                const status = await handleDownvote();
+                                if (!status) return;
+
+                                if (span) {
+                                    span.innerText = status?.newCount;
+                                }
+
+                                if (status.action === "added") {
+                                    target.classList.add(
+                                        "[&_svg]:text-purple-600"
+                                    );
+                                } else if (status.action === "removed") {
+                                    target.classList.remove(
+                                        "[&_svg]:text-purple-600"
+                                    );
+                                }
+                            }}
+                        ></Button>
+                    </span>
                 </p>
                 <Button Icon={FaRegComment} className="z-[1]">
                     {postData.commentsCount}

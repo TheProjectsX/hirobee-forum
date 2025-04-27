@@ -49,31 +49,9 @@ const Comment = ({
 
     const [updateComment] = useUpdateCommentMutation();
 
-    // Delete Comment
-    const handleDeleteComment = async (commentId: string) => {
-        const result = await Swal.fire({
-            title: "Are you sure?",
-            text: "Post will be Permanently Deleted!",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!",
-        });
+    // Upvote Comment
 
-        if (result.isDismissed) return;
-
-        try {
-            const response = await deleteComment({
-                commentId,
-            }).unwrap();
-            toast.success("Post Deleted!");
-            onDelete();
-        } catch (error: any) {
-            toast.error(error?.data?.message ?? "Failed to Delete Comment");
-        }
-    };
-
+    // Update Comment (For Author of Comment only)
     const handleUpdateComment = async (commentId: string, content: string) => {
         const result = await Swal.fire({
             input: "textarea",
@@ -102,6 +80,31 @@ const Comment = ({
             toast.success("Comment Updated!");
         } catch (error: any) {
             toast.error(error?.data?.message ?? "Failed to Update Comment");
+        }
+    };
+
+    // Delete Comment (For Author of Comment only)
+    const handleDeleteComment = async (commentId: string) => {
+        const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "Post will be Permanently Deleted!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        });
+
+        if (result.isDismissed) return;
+
+        try {
+            const response = await deleteComment({
+                commentId,
+            }).unwrap();
+            toast.success("Post Deleted!");
+            onDelete();
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Failed to Delete Comment");
         }
     };
 

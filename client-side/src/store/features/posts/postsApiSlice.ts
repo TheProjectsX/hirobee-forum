@@ -9,13 +9,13 @@ const postsApiSlice = baseApiSlice.injectEndpoints({
         }),
         updateUpvote: builder.mutation({
             query: (data) => ({
-                url: `/posts/${data.postId}/upvote/${data.action}`,
+                url: `/posts/${data.postId}/upvote`,
                 method: "PUT",
             }),
         }),
         updateDownvote: builder.mutation({
             query: (data) => ({
-                url: `/posts/${data.postId}/downvote/${data.action}`,
+                url: `/posts/${data.postId}/downvote`,
                 method: "PUT",
             }),
         }),
