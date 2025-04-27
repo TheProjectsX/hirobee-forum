@@ -38,7 +38,7 @@ const Navbar = ({
     // Logout User
     const handleLogoutUser = async () => {
         try {
-            await logoutUser({});
+            await logoutUser({}).unwrap();
             await refetchUserInfo();
             toast.success("Logout Successful!");
         } catch (error: any) {

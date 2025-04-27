@@ -7,7 +7,7 @@ import RoundedButton from "@/components/Buttons/Rounded";
 import Button from "@/components/PreviewPost/Button";
 import {
     useFetchCommentsQuery,
-    useSubmitCommentMutation,
+    useInsertCommentMutation,
 } from "@/store/features/comments/commentsApiSlice";
 import { useFetchUserInfoQuery } from "@/store/features/user/userApiSlice";
 import { toast } from "react-toastify";
@@ -16,7 +16,7 @@ const CommentSection = ({ postId }: { postId: string }) => {
     const { data: UserInfo, isLoading: isUserInfoLoading } =
         useFetchUserInfoQuery({});
     const [submitComment, { isLoading: isSubmitCommentLoading }] =
-        useSubmitCommentMutation();
+        useInsertCommentMutation();
 
     const {
         data: commentsData,
@@ -41,7 +41,7 @@ const CommentSection = ({ postId }: { postId: string }) => {
         };
 
         try {
-            const response = await submitComment(data);
+            const response = await submitComment(data).unwrap();
             refetchComments();
 
             toast.success("Comment Submitted");
@@ -148,7 +148,11 @@ const CommentSection = ({ postId }: { postId: string }) => {
                     commentsData.data.length > 0 &&
                     commentsData.data.map(
                         (commentData: CommentInterface, idx: number) => (
-                            <Comment key={idx} commentData={commentData} />
+                            <Comment
+                                key={idx}
+                                commentData={commentData}
+                                onDelete={refetchComments}
+                            />
                         )
                     )}
             </div>

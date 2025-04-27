@@ -6,6 +6,16 @@ import React from "react";
 import { TbArrowBigDown, TbArrowBigUp } from "react-icons/tb";
 import { FaRegComment } from "react-icons/fa";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import Popover from "@/components/Popover";
+import SquareButton from "@/components/Buttons/Square";
+import { IoFlagOutline } from "react-icons/io5";
+import { useFetchUserInfoQuery } from "@/store/features/user/userApiSlice";
+import { AiOutlineDelete } from "react-icons/ai";
+import { FiEdit3 } from "react-icons/fi";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import { useDeleteCommentMutation } from "@/store/features/comments/commentsApiSlice";
 
 export interface CommentInterface {
     _id: string;
@@ -20,7 +30,43 @@ export interface CommentInterface {
     };
 }
 
-const Comment = ({ commentData }: { commentData: CommentInterface }) => {
+const Comment = ({
+    commentData,
+    onDelete = () => {},
+}: {
+    commentData: CommentInterface;
+    onDelete: () => void;
+}) => {
+    const { data: userInfo } = useFetchUserInfoQuery({});
+
+    const [deleteComment, { isLoading: isDeleteCommentLoading }] =
+        useDeleteCommentMutation();
+
+    // Delete Comment
+    const handleDeleteComment = async (commentId: string) => {
+        const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "Post will be Permanently Deleted!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        });
+
+        if (result.isDismissed) return;
+
+        try {
+            const response = await deleteComment({
+                commentId,
+            }).unwrap();
+            toast.success("Post Deleted!");
+            onDelete();
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Failed to Delete Comment");
+        }
+    };
+
     return (
         <article className="py-3">
             {/* User Info */}
@@ -85,9 +131,57 @@ const Comment = ({ commentData }: { commentData: CommentInterface }) => {
                             </span>
                         </RoundedButton>
 
-                        <RoundedButton className="!px-2">
-                            <HiOutlineDotsHorizontal className="text-neutral-500 text-sm" />
-                        </RoundedButton>
+                        <Popover
+                            position="bottom"
+                            axis="left"
+                            className="text-base rounded-xl overflow-hidden"
+                            indicator={false}
+                            content={
+                                <div className="min-w-36">
+                                    {userInfo?.username ===
+                                        commentData.author.username && (
+                                        <>
+                                            <SquareButton
+                                                className="w-full"
+                                                Icon={FiEdit3}
+                                            >
+                                                Edit Comment
+                                            </SquareButton>
+                                            <SquareButton
+                                                className="w-full"
+                                                Icon={AiOutlineDelete}
+                                                onClick={() =>
+                                                    handleDeleteComment(
+                                                        commentData._id
+                                                    )
+                                                }
+                                                disabled={
+                                                    isDeleteCommentLoading
+                                                }
+                                            >
+                                                Delete Comment
+                                            </SquareButton>
+                                        </>
+                                    )}
+
+                                    {userInfo?.username !==
+                                        commentData.author.username && (
+                                        <>
+                                            <SquareButton
+                                                className="w-full"
+                                                Icon={IoFlagOutline}
+                                            >
+                                                Report
+                                            </SquareButton>
+                                        </>
+                                    )}
+                                </div>
+                            }
+                        >
+                            <RoundedButton className="!px-2">
+                                <HiOutlineDotsHorizontal className="text-neutral-500 text-sm" />
+                            </RoundedButton>
+                        </Popover>
                     </div>
                 </div>
             </summary>

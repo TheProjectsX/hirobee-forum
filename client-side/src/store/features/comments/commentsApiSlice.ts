@@ -7,16 +7,33 @@ const commentsApiSlice = baseApiSlice.injectEndpoints({
                 url: `/posts/${data.postId}/comments`,
             }),
         }),
-        submitComment: builder.mutation({
+        insertComment: builder.mutation({
             query: (data) => ({
                 url: `/posts/${data.postId}/comments`,
                 method: "POST",
                 body: data.body,
             }),
         }),
+        updateComment: builder.mutation({
+            query: (data) => ({
+                url: `/comments/${data.postId}`,
+                method: "PUT",
+                body: data.body,
+            }),
+        }),
+        deleteComment: builder.mutation({
+            query: (data) => ({
+                url: `/comments/${data.commentId}`,
+                method: "DELETE",
+            }),
+        }),
     }),
 });
 
-export const { useFetchCommentsQuery, useSubmitCommentMutation } =
-    commentsApiSlice;
+export const {
+    useFetchCommentsQuery,
+    useInsertCommentMutation,
+    useUpdateCommentMutation,
+    useDeleteCommentMutation,
+} = commentsApiSlice;
 export default commentsApiSlice;

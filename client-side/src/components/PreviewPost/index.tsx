@@ -101,7 +101,7 @@ const PreviewPost = ({
             await updateUpvote({
                 postId: postData._id,
                 action: action,
-            });
+            }).unwrap();
             return action;
         } catch (error: any) {
             toast.error(error?.data?.message ?? "Failed to Update Vote");
@@ -121,7 +121,7 @@ const PreviewPost = ({
                 action: postData.downvotedBy.includes(userInfo?.username)
                     ? "remove"
                     : "add",
-            });
+            }).unwrap();
             return true;
         } catch (error: any) {
             toast.error(error?.data?.message ?? "Failed to Update Vote");
@@ -144,7 +144,7 @@ const PreviewPost = ({
         if (result.isDismissed) return;
 
         try {
-            const response = await deletePost({ postId });
+            const response = await deletePost({ postId }).unwrap();
             router.push("/");
             toast.success("Post Deleted!");
             onDelete();
