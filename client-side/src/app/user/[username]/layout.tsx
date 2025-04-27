@@ -9,66 +9,103 @@ import { IoFlagOutline } from "react-icons/io5";
 import { CiMail } from "react-icons/ci";
 import { LiaUserAltSlashSolid } from "react-icons/lia";
 import { TbShare3 } from "react-icons/tb";
+import { notFound } from "next/navigation";
+import { ShortNumber } from "@lytieuphong/short-number";
 
-// import RoundedButton from "@/components/Buttons/Rounded";
-// import Link from "next/link";
+import Link from "next/link";
 
-const UserLayout = ({ children }: { children: React.ReactNode }) => {
+interface UserDataInterface {
+    _id: string;
+    username: string;
+    displayname: string;
+    profile_picture: string;
+    banner: string | null;
+    status: "active" | "banned";
+    role: "author" | "admin" | "moderator";
+    gender: string | null;
+    bio: string | null;
+    createdAt: number;
+    postsCount: number;
+    commentsCount: number;
+}
+
+const UserLayout = async ({
+    children,
+    params,
+}: {
+    children: React.ReactNode;
+    params: Promise<{ username: string }>;
+}) => {
+    const { username } = await params;
+
+    const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/${username}`
+    );
+    if (response.status !== 200) {
+        return notFound();
+    }
+
+    const userData: UserDataInterface = await response.json();
     return (
         <PageLayout breakpoint="770px">
-            <MainDiv>
+            <MainDiv className="py-3">
                 <div className="flex items-center gap-4 px-6 mb-5">
                     <div className="w-20 h-20 flex items-center justify-center rounded-full p-1 overflow-hidden bg-slate-300">
                         <img
-                            src="https://placehold.co/400"
+                            src={userData.profile_picture}
                             alt="Profile Picture"
                             className="w-full h-full rounded-full"
                         />
                     </div>
 
                     <div>
-                        <h2 className="text-2xl font-medium">SomeHeroIAm!</h2>
+                        <h2 className="text-2xl font-medium">
+                            {userData.displayname}
+                        </h2>
                         <p className="text-neutral-500 font-medium">
-                            u/SomeHeroIAm!
+                            u/{userData.username}
                         </p>
                     </div>
                 </div>
 
                 {/* Navigation */}
-                {/* <div className="flex items-center gap-3 mb-2">
-                    <Link href={`./someId`}>
+                <div className="flex items-center gap-3 pb-2 mx-2 mb-2 border-b border-slate-400 border-dashed">
+                    <Link href={`/user/${username}`}>
                         <RoundedButton>
                             <span className="text-sm font-medium text-neutral-700 px-3">
                                 Posts
                             </span>
                         </RoundedButton>
                     </Link>
-                    <Link href={`./someId/comments`}>
+                    <Link href={`/user/${username}/comments`}>
                         <RoundedButton>
                             <span className="text-sm font-medium text-neutral-700 px-3">
                                 Comments
                             </span>
                         </RoundedButton>
                     </Link>
-                </div> */}
+                </div>
 
                 {children}
             </MainDiv>
+
             <Sidebar>
                 <div className="bg-slate-100/80 rounded-2xl">
                     <div className="w-full max-h-14 min-h-[1px] mb-5">
-                        {/* <img
-                            src="https://placehold.co/600x120"
-                            alt="Banner Image"
-                            className="w-full h-full rounded-t-2xl"
-                        /> */}
+                        {userData.banner && (
+                            <img
+                                src={userData.banner}
+                                alt="Banner Image"
+                                className="w-full h-full rounded-t-2xl"
+                            />
+                        )}
                     </div>
 
-                    <div className="px-3.5 pb-1">
+                    <div className="px-3.5 pb-4">
                         {/* Basic */}
-                        <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center justify-between gap-2 px-2 mb-2">
                             <h3 className="text-base font-semibold">
-                                SomeHeroIAm!
+                                {userData.displayname}
                             </h3>
 
                             <Popover
@@ -112,17 +149,54 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
                             </Popover>
                         </div>
 
+                        {!userData.bio && (
+                            <p className="text-sm italic text-slate-500 px-2">
+                                No Biography Added
+                            </p>
+                        )}
+
+                        {userData.bio && (
+                            <>
+                                <p className="text-sm text-slate-500 px-2">
+                                    {userData.bio}
+                                </p>
+                                <p className="text-right text-sm italic text-neutral-500 px-2">
+                                    - {userData.username}
+                                </p>
+                            </>
+                        )}
+
+                        <div className="pb-2.5 mb-2.5 border-b border-neutral-400"></div>
+
+                        {/* Gender */}
+                        <p className="flex items-center gap-2 px-2">
+                            <span className="text-sm font-medium text-neutral-500">
+                                Gender:
+                            </span>
+                            {userData.gender ? (
+                                <span className="text-sm">
+                                    {userData.gender}
+                                </span>
+                            ) : (
+                                <span className="italic text-sm text-neutral-600">
+                                    Unknown
+                                </span>
+                            )}
+                        </p>
+
+                        <div className="pb-2.5 mb-2.5 border-b border-neutral-400"></div>
+
                         {/* Statistics */}
-                        <div className="flex items-center gap-3 pt-4 justify-around text-sm">
+                        <div className="flex items-center gap-3 justify-around text-sm text-center">
                             <p className="flex flex-col">
                                 <span className="font-semibold text-base">
-                                    44K
+                                    {ShortNumber(userData.postsCount)}
                                 </span>
                                 <span className="text-neutral-500">Posts</span>
                             </p>
                             <p className="flex flex-col">
                                 <span className="font-semibold text-base">
-                                    452K
+                                    {ShortNumber(userData.commentsCount)}
                                 </span>
                                 <span className="text-neutral-500">
                                     Comments
@@ -130,14 +204,19 @@ const UserLayout = ({ children }: { children: React.ReactNode }) => {
                             </p>
                             <p className="flex flex-col">
                                 <span className="font-semibold text-base">
-                                    Mar 12, 2022
+                                    {new Date(
+                                        userData.createdAt
+                                    ).toLocaleDateString("en-US", {
+                                        month: "short",
+                                        day: "2-digit",
+                                        year: "numeric",
+                                    })}
                                 </span>
                                 <span className="text-neutral-500">
                                     Cake Day
                                 </span>
                             </p>
                         </div>
-                        <div className="pb-4 mb-4 border-b border-neutral-400"></div>
                     </div>
                 </div>
                 <Footer />

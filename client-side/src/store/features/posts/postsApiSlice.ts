@@ -5,6 +5,7 @@ const postsApiSlice = baseApiSlice.injectEndpoints({
         fetchPosts: builder.query({
             query: (data) => ({
                 url: "/posts",
+                params: data.params ?? {},
             }),
         }),
         updateUpvote: builder.mutation({

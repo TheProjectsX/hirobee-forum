@@ -160,7 +160,7 @@ const PreviewPost = ({
                             href={
                                 postData.subhiro?.hironame
                                     ? `/h/${postData.subhiro.hironame}`
-                                    : `/h/${postData.author.username}`
+                                    : `/u/${postData.author.username}`
                             }
                             className="flex gap-1.5 items-center z-[1]"
                         >
