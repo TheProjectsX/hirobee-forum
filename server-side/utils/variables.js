@@ -90,3 +90,47 @@ export const commentAggregationPipeline = [
         },
     },
 ];
+
+export const specificUserAggregationPipeline = [
+    {
+        $lookup: {
+            from: "posts",
+            localField: "username",
+            foreignField: "authorId",
+            as: "posts",
+        },
+    },
+    {
+        $addFields: {
+            postsCount: { $size: "$posts" },
+        },
+    },
+    {
+        $lookup: {
+            from: "comments",
+            localField: "username",
+            foreignField: "authorId",
+            as: "comments",
+        },
+    },
+    {
+        $addFields: {
+            commentsCount: { $size: "$comments" },
+        },
+    },
+    {
+        $project: {
+            username: 1,
+            displayname: 1,
+            profile_picture: 1,
+            banner: 1,
+            status: 1,
+            role: 1,
+            gender: 1,
+            bio: 1,
+            createdAt: 1,
+            postsCount: 1,
+            commentsCount: 1,
+        },
+    },
+];

@@ -371,8 +371,7 @@ app.get("/users/:username", async (req, res, next) => {
     try {
         const response = await usersController.get_specific(
             username,
-            db.collection("users"),
-            db.collection("posts")
+            db.collection("users")
         );
 
         res.status(response.status_code).json(response);
@@ -384,11 +383,31 @@ app.get("/users/:username", async (req, res, next) => {
 // Get User's Posts
 app.get("/users/:username/posts", async (req, res, next) => {
     const username = req.params.username;
+    const query = req.query;
 
     try {
-        const response = usersController.fetch_posts(
+        const response = await usersController.fetch_posts(
             username,
+            query,
             db.collection("posts")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Get User's Comments
+app.get("/users/:username/comments", async (req, res, next) => {
+    const username = req.params.username;
+    const query = req.query;
+
+    try {
+        const response = await usersController.fetch_comments(
+            username,
+            query,
+            db.collection("comments")
         );
 
         res.status(response.status_code).json(response);

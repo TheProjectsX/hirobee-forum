@@ -162,13 +162,13 @@ const update_vote = async (user, postId, target, collection) => {
             doc["$pull"] = {
                 downvotedBy: user.username,
             };
-            returnResponse["newCount"] = targetPost.upvotedBy.length - 1;
+            returnResponse["newCount"] = targetPost.downvotedBy.length - 1;
             returnResponse["action"] = "removed";
         } else {
             doc["$addToSet"] = {
                 downvotedBy: user.username,
             };
-            returnResponse["newCount"] = targetPost.upvotedBy.length + 1;
+            returnResponse["newCount"] = targetPost.downvotedBy.length + 1;
             returnResponse["action"] = "added";
         }
     }
