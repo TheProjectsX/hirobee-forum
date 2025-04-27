@@ -16,16 +16,17 @@ import { TbMoodEdit } from "react-icons/tb";
 import { MdLogout } from "react-icons/md";
 import { GoGear, GoMegaphone } from "react-icons/go";
 import { GrUserAdmin } from "react-icons/gr";
-import Auth from "../Auth";
 import { useFetchUserInfoQuery } from "@/store/features/user/userApiSlice";
 import { useLogoutMutation } from "@/store/features/auth/authApiSlice";
 import { toast } from "react-toastify";
-
-const Navbar = ({
+import { useDispatch, useSelector } from "react-redux";
+import {
+    setAuthModalType,
     setDrawerOpened,
-}: {
-    setDrawerOpened: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+    SiteConfigState,
+} from "@/store/features/config/configSlice";
+
+const Navbar = () => {
     const {
         data: userInfo,
         refetch: refetchUserInfo,
@@ -33,8 +34,14 @@ const Navbar = ({
         isSuccess,
         isError,
     } = useFetchUserInfoQuery({});
+
     const [logoutUser] = useLogoutMutation();
 
+    const siteConfig: SiteConfigState = useSelector(
+        (state: any) => state.site_config
+    );
+
+    const dispatch = useDispatch();
     // Logout User
     const handleLogoutUser = async () => {
         try {
@@ -55,7 +62,7 @@ const Navbar = ({
                 <RoundedButton
                     className="lg:hidden"
                     onClick={(e) => {
-                        setDrawerOpened((prev) => !prev);
+                        dispatch(setDrawerOpened(!siteConfig.drawerOpened));
                     }}
                 >
                     <RiMenuLine className="text-2xl" />
@@ -98,7 +105,16 @@ const Navbar = ({
             {/* Extra */}
             <div className="flex items-center gap-0.5">
                 {/* Auth (Login / Register) */}
-                {!isLoading && (!userInfo || isError) && <Auth />}
+                {!isLoading && (!userInfo || isError) && (
+                    <RoundedButton
+                        className="!bg-blue-600 hover:!bg-blue-500"
+                        onClick={() => dispatch(setAuthModalType("login"))}
+                    >
+                        <span className="px-2 text-sm text-white font-semibold">
+                            Login
+                        </span>
+                    </RoundedButton>
+                )}
 
                 {/* User Profile */}
                 {isSuccess && (

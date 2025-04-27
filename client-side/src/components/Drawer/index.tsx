@@ -11,12 +11,14 @@ const Drawer = ({
     children,
     drawerContent,
     drawerOpened,
-    setDrawerOpened,
+    onDrawerOpened,
+    onDrawerClosed,
 }: {
     children: React.ReactNode;
     drawerContent: React.ReactNode;
     drawerOpened: boolean;
-    setDrawerOpened: React.Dispatch<React.SetStateAction<boolean>>;
+    onDrawerOpened: () => void;
+    onDrawerClosed: () => void;
 }) => {
     return (
         <div
@@ -50,7 +52,9 @@ const Drawer = ({
                 {/* Controller */}
                 <RoundedButton
                     className={`!absolute top-5 -right-4 bg-white border border-neutral-400 !px-1.5 !py-1.5 hidden lg:block`}
-                    onClick={(e) => setDrawerOpened((prev) => !prev)}
+                    onClick={() =>
+                        drawerOpened ? onDrawerClosed() : onDrawerOpened()
+                    }
                 >
                     {drawerOpened ? (
                         <MdKeyboardDoubleArrowLeft className="text-lg" />
@@ -70,10 +74,10 @@ const Drawer = ({
 
                 {/* Black cover for Drawer */}
                 <div
-                    className={`absolute inset-0 bg-black/15 ${
+                    className={`absolute inset-0 bg-black/15 z-10 ${
                         drawerOpened ? "lg:hidden" : "hidden"
                     }`}
-                    onClick={() => setDrawerOpened(false)}
+                    onClick={() => onDrawerClosed()}
                     onScroll={(e) => e.preventDefault()}
                 ></div>
             </div>

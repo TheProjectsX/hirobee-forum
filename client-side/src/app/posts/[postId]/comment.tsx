@@ -47,8 +47,7 @@ const Comment = ({
     const [deleteComment, { isLoading: isDeleteCommentLoading }] =
         useDeleteCommentMutation();
 
-    const [updateComment, { isLoading: isUpdateCommentLoading }] =
-        useUpdateCommentMutation();
+    const [updateComment] = useUpdateCommentMutation();
 
     // Delete Comment
     const handleDeleteComment = async (commentId: string) => {
@@ -223,7 +222,13 @@ const Comment = ({
                                 </div>
                             }
                         >
-                            <RoundedButton className="!px-2">
+                            <RoundedButton
+                                className={`!px-2 ${
+                                    isDeleteCommentLoading
+                                        ? "pointer-events-none"
+                                        : ""
+                                }`}
+                            >
                                 <HiOutlineDotsHorizontal className="text-neutral-500 text-sm" />
                             </RoundedButton>
                         </Popover>

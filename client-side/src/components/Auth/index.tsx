@@ -1,7 +1,7 @@
 "use client";
 
 import { Modal, ModalBody, ModalHeader, Spinner } from "flowbite-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import RoundedButton from "../Buttons/Rounded";
 import Link from "next/link";
 import { toast } from "react-toastify";
@@ -10,10 +10,21 @@ import {
     useRegisterMutation,
 } from "@/store/features/auth/authApiSlice";
 import { useFetchUserInfoQuery } from "@/store/features/user/userApiSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    setAuthModalType,
+    SiteConfigState,
+} from "@/store/features/config/configSlice";
 
 const Auth = () => {
-    // Mutations
+    // Open State
+    const siteConfig: SiteConfigState = useSelector(
+        (state: any) => state.site_config
+    );
 
+    const dispatch = useDispatch();
+
+    // Mutations
     const [
         registerUser,
         { isLoading: isRegisterLoading, isSuccess: isRegisterSuccess },
@@ -26,10 +37,6 @@ const Auth = () => {
 
     const { refetch: fetchUserInfo, isSuccess: isFetchUserInfoSuccess } =
         useFetchUserInfoQuery({});
-
-    const [modalType, setModalType] = useState<
-        "close" | "login" | "register" | "registration_complete"
-    >("close");
 
     const [authValues, setAuthValues] = useState<{
         email: string;
@@ -66,7 +73,7 @@ const Auth = () => {
         try {
             const registerResponse = await registerUser(credentials).unwrap();
             toast.success("Registration SuccessFul!");
-            setModalType("close");
+            dispatch(setAuthModalType("close"));
 
             const userInfoResponse = await fetchUserInfo().unwrap();
             // Do other stuffs
@@ -99,7 +106,7 @@ const Auth = () => {
         try {
             const loginResponse = await loginUser(credentials).unwrap();
             toast.success("Login SuccessFul!");
-            setModalType("close");
+            dispatch(setAuthModalType("close"));
 
             const userInfoResponse = await fetchUserInfo().unwrap();
             // Do other stuffs
@@ -110,24 +117,16 @@ const Auth = () => {
 
     return (
         <>
-            <RoundedButton
-                className="!bg-blue-600 hover:!bg-blue-500"
-                onClick={() => setModalType("login")}
-            >
-                <span className="px-2 text-sm text-white font-semibold">
-                    Login
-                </span>
-            </RoundedButton>
             <Modal
-                show={modalType !== "close"}
-                onClose={() => setModalType("close")}
+                show={siteConfig.authModalType !== "close"}
+                onClose={() => dispatch(setAuthModalType("close"))}
                 size="lg"
                 popup
                 dismissible
             >
                 <ModalHeader className="!pb-0" />
                 <ModalBody>
-                    {modalType === "login" && (
+                    {siteConfig.authModalType === "login" && (
                         <div className="px-4 sm:max-w-96 mx-auto">
                             <h3 className="text-2xl font-semibold text-center mb-2 underline underline-offset-4">
                                 Log In
@@ -188,7 +187,9 @@ const Auth = () => {
                                         type="button"
                                         className="text-blue-600 hover:underline underline-offset-4 px-1"
                                         onClick={(e) =>
-                                            setModalType("register")
+                                            dispatch(
+                                                setAuthModalType("register")
+                                            )
                                         }
                                     >
                                         Join ASAP!
@@ -231,7 +232,7 @@ const Auth = () => {
                         </div>
                     )}
 
-                    {modalType === "register" && (
+                    {siteConfig.authModalType === "register" && (
                         <div className="px-4 sm:max-w-96 mx-auto">
                             <h3 className="text-2xl font-semibold text-center mb-2 underline underline-offset-4">
                                 Register
@@ -302,7 +303,9 @@ const Auth = () => {
                                     <button
                                         type="button"
                                         className="text-blue-600 hover:underline underline-offset-4 px-2"
-                                        onClick={(e) => setModalType("login")}
+                                        onClick={(e) =>
+                                            dispatch(setAuthModalType("login"))
+                                        }
                                     >
                                         Welcome Back!
                                     </button>

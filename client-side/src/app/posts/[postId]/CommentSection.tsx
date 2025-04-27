@@ -11,8 +11,12 @@ import {
 } from "@/store/features/comments/commentsApiSlice";
 import { useFetchUserInfoQuery } from "@/store/features/user/userApiSlice";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { setAuthModalType } from "@/store/features/config/configSlice";
 
 const CommentSection = ({ postId }: { postId: string }) => {
+    const dispatch = useDispatch();
+
     const { data: UserInfo, isLoading: isUserInfoLoading } =
         useFetchUserInfoQuery({});
     const [submitComment, { isLoading: isSubmitCommentLoading }] =
@@ -61,7 +65,7 @@ const CommentSection = ({ postId }: { postId: string }) => {
                         className="block w-full outline-none border border-neutral-400 rounded-full px-4 py-2.5 text-slate-500 text-left text-sm cursor-text"
                         onClick={(e) => {
                             if (!UserInfo && !isUserInfoLoading) {
-                                return toast.info("You Must Login First!");
+                                return dispatch(setAuthModalType("login"));
                             }
 
                             setCommentBoxStatus((prev) => ({
