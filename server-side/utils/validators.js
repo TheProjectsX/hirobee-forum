@@ -63,7 +63,7 @@ export const postCreateValidator = (body) => {
 
 export const postUpdateFilter = (body) => {
     if (!body) return {};
-    const approved_keys = ["title", "body", "subhiro"];
+    const approved_keys = ["title", "content", "subhiro"];
 
     const filteredBody = approved_keys.reduce((acc, key) => {
         if (key in body) acc[key] = body[key];

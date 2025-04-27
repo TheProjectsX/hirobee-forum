@@ -79,7 +79,7 @@ const fetch_posts = async (user, filters, collection) => {
             ...postAggregationPipeline,
             { $sort: sort },
             { $skip: skip },
-            { $limit: limit },
+            { $limit: Number(limit) },
         ])
         .toArray();
 
@@ -238,6 +238,7 @@ const update_post = async (user, postId, body, collection) => {
     return {
         success: true,
         message: "Post Updated",
+        id: postId,
         status_code: StatusCodes.OK,
     };
 };

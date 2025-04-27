@@ -38,7 +38,7 @@ const fetch_posts = async (filters, collection) => {
             ...postAggregationPipeline,
             { $sort: sort },
             { $skip: skip },
-            { $limit: limit },
+            { $limit: Number(limit) },
         ])
         .toArray();
 
@@ -109,7 +109,7 @@ const fetch_single_post = async (postId, collection) => {
     };
 };
 
-const update_vote = async (user, postId, meta, collection) => {
+const update_vote = async (user, postId, target, collection) => {
     let postOid;
 
     try {
@@ -125,15 +125,11 @@ const update_vote = async (user, postId, meta, collection) => {
         };
     }
 
-    const doc = {};
-
-    doc[meta.action === "add" ? "$addToSet" : "$pull"] = {
-        [meta.target === "upvote" ? "upvotedBy" : "downvotedBy"]: user.username,
-    };
-
-    const response = await collection.updateOne({ _id: postOid }, doc);
-
-    if (response.matchedCount === 0) {
+    const targetPost = await collection.findOne(
+        { _id: postOid },
+        { projection: { upvotedBy: 1, downvotedBy: 1 } }
+    );
+    if (!targetPost) {
         return {
             success: false,
             message: "Post not Found!",
@@ -142,17 +138,55 @@ const update_vote = async (user, postId, meta, collection) => {
             },
             status_code: StatusCodes.NOT_FOUND,
         };
-    } else if (response.modifiedCount === 0) {
+    }
+
+    const doc = {};
+    const returnResponse = {};
+
+    if (target === "upvote") {
+        if (targetPost.upvotedBy.includes(user.username)) {
+            doc["$pull"] = {
+                upvotedBy: user.username,
+            };
+            returnResponse["newCount"] = targetPost.upvotedBy.length - 1;
+            returnResponse["action"] = "removed";
+        } else {
+            doc["$addToSet"] = {
+                upvotedBy: user.username,
+            };
+            returnResponse["newCount"] = targetPost.upvotedBy.length + 1;
+            returnResponse["action"] = "added";
+        }
+    } else if (target === "downvote") {
+        if (targetPost.downvotedBy.includes(user.username)) {
+            doc["$pull"] = {
+                downvotedBy: user.username,
+            };
+            returnResponse["newCount"] = targetPost.upvotedBy.length - 1;
+            returnResponse["action"] = "removed";
+        } else {
+            doc["$addToSet"] = {
+                downvotedBy: user.username,
+            };
+            returnResponse["newCount"] = targetPost.upvotedBy.length + 1;
+            returnResponse["action"] = "added";
+        }
+    }
+
+    const response = await collection.updateOne({ _id: postOid }, doc);
+
+    if (response.modifiedCount === 0) {
         return {
             success: false,
-            message: "Already performed this action",
-            status_code: StatusCodes.NOT_FOUND,
+            message: "Failed to Update Vote",
+            status_code: StatusCodes.INTERNAL_SERVER_ERROR,
         };
     }
     return {
         success: true,
-        message: `Vote ${meta.action === "add" ? "Added" : "Removed"}`,
+        message: `Vote ${returnResponse.action}`,
         status_code: StatusCodes.OK,
+        ...returnResponse,
     };
 };
 
@@ -164,10 +198,10 @@ const fetch_comments = async (postId, filters, collection) => {
     const response = await collection
 
         .aggregate([
-            { $match: { postId } },
+            { $match: { postId: new ObjectId(String(postId)) } },
             ...commentAggregationPipeline,
             { $skip: skip },
-            { $limit: limit },
+            { $limit: Number(limit) },
         ])
         .toArray();
 

@@ -96,7 +96,7 @@ const update_vote = async (user, commentId, meta, collection) => {
     } catch (error) {
         return {
             success: false,
-            message: "Post not Found!",
+            message: "Comment not Found!",
             query: {
                 id: commentId,
             },
@@ -143,7 +143,7 @@ const delete_comment = async (user, commentId, collection) => {
     } catch (error) {
         return {
             success: false,
-            message: "Post not Found!",
+            message: "Comment not Found!",
             query: {
                 id: commentId,
             },

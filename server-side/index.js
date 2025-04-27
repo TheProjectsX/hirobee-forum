@@ -450,34 +450,27 @@ app.get("/posts/:id/comments", async (req, res, next) => {
 
 /* Private Post Routes */
 // Update Votes
-app.put(
-    "/posts/:id/:target/:action",
-    checkAuthentication,
-    async (req, res, next) => {
-        const user = req.user;
-        const { id: postId, target, action } = req.params;
+app.put("/posts/:id/:target", checkAuthentication, async (req, res, next) => {
+    const user = req.user;
+    const { id: postId, target } = req.params;
 
-        if (
-            !["upvote", "downvote"].includes(target) ||
-            !["add", "remove"].includes(action)
-        ) {
-            return res.sendStatus(404);
-        }
-
-        try {
-            const response = await postsController.update_vote(
-                user,
-                postId,
-                { target, action },
-                db.collection("posts")
-            );
-
-            res.status(response.status_code).json(response);
-        } catch (error) {
-            next(error);
-        }
+    if (!["upvote", "downvote"].includes(target)) {
+        return res.sendStatus(404);
     }
-);
+
+    try {
+        const response = await postsController.update_vote(
+            user,
+            postId,
+            target,
+            db.collection("posts")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
 
 /* Private Comment Routes */
 
@@ -491,6 +484,26 @@ app.post("/posts/:id/comments", checkAuthentication, async (req, res, next) => {
         const response = await commentsController.insert_comment(
             user,
             postId,
+            body,
+            db.collection("comments")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Update Comment
+app.put("/comments/:id", checkAuthentication, async (req, res, next) => {
+    const user = req.user;
+    const commentId = req.params.id;
+    const body = req.body;
+
+    try {
+        const response = await commentsController.update_comment(
+            user,
+            commentId,
             body,
             db.collection("comments")
         );
@@ -521,16 +534,13 @@ app.delete("/comments/:id", checkAuthentication, async (req, res, next) => {
 
 // Update Votes
 app.put(
-    "/comments/:id/:target/:action",
+    "/comments/:id/:target/",
     checkAuthentication,
     async (req, res, next) => {
         const user = req.user;
-        const { id: commentId, target, action } = req.params;
+        const { id: commentId, target } = req.params;
 
-        if (
-            !["upvote", "downvote"].includes(target) ||
-            !["add", "remove"].includes(action)
-        ) {
+        if (!["upvote", "downvote"].includes(target)) {
             return res.sendStatus(404);
         }
 
@@ -538,7 +548,7 @@ app.put(
             const response = await commentsController.update_vote(
                 user,
                 commentId,
-                { target, action },
+                { target },
                 db.collection("comments")
             );
 

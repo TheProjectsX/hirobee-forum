@@ -1,0 +1,2 @@
+-   When Upvoted, remove Downvote if user did and vice versa
+-   Consider checking if the user upvoted or not in the backend
