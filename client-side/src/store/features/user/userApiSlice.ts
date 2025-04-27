@@ -26,6 +26,12 @@ const userApiSlice = baseApiSlice.injectEndpoints({
                 body: data.body,
             }),
         }),
+        deletePost: builder.mutation({
+            query: (data) => ({
+                url: `/me/posts/${data.postId}`,
+                method: "DELETE",
+            }),
+        }),
     }),
 });
 
@@ -35,5 +41,6 @@ export const {
     useFetchSinglePostQuery,
     useInsertPostMutation,
     useUpdatePostMutation,
+    useDeletePostMutation,
 } = userApiSlice;
 export default userApiSlice;

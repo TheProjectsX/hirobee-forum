@@ -9,7 +9,12 @@ import SidebarPost from "@/components/PreviewPost/SidebarPost";
 import { useFetchPostsQuery } from "@/store/features/posts/postsApiSlice";
 
 export default function Home() {
-    const { data: postsData, isLoading, isSuccess } = useFetchPostsQuery({});
+    const {
+        data: postsData,
+        refetch,
+        isLoading,
+        isSuccess,
+    } = useFetchPostsQuery({});
 
     return (
         <PageLayout>
@@ -28,6 +33,7 @@ export default function Home() {
                                 <div className="pb-1 mb-1 border-b border-neutral-300"></div>
                                 <PreviewPost
                                     postData={postData as PostInterface}
+                                    onDelete={refetch}
                                 />
                             </React.Fragment>
                         ))}

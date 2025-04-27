@@ -26,13 +26,20 @@ import Button from "./Button";
 import { MdArrowBack } from "react-icons/md";
 import Clipboard from "../Clipboard";
 import { toast } from "react-toastify";
-import { useFetchUserInfoQuery } from "@/store/features/user/userApiSlice";
+import Swal from "sweetalert2";
+
 import {
+    useDeletePostMutation,
+    useFetchUserInfoQuery,
+} from "@/store/features/user/userApiSlice";
+import {
+    useFetchPostsQuery,
     useUpdateDownvoteMutation,
     useUpdateUpvoteMutation,
 } from "@/store/features/posts/postsApiSlice";
 import { FiEdit3 } from "react-icons/fi";
 import { AiOutlineDelete } from "react-icons/ai";
+import { useRouter } from "next/navigation";
 
 export interface PostInterface {
     _id: string;
@@ -58,10 +65,12 @@ const PreviewPost = ({
     fullPreview = false,
     className = "",
     postData,
+    onDelete = () => {},
 }: {
     fullPreview?: boolean;
     postData: PostInterface;
     className?: string;
+    onDelete?: () => void;
 }) => {
     const {
         data: userInfo,
@@ -69,9 +78,16 @@ const PreviewPost = ({
         isError: isUserInfoError,
         isSuccess: isUserInfoSuccess,
     } = useFetchUserInfoQuery({});
+
     const [updateUpvote] = useUpdateUpvoteMutation();
     const [updateDownvote] = useUpdateDownvoteMutation();
 
+    const [deletePost, { isLoading: isDeletePostLoading }] =
+        useDeletePostMutation();
+
+    const router = useRouter();
+
+    // Private Route
     const handleUpvote = async () => {
         if (!isUserInfoLoading && isUserInfoError) {
             return false;
@@ -93,6 +109,7 @@ const PreviewPost = ({
         }
     };
 
+    // Private Route
     const handleDownvote = async () => {
         if (!isUserInfoLoading && isUserInfoError) {
             return false;
@@ -112,6 +129,30 @@ const PreviewPost = ({
         }
     };
 
+    // Private Route (Only for Author)
+    const handleDeletePost = async (postId: string) => {
+        const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "Post will be Permanently Deleted!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        });
+
+        if (result.isDismissed) return;
+
+        try {
+            const response = await deletePost({ postId });
+            router.push("/");
+            toast.success("Post Deleted!");
+            onDelete();
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Failed to Delete Post");
+        }
+    };
+
     return (
         <article
             className={`py-1.5 rounded-2xl relative ${
@@ -124,7 +165,7 @@ const PreviewPost = ({
                 }`}
             >
                 {!fullPreview && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5">
                         <Link
                             href={
                                 postData.subhiro?.hironame
@@ -145,7 +186,7 @@ const PreviewPost = ({
                                     loading="lazy"
                                 />
                             </span>
-                            <span className="hover:text-blue-800 font-medium">
+                            <span className="hover:text-blue-800 font-medium text-sm">
                                 {postData.subhiro?.hironame
                                     ? `h/${postData.subhiro.hironame}`
                                     : `u/${postData.author.username}`}
@@ -200,7 +241,7 @@ const PreviewPost = ({
                                             : `/u/${postData.author.username}`
                                     }
                                 >
-                                    <span className="hover:text-blue-800 font-medium">
+                                    <span className="hover:text-blue-800 font-medium text-sm">
                                         {postData.subhiro?.hironame
                                             ? `h/${postData.subhiro.hironame}`
                                             : `u/${postData.author.username}`}
@@ -260,6 +301,10 @@ const PreviewPost = ({
                                         <SquareButton
                                             className="w-full"
                                             Icon={AiOutlineDelete}
+                                            onClick={() =>
+                                                handleDeletePost(postData._id)
+                                            }
+                                            disabled={isDeletePostLoading}
                                         >
                                             Delete Post
                                         </SquareButton>
