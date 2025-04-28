@@ -30,7 +30,7 @@ export default function Home() {
                     <div>
                         {postsData.data?.map((postData: {}, idx: number) => (
                             <React.Fragment key={idx}>
-                                <div className="pb-1 mb-1 border-b border-neutral-300"></div>
+                                <div className="pb-1.5 mb-1.5 border-b border-neutral-300"></div>
                                 <PreviewPost
                                     postData={postData as PostInterface}
                                     onDelete={refetch}

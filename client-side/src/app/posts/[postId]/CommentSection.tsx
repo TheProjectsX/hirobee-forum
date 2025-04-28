@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Comment, { CommentInterface } from "./comment";
 
 import RoundedButton from "@/components/Buttons/Rounded";
 import Button from "@/components/PreviewPost/Button";
@@ -13,6 +12,7 @@ import { useFetchUserInfoQuery } from "@/store/features/user/userApiSlice";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { setAuthModalType } from "@/store/features/config/configSlice";
+import PreviewComment, { CommentInterface } from "@/components/PreviewComment";
 
 const CommentSection = ({ postId }: { postId: string }) => {
     const dispatch = useDispatch();
@@ -152,7 +152,7 @@ const CommentSection = ({ postId }: { postId: string }) => {
                     commentsData.data.length > 0 &&
                     commentsData.data.map(
                         (commentData: CommentInterface, idx: number) => (
-                            <Comment
+                            <PreviewComment
                                 key={idx}
                                 commentData={commentData}
                                 onDelete={refetchComments}

@@ -1,8 +1,8 @@
 "use client";
 
 import React, { use } from "react";
-import Comment, { CommentInterface } from "@/app/posts/[postId]/comment";
 import { useFetchSpecificUserCommentsQuery } from "@/store/features/users/usersApiSlice";
+import PreviewComment, { CommentInterface } from "@/components/PreviewComment";
 
 const Comments = ({ params }: { params: Promise<{ username: string }> }) => {
     const { username } = use(params);
@@ -20,7 +20,14 @@ const Comments = ({ params }: { params: Promise<{ username: string }> }) => {
                 commentsData.data.length > 0 &&
                 commentsData.data.map(
                     (commentData: CommentInterface, idx: number) => (
-                        <Comment key={idx} commentData={commentData} />
+                        <React.Fragment key={idx}>
+                            <PreviewComment
+                                className=""
+                                key={idx}
+                                commentData={commentData}
+                            />
+                            <div className="pb-1.5 mb-1.5 border-b border-neutral-300"></div>
+                        </React.Fragment>
                     )
                 )}
         </div>

@@ -33,7 +33,6 @@ import {
     useFetchUserInfoQuery,
 } from "@/store/features/user/userApiSlice";
 import {
-    useFetchPostsQuery,
     useUpdateDownvoteMutation,
     useUpdateUpvoteMutation,
 } from "@/store/features/posts/postsApiSlice";

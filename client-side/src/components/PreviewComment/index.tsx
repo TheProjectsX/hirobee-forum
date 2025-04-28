@@ -13,7 +13,6 @@ import { useFetchUserInfoQuery } from "@/store/features/user/userApiSlice";
 import { AiOutlineDelete } from "react-icons/ai";
 import { FiEdit3 } from "react-icons/fi";
 import Swal from "sweetalert2";
-import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import {
     useDeleteCommentMutation,
@@ -23,6 +22,8 @@ import {
 export interface CommentInterface {
     _id: string;
     content: string;
+    postId: string | undefined;
+    postTitle: string | undefined;
     upvotedBy: Array<string>;
     downvotedBy: Array<string>;
     createdAt: number;
@@ -33,12 +34,14 @@ export interface CommentInterface {
     };
 }
 
-const Comment = ({
+const PreviewComment = ({
     commentData,
+    className = "",
     onUpdate = () => {},
     onDelete = () => {},
 }: {
     commentData: CommentInterface;
+    className?: string;
     onUpdate?: () => void;
     onDelete?: () => void;
 }) => {
@@ -109,12 +112,18 @@ const Comment = ({
     };
 
     return (
-        <article className="py-3">
+        <article
+            className={`rounded-2xl relative p-3 ${
+                commentData.postId && commentData.postTitle
+                    ? "hover:bg-slate-100 px-3"
+                    : ""
+            } ${className ?? ""}`}
+        >
             {/* User Info */}
-            <div className="flex items-center text-xs mb-1.5">
+            <div className="flex items-center text-xs">
                 <Link
                     href={`/u/${commentData.author.username}`}
-                    className="mr-2"
+                    className="mr-2 z-[1]"
                 >
                     <figure className="w-8 h-8 rounded-full overflow-hidden">
                         <img
@@ -126,20 +135,36 @@ const Comment = ({
                     </figure>
                 </Link>
 
-                <Link href={`/u/${commentData.author.username}`}>
+                <Link
+                    href={`/u/${commentData.author.username}`}
+                    className="z-[1]"
+                >
                     <span className="font-semibold underline-offset-4 hover:underline">
                         u/{commentData.author.username}
                     </span>
                 </Link>
-                <span className="text-neutral-500 mx-2">•</span>
+                <span className="text-neutral-400 mx-1.5">•</span>
                 <span
-                    className="text-neutral-500"
+                    className="text-neutral-500 shrink-0"
                     title={new Date(commentData.createdAt).toString()}
                 >
                     {formatDistanceToNow(new Date(commentData.createdAt), {
                         addSuffix: true,
                     })}
                 </span>
+                {commentData.postId && commentData.postTitle && (
+                    <>
+                        <span className="text-neutral-400 mx-1.5">•</span>
+                        <Link
+                            href={`/posts/${commentData.postId}`}
+                            className="z-[1]"
+                        >
+                            <span className="hover:text-blue-800 line-clamp-1 w-fit">
+                                {commentData.postTitle}
+                            </span>
+                        </Link>
+                    </>
+                )}
             </div>
 
             {/* Content */}
@@ -154,20 +179,20 @@ const Comment = ({
 
                     <div className="flex items-center text-xs">
                         <p className="flex items-center">
-                            <RoundedButton className="!p-2 hover:text-orange-600">
+                            <RoundedButton className="!p-2 hover:text-orange-600 z-[1]">
                                 <TbArrowBigUp className="text-base" />
                             </RoundedButton>
                             <span className="font-semibold text-neutral-500">
                                 {commentData.upvotedBy.length}
                             </span>
-                            <RoundedButton className="!p-2 hover:text-purple-600">
+                            <RoundedButton className="!p-2 hover:text-purple-600 z-[1]">
                                 <TbArrowBigDown className="text-base" />
                             </RoundedButton>
                         </p>
 
                         <RoundedButton className="!px-3">
                             <FaRegComment className="text-base" />
-                            <span className="font-semibold text-neutral-500 pl-2">
+                            <span className="font-semibold text-neutral-500 pl-2 z-[1]">
                                 Reply
                             </span>
                         </RoundedButton>
@@ -232,14 +257,22 @@ const Comment = ({
                                         : ""
                                 }`}
                             >
-                                <HiOutlineDotsHorizontal className="text-neutral-500 text-sm" />
+                                <HiOutlineDotsHorizontal className="text-neutral-500 text-sm z-[1]" />
                             </RoundedButton>
                         </Popover>
                     </div>
                 </div>
             </summary>
+
+            {/* The Link to the Post. Active only in User Profile preview */}
+            {commentData.postId && commentData.postTitle && (
+                <Link
+                    href={`/posts/${commentData.postId}`}
+                    className="absolute inset-0"
+                ></Link>
+            )}
         </article>
     );
 };
 
-export default Comment;
+export default PreviewComment;
