@@ -33,8 +33,8 @@ import {
     useFetchUserInfoQuery,
 } from "@/store/features/user/userApiSlice";
 import {
-    useUpdateDownvoteMutation,
-    useUpdateUpvoteMutation,
+    useUpdatePostDownvoteMutation,
+    useUpdatePostUpvoteMutation,
 } from "@/store/features/posts/postsApiSlice";
 import { FiEdit3 } from "react-icons/fi";
 import { AiOutlineDelete } from "react-icons/ai";
@@ -78,8 +78,8 @@ const PreviewPost = ({
         isSuccess: isUserInfoSuccess,
     } = useFetchUserInfoQuery({});
 
-    const [updateUpvote] = useUpdateUpvoteMutation();
-    const [updateDownvote] = useUpdateDownvoteMutation();
+    const [updateUpvote] = useUpdatePostUpvoteMutation();
+    const [updateDownvote] = useUpdatePostDownvoteMutation();
 
     const [deletePost, { isLoading: isDeletePostLoading }] =
         useDeletePostMutation();

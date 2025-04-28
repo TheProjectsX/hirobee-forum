@@ -12,9 +12,15 @@ Done
 
 ### Fix all the Loadings
 
+Done
+
 ### Make 404 Page
 
+Done
+
 ### Add Pagination
+
+#### Create Infinite Scroll
 
 ### Update Sidebar Contents
 

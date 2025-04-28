@@ -19,3 +19,20 @@
 
 /* Enable manual Dark Mode */
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Global scrollbar customization */
+::-webkit-scrollbar {
+    width: 6px; /* Width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent; /* Track color */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #6b7280; /* Thumb color */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #515764; /* Thumb color when hovered */
+}

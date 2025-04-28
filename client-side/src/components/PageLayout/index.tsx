@@ -19,7 +19,7 @@ const PageLayout = ({
     return (
         <div
             data-name="Page Layout Parent"
-            className={`flex gap-6 w-full h-full max-width mx-auto px-3 pt-3 ${
+            className={`relative flex gap-6 w-full h-full max-width mx-auto px-3 pt-3 ${
                 wrap
                     ? global__breakpoint === "770px"
                         ? "max-[770px]:flex-col"
@@ -58,7 +58,7 @@ export const Sidebar = ({
 }) => {
     return (
         <aside
-            className={`max-h-full overflow-y-auto scrollbar-track-transparent scrollbar-thumb-transparent scrollbar-thin hover:scrollbar-thumb-neutral-500/50 shrink-0 w-[320px]
+            className={`max-h-full overflow-y-auto scrollbar-track-transparent scrollbar-thumb-transparent scrollbar-thin hover:scrollbar-thumb-neutral-500/50 shrink-0 w-[320px] sticky top-0 self-start
             ${
                 global__breakpoint === "770px"
                     ? "min-[770px]:block"

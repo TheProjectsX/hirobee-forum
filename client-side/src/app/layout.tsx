@@ -9,7 +9,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body className="h-screen flex flex-col overflow-hidden light">
+            <body className="flex flex-col light">
                 <ApplicationWrapper>{children}</ApplicationWrapper>
             </body>
         </html>

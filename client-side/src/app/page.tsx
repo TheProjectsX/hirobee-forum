@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import Footer from "@/components/Footer";
 import PageLayout, { MainDiv, Sidebar } from "@/components/PageLayout";
@@ -10,19 +10,18 @@ import { useFetchPostsQuery } from "@/store/features/posts/postsApiSlice";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 
 export default function Home() {
+    const [currentPage, setCurrentPage] = useState(1);
     const {
         data: postsData,
         refetch,
-        isLoading,
+        isFetching,
         isSuccess,
-    } = useFetchPostsQuery({});
+    } = useFetchPostsQuery({ params: { page: currentPage, limit: 6 } });
 
     return (
         <PageLayout>
             <MainDiv className="">
                 {/* Posts */}
-                {isLoading && <LoadingPlaceholder />}
-
                 {isSuccess && (
                     <div>
                         {postsData.data?.map((postData: {}, idx: number) => (
@@ -36,6 +35,8 @@ export default function Home() {
                         ))}
                     </div>
                 )}
+
+                {isFetching && <LoadingPlaceholder />}
             </MainDiv>
             <Sidebar className="h-fit">
                 {/* Sidebar Content */}

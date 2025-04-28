@@ -7,14 +7,31 @@ const postsApiSlice = baseApiSlice.injectEndpoints({
                 url: "/posts",
                 params: data.params ?? {},
             }),
+            serializeQueryArgs: ({ endpointName }) => {
+                return endpointName;
+            },
+            merge: (currentCache, newData, { arg }) => {
+                const { page } = arg.params ?? {};
+                if (!page || page === 1) {
+                    return newData;
+                }
+
+                return {
+                    data: [...currentCache.data, ...newData.data],
+                    pagination: newData.pagination,
+                };
+            },
+            forceRefetch({ currentArg, previousArg }) {
+                return currentArg !== previousArg;
+            },
         }),
-        updateUpvote: builder.mutation({
+        updatePostUpvote: builder.mutation({
             query: (data) => ({
                 url: `/posts/${data.postId}/upvote`,
                 method: "PUT",
             }),
         }),
-        updateDownvote: builder.mutation({
+        updatePostDownvote: builder.mutation({
             query: (data) => ({
                 url: `/posts/${data.postId}/downvote`,
                 method: "PUT",
@@ -25,7 +42,7 @@ const postsApiSlice = baseApiSlice.injectEndpoints({
 
 export const {
     useFetchPostsQuery,
-    useUpdateUpvoteMutation,
-    useUpdateDownvoteMutation,
+    useUpdatePostUpvoteMutation,
+    useUpdatePostDownvoteMutation,
 } = postsApiSlice;
 export default postsApiSlice;

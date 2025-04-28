@@ -56,7 +56,7 @@ const Navbar = () => {
     // const
 
     return (
-        <header className="px-3 py-1.5 flex justify-between items-center gap-4 border-b border-neutral-300">
+        <header className="sticky top-0 px-3 py-1.5 flex justify-between items-center gap-4 border-b border-neutral-300 z-[100] bg-white">
             {/* Logo and Menu */}
             <div className="flex items-center gap-2">
                 <RoundedButton
