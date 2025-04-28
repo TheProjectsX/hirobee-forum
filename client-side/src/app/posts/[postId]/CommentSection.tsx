@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { setAuthModalType } from "@/store/features/config/configSlice";
 import PreviewComment, { CommentInterface } from "@/components/PreviewComment";
+import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 
 const CommentSection = ({ postId }: { postId: string }) => {
     const dispatch = useDispatch();
@@ -136,11 +137,7 @@ const CommentSection = ({ postId }: { postId: string }) => {
 
             {/* Comments Preview */}
             <div>
-                {isLoading && (
-                    <p className="italic py-4 font-semibold text-neutral-500">
-                        Fetching Comments...
-                    </p>
-                )}
+                {isLoading && <LoadingPlaceholder />}
 
                 {isSuccess && commentsData.data.length === 0 && (
                     <p className="italic py-4 font-semibold text-neutral-500">

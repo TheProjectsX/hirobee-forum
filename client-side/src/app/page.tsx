@@ -7,6 +7,7 @@ import PageLayout, { MainDiv, Sidebar } from "@/components/PageLayout";
 import PreviewPost, { PostInterface } from "@/components/PreviewPost";
 import SidebarPost from "@/components/PreviewPost/SidebarPost";
 import { useFetchPostsQuery } from "@/store/features/posts/postsApiSlice";
+import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 
 export default function Home() {
     const {
@@ -20,11 +21,7 @@ export default function Home() {
         <PageLayout>
             <MainDiv className="">
                 {/* Posts */}
-                {isLoading && (
-                    <p className="text-center text-lg py-10 font-semibold italic">
-                        Fetching Posts...
-                    </p>
-                )}
+                {isLoading && <LoadingPlaceholder />}
 
                 {isSuccess && (
                     <div>

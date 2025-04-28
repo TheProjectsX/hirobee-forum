@@ -1,5 +1,7 @@
 "use client";
 
+import EmptyDataLabel from "@/components/EmptyDataLabel";
+import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 import PreviewPost, { PostInterface } from "@/components/PreviewPost";
 import { useFetchSpecificUserPostsQuery } from "@/store/features/users/usersApiSlice";
 import React, { use } from "react";
@@ -14,7 +16,13 @@ const Posts = ({ params }: { params: Promise<{ username: string }> }) => {
 
     return (
         <div>
-            {isLoading && <p>Loading</p>}
+            {isLoading && <LoadingPlaceholder />}
+            {isSuccess && userPosts.data.length === 0 && (
+                <EmptyDataLabel>
+                    This user haven't Posted anything Yet!
+                </EmptyDataLabel>
+            )}
+
             {isSuccess &&
                 userPosts.data.length > 0 &&
                 userPosts.data.map((postData: PostInterface, idx: number) => (

@@ -8,6 +8,8 @@ Done
 
 ### Add Post Preview or Post Link in Comments of User Profile
 
+Done
+
 ### Fix all the Loadings
 
 ### Make 404 Page
