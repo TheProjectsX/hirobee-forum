@@ -40,7 +40,7 @@ const ProviderWrapped = ({ children }: { children: React.ReactNode }) => {
             <Navbar />
 
             {/* Main Section */}
-            <div className="flex-1 grow overflow-x-hidden">
+            <div className="flex-1 grow">
                 <Drawer
                     drawerContent={<DrawerContent />}
                     drawerOpened={siteConfig.drawerOpened}

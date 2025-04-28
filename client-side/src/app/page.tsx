@@ -65,7 +65,7 @@ export default function Home() {
 
                     {isSuccess &&
                         postsData.data
-                            ?.slice(0, 6)
+                            ?.slice(0, 5)
                             .map((post: {}, idx: number) => (
                                 <React.Fragment key={idx}>
                                     <SidebarPost

@@ -19,12 +19,14 @@ const PageLayout = ({
     return (
         <div
             data-name="Page Layout Parent"
-            className={`relative flex gap-6 w-full h-full max-width mx-auto px-3 pt-3 ${
+            className={`relative grid overflow-visible grid-cols-[1fr_320px] gap-6 w-full max-width mx-auto px-3 pt-3 ${
                 wrap
                     ? global__breakpoint === "770px"
-                        ? "max-[770px]:flex-col"
-                        : "max-[950px]:flex-col"
-                    : ""
+                        ? "max-[770px]:grid-rows-2 max-[770px]:grid-cols-2"
+                        : "max-[950px]:grid-rows-2 max-[950px]:grid-cols-2"
+                    : global__breakpoint === "770px"
+                    ? "max-[770px]:grid-cols-1"
+                    : "max-[950px]:grid-cols-1"
             } ${className}`}
             {...options}
         >
@@ -58,19 +60,14 @@ export const Sidebar = ({
 }) => {
     return (
         <aside
-            className={`max-h-full overflow-y-auto scrollbar-track-transparent scrollbar-thumb-transparent scrollbar-thin hover:scrollbar-thumb-neutral-500/50 shrink-0 w-[320px] sticky top-0 self-start
-            ${
-                global__breakpoint === "770px"
-                    ? "min-[770px]:block"
-                    : "min-[950px]:block"
-            }
-            ${global__wrap ? "block" : "hidden"}
-            ${
-                global__wrap &&
-                (global__breakpoint === "770px"
-                    ? "max-[770px]:w-full"
-                    : "max-[950px]:w-full")
-            }
+            className={`sticky top-[65px] max-h-[calc(100vh-65px)] overflow-y-auto scrollbar-track-transparent scrollbar-thumb-transparent scrollbar-thin hover:scrollbar-thumb-neutral-500/50 shrink-0
+                ${
+                    global__wrap
+                        ? ""
+                        : global__breakpoint === "770px"
+                        ? "max-[770px]:hidden"
+                        : "max-[950px]:hidden"
+                }
             ${className}
           `}
             {...options}

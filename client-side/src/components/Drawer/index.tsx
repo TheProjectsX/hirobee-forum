@@ -37,7 +37,7 @@ const Drawer = ({
     useEffect(() => {
         const handleScrollBlock = () => {
             document.body.style.overflow =
-                window.innerWidth < 1024 && drawerOpened ? "hidden" : "auto";
+                window.innerWidth < 1024 && drawerOpened ? "hidden" : "visible";
         };
 
         handleScrollBlock();
@@ -54,7 +54,7 @@ const Drawer = ({
                     "--shrink-visible": "24px",
                 } as React.CSSProperties
             }
-            className={`relative h-full overflow-hidden grid transition-[grid-template-columns] ease-in-out duration-300 delay-100 grid-cols-[0px_1fr] ${
+            className={`relative h-full grid transition-[grid-template-columns] ease-in-out duration-300 delay-100 grid-cols-[0px_1fr] ${
                 drawerOpened
                     ? "lg:grid-cols-[var(--drawer-size)_1fr]"
                     : "lg:grid-cols-[var(--shrink-visible)_1fr]"
@@ -94,7 +94,7 @@ const Drawer = ({
             </div>
 
             {/* Content */}
-            <div className="grow relative">
+            <div className="relative">
                 {children}
 
                 {/* Black Cover */}
