@@ -109,8 +109,8 @@ const fetch_users = async (filters, query, collection) => {
 
     if (search) {
         query.$or = [
-            { title: { $regex: search, $options: "i" } },
-            { body: { $regex: search, $options: "i" } },
+            { username: { $regex: search, $options: "i" } },
+            { displayname: { $regex: search, $options: "i" } },
         ];
     }
     const skip = (page - 1) * limit;
