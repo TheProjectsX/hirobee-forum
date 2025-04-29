@@ -26,6 +26,8 @@ Done
 
 ### Add Pagination
 
+Done (!)
+
 ### Update Sidebar Contents
 
 ### Admin Panel

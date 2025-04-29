@@ -17,7 +17,7 @@ export default function Home() {
         refetch,
         isFetching,
         isSuccess,
-    } = useFetchPostsQuery({ params: { page: currentPage, limit: 4 } });
+    } = useFetchPostsQuery({ params: { page: currentPage, limit: 8 } });
 
     return (
         <PageLayout>
