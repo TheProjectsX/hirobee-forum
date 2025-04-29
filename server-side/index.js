@@ -720,6 +720,72 @@ app.get(
     }
 );
 
+// Get Reported Posts
+app.get(
+    "/admin/reported/posts",
+    checkAuthentication,
+    checkAdminPrivilege,
+    async (req, res, next) => {
+        const query = req.query;
+
+        try {
+            const response = await adminController.fetch_reports(
+                "post",
+                query,
+                db.collection("reports")
+            );
+
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+// Get Reported Posts
+app.get(
+    "/admin/reported/users",
+    checkAuthentication,
+    checkAdminPrivilege,
+    async (req, res, next) => {
+        const query = req.query;
+
+        try {
+            const response = await adminController.fetch_reports(
+                "user",
+                query,
+                db.collection("reports")
+            );
+
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+// Get Reported Posts
+app.get(
+    "/admin/reported/comments",
+    checkAuthentication,
+    checkAdminPrivilege,
+    async (req, res, next) => {
+        const query = req.query;
+
+        try {
+            const response = await adminController.fetch_reports(
+                "comment",
+                query,
+                db.collection("reports")
+            );
+
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
 // Change User Role
 app.put(
     "/admin/users/:id/role/:role",

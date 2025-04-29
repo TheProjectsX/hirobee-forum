@@ -1,4 +1,5 @@
 import { StatusCodes } from "http-status-codes";
+import { toNumber } from "../../utils/helpers.js";
 
 const fetch_stats = async (
     usersCollection,
@@ -6,33 +7,25 @@ const fetch_stats = async (
     commentsCollection,
     subhiroCollection
 ) => {
-    const totalUsers = await usersCollection.estimatedDocumentCount();
-    const totalPosts = await postsCollection.estimatedDocumentCount();
-    const totalComments = await commentsCollection.estimatedDocumentCount();
-    const totalSubhiro = await subhiroCollection.estimatedDocumentCount();
-
-    const mostUpvotedPosts = await collection
-        .aggregate([
-            {
-                $addFields: {
-                    upvoteCount: { $size: "$upvotedBy" },
-                },
-            },
-            { $sort: { upvoteCount: -1 } },
-            { $limit: 3 },
-        ])
-        .toArray();
-
-    const startOfWeek = new Date();
-    startOfWeek.setDate(startOfWeek.getDate() - 7);
-
-    const newUsersThisWeek = await usersCollection.countDocuments({
-        createdAt: { $gte: startOfWeek },
-    });
-
-    const newPostsThisWeek = await postsCollection.countDocuments({
-        createdAt: { $gte: startOfWeek },
-    });
+    const [
+        totalUsers,
+        totalPosts,
+        totalComments,
+        totalSubhiro,
+        newUsersThisWeek,
+        newPostsThisWeek,
+    ] = await Promise.all([
+        usersCollection.estimatedDocumentCount(),
+        postsCollection.estimatedDocumentCount(),
+        commentsCollection.estimatedDocumentCount(),
+        subhiroCollection.estimatedDocumentCount(),
+        usersCollection.countDocuments({
+            createdAt: { $gte: Date.now() - 7 * 24 * 60 * 60 * 1000 },
+        }),
+        postsCollection.countDocuments({
+            createdAt: { $gte: Date.now() - 7 * 24 * 60 * 60 * 1000 },
+        }),
+    ]);
 
     const response = {
         success: true,
@@ -47,7 +40,6 @@ const fetch_stats = async (
             users: newUsersThisWeek,
             posts: newPostsThisWeek,
         },
-        most_upvoted: mostUpvotedPosts,
         status_code: StatusCodes.OK,
     };
 
@@ -111,7 +103,9 @@ const change_user_role = async (user, targetId, role, collection) => {
 };
 
 const fetch_users = async (filters, query, collection) => {
-    const { search, page = 1, limit = 10 } = filters;
+    let { search, page = 1, limit = 10 } = filters;
+    page = toNumber(page, 1);
+    limit = toNumber(limit, 10);
 
     if (search) {
         query.$or = [
@@ -149,9 +143,42 @@ const fetch_users = async (filters, query, collection) => {
     };
 };
 
+const fetch_reports = async (targetType, filters, collection) => {
+    let { page = 1, limit = 10 } = filters;
+    page = toNumber(page, 1);
+    limit = toNumber(limit, 10);
+
+    const skip = (page - 1) * limit;
+
+    const response = await collection
+        .find({ targetType })
+        .skip(skip)
+        .limit(limit)
+        .toArray();
+
+    const totalCount = await collection.countDocuments({ targetType });
+
+    const pagination = {
+        has_next_page: totalCount > skip + response.length,
+        current_page: page,
+        current_count: response.length,
+        total_count: totalCount,
+        limit,
+    };
+
+    return {
+        success: true,
+        message: "Data Fetched",
+        pagination,
+        data: response,
+        status_code: StatusCodes.OK,
+    };
+};
+
 export default {
     fetch_stats,
     change_user_status,
     change_user_role,
     fetch_users,
+    fetch_reports,
 };
