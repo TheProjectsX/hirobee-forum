@@ -1,35 +1,34 @@
 "use client";
 
-import { Spinner } from "flowbite-react";
+import { Pagination, Spinner } from "flowbite-react";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { LiaSortSolid } from "react-icons/lia";
 import Title from "../Title";
-// import ReactSelect from "react-select";
+import { useFetchUsersQuery } from "@/store/features/admin/adminApiSlice";
+import LoadingPlaceholder from "@/components/LoadingPlaceholder";
+
+interface UserDataInterface {
+    _id: string;
+    username: string;
+    displayname: string;
+    profile_picture: string;
+    banner: string | null;
+    status: "active" | "banned";
+    role: "author" | "admin" | "moderator";
+    gender: string | null;
+    bio: string | null;
+    createdAt: number;
+}
 
 const UserList = () => {
-    const UsersData: Array<{
-        username: string;
-        createdAt: number;
-        status: "active" | "banned";
-    }> = [
-        {
-            username: "NarutoUzumaki",
-            createdAt: Date.now() - 100000000,
-            status: "active",
-        },
-        {
-            username: "SasukeUchiha",
-            createdAt: Date.now() - 2000000000,
-            status: "banned",
-        },
-        {
-            username: "SakuraHaruno",
-            createdAt: Date.now() - 500000000,
-            status: "active",
-        },
-    ];
+    const [currentPage, setCurrentPage] = useState(1);
+    const {
+        data: usersData,
+        isFetching,
+        isSuccess,
+    } = useFetchUsersQuery({ params: { page: currentPage, limit: 10 } });
 
     return (
         <div>
@@ -60,82 +59,110 @@ const UserList = () => {
                 </form>
             </div>
 
+            {/* Initial Loading */}
+            {!usersData && isFetching && <LoadingPlaceholder />}
+
             {/* Table of Contents */}
-            <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-6">
-                <table className="w-full text-sm text-center text-gray-600">
-                    <thead className="text-xs uppercase bg-gray-100 text-gray-700">
-                        <tr>
-                            <th className="px-6 py-3">Username</th>
-                            <th className="justify-center">
-                                <button className="mx-auto px-6 py-3 flex items-center justify-center gap-1.5 cursor-pointer uppercase translate-x-1">
-                                    <span>Join Date</span>
-                                    <LiaSortSolid className="text-sm" />
-                                </button>
-                            </th>
-                            <th className="justify-center">
-                                <button className="mx-auto px-6 py-3 flex items-center justify-center gap-1.5 cursor-pointer uppercase translate-x-1">
-                                    <span>Status</span>
-                                    <LiaSortSolid className="text-sm" />
-                                </button>
-                            </th>
-                            <th className="px-6 py-3">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {UsersData.map((item, idx) => (
-                            <tr
-                                key={idx}
-                                className="odd:bg-white even:bg-gray-50 border-b border-gray-200"
-                            >
-                                <td className="px-6 py-4">
-                                    <Link
-                                        href={`/user/${item.username}`}
-                                        className="hover:underline underline-offset-4"
-                                    >
-                                        {item.username}
-                                    </Link>
-                                </td>
-                                <td className="px-6 py-4">
-                                    {new Date(
-                                        item.createdAt
-                                    ).toLocaleDateString("en-US", {
-                                        month: "short",
-                                        day: "2-digit",
-                                        year: "numeric",
-                                    })}
-                                </td>
-                                <td className="px-6 py-4">
-                                    {item.status === "active" ? (
-                                        <div className="flex items-center justify-center">
-                                            <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
-                                            Active
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center justify-center">
-                                            <div className="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div>
-                                            Banned
-                                        </div>
-                                    )}
-                                </td>
-                                <td className="px-6 py-4">
-                                    <button
-                                        className={`${
-                                            item.status.toLowerCase() ===
-                                            "active"
-                                                ? "text-red-600"
-                                                : "text-blue-600"
-                                        } hover:underline`}
-                                    >
-                                        {item.status.toLowerCase() === "active"
-                                            ? "Ban User"
-                                            : "Unban User"}
+            {usersData && (
+                <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-6">
+                    <table className="w-full text-sm text-center text-gray-600">
+                        <thead className="text-xs uppercase bg-gray-100 text-gray-700">
+                            <tr>
+                                <th className="px-6 py-3">Username</th>
+                                <th className="justify-center">
+                                    <button className="mx-auto px-6 py-3 flex items-center justify-center gap-1.5 cursor-pointer uppercase translate-x-1">
+                                        <span>Join Date</span>
+                                        <LiaSortSolid className="text-sm" />
                                     </button>
-                                </td>
+                                </th>
+                                <th className="justify-center">
+                                    <button className="mx-auto px-6 py-3 flex items-center justify-center gap-1.5 cursor-pointer uppercase translate-x-1">
+                                        <span>Status</span>
+                                        <LiaSortSolid className="text-sm" />
+                                    </button>
+                                </th>
+                                <th className="px-6 py-3">Action</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            {usersData.data.map(
+                                (item: UserDataInterface, idx: number) => (
+                                    <tr
+                                        key={idx}
+                                        className="odd:bg-white even:bg-gray-50 border-b border-gray-200"
+                                    >
+                                        <td className="px-6 py-4">
+                                            <Link
+                                                href={`/user/${item.username}`}
+                                                className="hover:underline underline-offset-4"
+                                            >
+                                                {item.displayname}
+                                            </Link>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {new Date(
+                                                item.createdAt
+                                            ).toLocaleDateString("en-US", {
+                                                month: "short",
+                                                day: "2-digit",
+                                                year: "numeric",
+                                            })}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {item.status === "active" ? (
+                                                <div className="flex items-center justify-center">
+                                                    <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
+                                                    Active
+                                                </div>
+                                            ) : (
+                                                <div className="flex items-center justify-center">
+                                                    <div className="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div>
+                                                    Banned
+                                                </div>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <button
+                                                className={`${
+                                                    item.status.toLowerCase() ===
+                                                    "active"
+                                                        ? "text-red-600"
+                                                        : "text-blue-600"
+                                                } hover:underline`}
+                                            >
+                                                {item.status.toLowerCase() ===
+                                                "active"
+                                                    ? "Ban User"
+                                                    : "Unban User"}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                )
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            {usersData && (
+                <div className="flex gap-2 items-center overflow-x-auto justify-center mt-8">
+                    <span className="w-6"></span>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={Math.ceil(
+                            usersData.pagination.total_count /
+                                usersData.pagination.limit
+                        )}
+                        onPageChange={(page: number) => setCurrentPage(page)}
+                        showIcons
+                    />
+
+                    <Spinner
+                        size="md"
+                        className={`${isFetching ? "visible" : "invisible"}`}
+                    />
+                </div>
+            )}
         </div>
     );
 };

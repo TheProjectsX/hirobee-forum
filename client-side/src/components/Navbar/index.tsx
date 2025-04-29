@@ -193,18 +193,22 @@ const Navbar = () => {
                                         </span>
                                     </SquareButton>
 
-                                    <div className="pb-2 mb-2 mx-2 border-b border-neutral-300"></div>
-
-                                    <Link href={"/admin"}>
-                                        <SquareButton
-                                            className="w-full !py-4"
-                                            Icon={GrUserAdmin}
-                                        >
-                                            <span className="text-slate-700">
-                                                Admin Dashboard
-                                            </span>
-                                        </SquareButton>
-                                    </Link>
+                                    {userInfo.role === "admin" && (
+                                        <>
+                                            {" "}
+                                            <div className="pb-2 mb-2 mx-2 border-b border-neutral-300"></div>
+                                            <Link href={"/admin"}>
+                                                <SquareButton
+                                                    className="w-full !py-4"
+                                                    Icon={GrUserAdmin}
+                                                >
+                                                    <span className="text-slate-700">
+                                                        Admin Dashboard
+                                                    </span>
+                                                </SquareButton>
+                                            </Link>
+                                        </>
+                                    )}
 
                                     <div className="pb-2 mb-2 mx-2 border-b border-neutral-300"></div>
                                     <Link href={"#"}>

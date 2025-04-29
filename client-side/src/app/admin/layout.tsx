@@ -30,18 +30,18 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                             User List
                         </Link>
                         <Link
-                            href="/admin/reported/posts"
-                            className="w-full px-4 py-3 rounded bg-white hover:bg-slate-100 flex items-center gap-3"
-                        >
-                            <AiOutlineFileUnknown className="text-xl" />
-                            Reported Posts
-                        </Link>
-                        <Link
                             href="/admin/reported/users"
                             className="w-full px-4 py-3 rounded bg-white hover:bg-slate-100 flex items-center gap-3"
                         >
                             <TbUserQuestion className="text-xl" />
                             Reported Users
+                        </Link>
+                        <Link
+                            href="/admin/reported/posts"
+                            className="w-full px-4 py-3 rounded bg-white hover:bg-slate-100 flex items-center gap-3"
+                        >
+                            <AiOutlineFileUnknown className="text-xl" />
+                            Reported Posts
                         </Link>
                         <Link
                             href="/admin/reported/comments"

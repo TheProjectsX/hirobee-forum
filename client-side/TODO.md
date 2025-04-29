@@ -31,3 +31,5 @@ Done (!)
 ### Update Sidebar Contents
 
 ### Admin Panel
+
+### See if it's possible to add base path for the injected reducers
