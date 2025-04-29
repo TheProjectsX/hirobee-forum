@@ -41,6 +41,18 @@ const adminApiSlice = baseApiSlice.injectEndpoints({
                 return currentArg !== previousArg;
             },
         }),
+        updateUserRole: builder.mutation({
+            query: (data) => ({
+                url: `/admin/users/${data.username}/role/${data.role}`,
+                method: "PUT",
+            }),
+        }),
+        updateUserStatus: builder.mutation({
+            query: (data) => ({
+                url: `/admin/users/${data.username}/status/${data.status}`,
+                method: "PUT",
+            }),
+        }),
     }),
 });
 
@@ -50,5 +62,7 @@ export const {
     useFetchReportedUsersQuery,
     useFetchReportedPostsQuery,
     useFetchReportedCommentsQuery,
+    useUpdateUserRoleMutation,
+    useUpdateUserStatusMutation,
 } = adminApiSlice;
 export default adminApiSlice;

@@ -1,9 +1,7 @@
 import RoundedButton from "@/components/Buttons/Rounded";
 import PageLayout, { MainDiv, Sidebar } from "@/components/PageLayout";
 import PreviewPost from "@/components/PreviewPost";
-import Button from "@/components/PreviewPost/Button";
 import React from "react";
-import Comment from "./comment";
 import Link from "next/link";
 
 import { PiCakeThin } from "react-icons/pi";

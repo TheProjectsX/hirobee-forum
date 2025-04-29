@@ -6,9 +6,15 @@ import React, { useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { LiaSortSolid } from "react-icons/lia";
 import Title from "../Title";
-import { useFetchUsersQuery } from "@/store/features/admin/adminApiSlice";
+import {
+    useFetchUsersQuery,
+    useUpdateUserRoleMutation,
+    useUpdateUserStatusMutation,
+} from "@/store/features/admin/adminApiSlice";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 import EmptyDataLabel from "@/components/EmptyDataLabel";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 interface UserDataInterface {
     _id: string;
@@ -34,16 +40,80 @@ const UserList = () => {
         search: "",
     });
 
-    const { data: usersData, isFetching } = useFetchUsersQuery({
+    const {
+        data: usersData,
+        refetch: refetchUsersData,
+        isFetching,
+    } = useFetchUsersQuery({
         params: queryParams,
     });
 
+    const [updateUserRole, { isLoading: isUpdateUserRoleFetching }] =
+        useUpdateUserRoleMutation();
+    const [updateUserStatus, { isLoading: isUpdateUserStatusFetching }] =
+        useUpdateUserStatusMutation();
+
+    // Search for User
     const handleUserSearch = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const target = e.target as HTMLFormElement;
         const query: string = target.query.value;
 
         setQueryParams((prev) => ({ ...prev, page: 1, search: query }));
+    };
+
+    // Change User Role
+    const handleChangeRole = async (username: string, role: string) => {
+        const result = await Swal.fire({
+            title: "Are you sure?",
+            text: `Change ${username}'s role to ${role}?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes",
+        });
+
+        if (result.isDismissed) return false;
+
+        try {
+            await updateUserRole({ username, role }).unwrap();
+
+            toast.success("Changed User Role!", { autoClose: 1500 });
+            refetchUsersData();
+            return true;
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Failed to Change Role", {
+                autoClose: 1500,
+            });
+            return false;
+        }
+    };
+
+    // Change User Status
+    const handleChangeUserStatus = async (username: string, status: string) => {
+        const result = await Swal.fire({
+            title: "Are you sure?",
+            text: `${status === "active" ? "Un-ban" : "Ban"} ${username}?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes",
+        });
+
+        if (result.isDismissed) return;
+
+        try {
+            await updateUserStatus({ username, status }).unwrap();
+
+            toast.success("Changed User Status!", { autoClose: 1500 });
+            refetchUsersData();
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Failed to Change Status", {
+                autoClose: 1500,
+            });
+        }
     };
 
     return (
@@ -86,13 +156,13 @@ const UserList = () => {
 
             {/* Table of Contents */}
             {usersData && usersData.data.length > 0 && (
-                <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-6">
-                    <table className="w-full text-sm text-center text-gray-600">
+                <div className="relative overflow-x-auto scrollbar-thin shadow-md sm:rounded-lg mt-6">
+                    <table className="w-full text-xs text-center text-gray-600">
                         <thead className="text-xs uppercase bg-gray-100 text-gray-700">
                             <tr>
                                 <th className="px-6 py-3">Username</th>
                                 <th className="justify-center">
-                                    <button className="mx-auto px-6 py-3 flex items-center justify-center gap-1.5 cursor-pointer uppercase translate-x-1">
+                                    <button className="mx-auto px-6 py-3 flex items-center justify-center gap-1.5 cursor-pointer uppercase translate-x-1 whitespace-nowrap">
                                         <span>Join Date</span>
                                         <LiaSortSolid className="text-sm" />
                                     </button>
@@ -103,27 +173,28 @@ const UserList = () => {
                                         <LiaSortSolid className="text-sm" />
                                     </button>
                                 </th>
+                                <th className="px-6 py-3">Role</th>
                                 <th className="px-6 py-3">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {usersData.data.map(
-                                (item: UserDataInterface, idx: number) => (
+                                (userData: UserDataInterface, idx: number) => (
                                     <tr
                                         key={idx}
                                         className="odd:bg-white even:bg-gray-50 border-b border-gray-200"
                                     >
                                         <td className="px-6 py-4">
                                             <Link
-                                                href={`/user/${item.username}`}
+                                                href={`/user/${userData.username}`}
                                                 className="hover:underline underline-offset-4"
                                             >
-                                                {item.displayname}
+                                                {userData.displayname}
                                             </Link>
                                         </td>
                                         <td className="px-6 py-4">
                                             {new Date(
-                                                item.createdAt
+                                                userData.createdAt
                                             ).toLocaleDateString("en-US", {
                                                 month: "short",
                                                 day: "2-digit",
@@ -131,7 +202,7 @@ const UserList = () => {
                                             })}
                                         </td>
                                         <td className="px-6 py-4">
-                                            {item.status === "active" ? (
+                                            {userData.status === "active" ? (
                                                 <div className="flex items-center justify-center">
                                                     <div className="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
                                                     Active
@@ -144,16 +215,55 @@ const UserList = () => {
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
+                                            <select
+                                                name="role"
+                                                defaultValue={userData.role}
+                                                className="outline-none"
+                                                onChange={async (e) => {
+                                                    const changed =
+                                                        await handleChangeRole(
+                                                            userData.username,
+                                                            e.target.value
+                                                        );
+                                                    if (!changed) {
+                                                        e.target.value =
+                                                            userData.role;
+                                                    }
+                                                }}
+                                                disabled={
+                                                    isUpdateUserRoleFetching
+                                                }
+                                            >
+                                                <option value="admin">
+                                                    Admin
+                                                </option>
+                                                <option value="moderator">
+                                                    Moderator
+                                                </option>
+                                                <option value="author">
+                                                    Author
+                                                </option>
+                                            </select>
+                                        </td>
+                                        <td className="px-6 py-4">
                                             <button
                                                 className={`${
-                                                    item.status.toLowerCase() ===
+                                                    userData.status.toLowerCase() ===
                                                     "active"
                                                         ? "text-red-600"
                                                         : "text-blue-600"
-                                                } hover:underline`}
+                                                } hover:underline whitespace-nowrap`}
+                                                onClick={() =>
+                                                    handleChangeUserStatus(
+                                                        userData.username,
+                                                        userData.status ===
+                                                            "active"
+                                                            ? "banned"
+                                                            : "active"
+                                                    )
+                                                }
                                             >
-                                                {item.status.toLowerCase() ===
-                                                "active"
+                                                {userData.status === "active"
                                                     ? "Ban User"
                                                     : "Unban User"}
                                             </button>
