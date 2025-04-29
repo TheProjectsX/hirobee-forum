@@ -1,2 +1,3 @@
--   When Upvoted, remove Downvote if user did and vice versa
--   Consider checking if the user upvoted or not in the backend
+### When Upvoted, remove Down-vote if user did and vice versa
+
+### Add Report content Route

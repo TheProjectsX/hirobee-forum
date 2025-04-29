@@ -491,6 +491,13 @@ app.put("/posts/:id/:target", checkAuthentication, async (req, res, next) => {
     }
 });
 
+// Report Post
+app.post(
+    "/posts/:id/report",
+    checkAuthentication,
+    async (req, res, next) => {}
+);
+
 /* Private Comment Routes */
 
 // Add Comment
@@ -859,7 +866,7 @@ app.put(
     "/admin/reported/:id/ignore",
     checkAuthentication,
     checkModPrivilege,
-    async (req, res) => {
+    async (req, res, next) => {
         const user = req.user;
         const targetId = req.params.id;
 
@@ -882,7 +889,7 @@ app.put(
     "/admin/reported/:id/delete",
     checkAuthentication,
     checkModPrivilege,
-    async (req, res) => {
+    async (req, res, next) => {
         const user = req.user;
         const targetId = req.params.id;
 

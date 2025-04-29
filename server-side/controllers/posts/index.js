@@ -232,9 +232,65 @@ const fetch_comments = async (postId, filters, collection) => {
     };
 };
 
+const report_post = async (user, data, reportsCollection, postsCollection) => {
+    if (!data.postId || !data.report) {
+        return {
+            success: false,
+            message: "Invalid Body provided",
+            status_code: StatusCodes.BAD_REQUEST,
+        };
+    }
+
+    let postOid;
+    try {
+        postOid = new ObjectId(String(data.postId));
+    } catch (error) {
+        return {
+            success: false,
+            message: "Post not Found!",
+            query: {
+                id: data.postId,
+            },
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    }
+
+    const targetPost = await postsCollection.findOne({ _id: postOid });
+
+    const reportBody = {
+        title: targetPost.title,
+        author: targetPost.authorId,
+        subhiro: targetPost.subhiro,
+        targetId: postOid,
+        targetType: "post",
+        report: data.report,
+        reportedBy: user.username,
+        meta: {},
+        status: "pending",
+        createdAt: Date.now(),
+    };
+
+    const response = await reportsCollection.insertOne(reportBody);
+
+    if (response.acknowledged) {
+        return {
+            success: true,
+            message: "Post Reported!",
+            status_code: StatusCodes.CREATED,
+        };
+    } else {
+        return {
+            success: false,
+            message: "Failed to Report Post",
+            status_code: StatusCodes.INTERNAL_SERVER_ERROR,
+        };
+    }
+};
+
 export default {
     fetch_posts,
     fetch_single_post,
     update_vote,
     fetch_comments,
+    report_post,
 };
