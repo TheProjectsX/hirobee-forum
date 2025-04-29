@@ -24,11 +24,9 @@ interface UserDataInterface {
 
 const UserList = () => {
     const [currentPage, setCurrentPage] = useState(1);
-    const {
-        data: usersData,
-        isFetching,
-        isSuccess,
-    } = useFetchUsersQuery({ params: { page: currentPage, limit: 10 } });
+    const { data: usersData, isFetching } = useFetchUsersQuery({
+        params: { page: currentPage, limit: 10 },
+    });
 
     return (
         <div>

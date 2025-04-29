@@ -47,8 +47,8 @@ const adminApiSlice = baseApiSlice.injectEndpoints({
 export const {
     useFetchStatsQuery,
     useFetchUsersQuery,
-    useLazyFetchReportedUsersQuery,
+    useFetchReportedUsersQuery,
     useFetchReportedPostsQuery,
-    useLazyFetchReportedCommentsQuery,
+    useFetchReportedCommentsQuery,
 } = adminApiSlice;
 export default adminApiSlice;
