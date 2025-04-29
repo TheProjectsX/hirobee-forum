@@ -4,9 +4,10 @@ import {
     commentAggregationPipeline,
     postAggregationPipeline,
 } from "../../utils/variables.js";
+import { toNumber } from "../../utils/helpers.js";
 
 const fetch_posts = async (filters, collection) => {
-    const {
+    let {
         query: search,
         page = 1,
         limit = 10,
@@ -14,6 +15,9 @@ const fetch_posts = async (filters, collection) => {
         author,
         sortBy = "new",
     } = filters;
+
+    page = toNumber(page, 1);
+    limit = toNumber(limit, 10);
 
     const query = {};
     const sort = {};
@@ -191,7 +195,9 @@ const update_vote = async (user, postId, target, collection) => {
 };
 
 const fetch_comments = async (postId, filters, collection) => {
-    const { page = 1, limit = 10 } = filters;
+    let { page = 1, limit = 10 } = filters;
+    page = toNumber(page, 1);
+    limit = toNumber(limit, 10);
 
     const skip = (page - 1) * limit;
 

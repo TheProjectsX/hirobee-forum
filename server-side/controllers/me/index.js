@@ -7,6 +7,7 @@ import {
 } from "../../utils/validators.js";
 import { ObjectId } from "mongodb";
 import { postAggregationPipeline } from "../../utils/variables.js";
+import { toNumber } from "../../utils/helpers.js";
 
 const fetch_info = async (user, collection) => {
     const { email } = user;
@@ -54,7 +55,9 @@ const update_info = async (user, body, collection) => {
 };
 
 const fetch_posts = async (user, filters, collection) => {
-    const { search, page = 1, limit = 10, subhiro, sortBy = "new" } = filters;
+    let { search, page = 1, limit = 10, subhiro, sortBy = "new" } = filters;
+    page = toNumber(page, 1);
+    limit = toNumber(limit, 10);
 
     const query = {
         authorId: user.username,

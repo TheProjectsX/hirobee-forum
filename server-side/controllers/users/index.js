@@ -4,6 +4,7 @@ import {
     postAggregationPipeline,
     specificUserAggregationPipeline,
 } from "../../utils/variables.js";
+import { toNumber } from "../../utils/helpers.js";
 
 const get_specific = async (username, user_collection) => {
     const response = await user_collection
@@ -33,7 +34,9 @@ const get_specific = async (username, user_collection) => {
 };
 
 const fetch_posts = async (username, filters, collection) => {
-    const { page = 1, limit = 10 } = filters;
+    let { page = 1, limit = 10 } = filters;
+    page = toNumber(page, 1);
+    limit = toNumber(limit, 10);
 
     const query = { authorId: username };
     const sort = { createdAt: -1 };
@@ -69,7 +72,9 @@ const fetch_posts = async (username, filters, collection) => {
 };
 
 const fetch_comments = async (username, filters, collection) => {
-    const { page = 1, limit = 10 } = filters;
+    let { page = 1, limit = 10 } = filters;
+    page = toNumber(page, 1);
+    limit = toNumber(limit, 10);
 
     const query = { authorId: username };
     const sort = { createdAt: -1 };
