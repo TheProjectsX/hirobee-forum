@@ -1,5 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { toNumber } from "../../utils/helpers.js";
+import { ObjectId } from "mongodb";
 
 const fetch_stats = async (
     usersCollection,
@@ -46,7 +47,7 @@ const fetch_stats = async (
     return response;
 };
 
-const change_user_status = async (user, targetId, status, collection) => {
+const change_user_status = async (user, targetUsername, status, collection) => {
     const doc = {
         status,
     };
@@ -54,10 +55,13 @@ const change_user_status = async (user, targetId, status, collection) => {
     if (status === "banned") {
         doc["meta.bannerBy"] = user.username;
         doc["meta.bannerAt"] = Date.now();
+    } else {
+        doc["meta.bannerBy"] = null;
+        doc["meta.bannerAt"] = null;
     }
 
     const response = await collection.updateOne(
-        { username: targetId },
+        { username: targetUsername },
         { $set: doc }
     );
 
@@ -76,7 +80,7 @@ const change_user_status = async (user, targetId, status, collection) => {
     };
 };
 
-const change_user_role = async (user, targetId, role, collection) => {
+const change_user_role = async (user, targetUsername, role, collection) => {
     const doc = {
         role,
         "meta.roleUpdatedBy": user.username,
@@ -84,8 +88,8 @@ const change_user_role = async (user, targetId, role, collection) => {
     };
 
     const response = await collection.updateOne(
-        { username: targetId },
-        { $ser: doc }
+        { username: targetUsername },
+        { $set: doc }
     );
     if (response.matchedCount === 0) {
         return {
@@ -144,11 +148,25 @@ const fetch_users = async (filters, query, collection) => {
 };
 
 const fetch_reports = async (targetType, filters, collection) => {
-    let { page = 1, limit = 10 } = filters;
+    let { page = 1, limit = 10, all, ignored, fulfilled } = filters;
     page = toNumber(page, 1);
     limit = toNumber(limit, 10);
 
     const skip = (page - 1) * limit;
+
+    const query = { targetType };
+
+    if (!all) {
+        query["status"] = "pending";
+    }
+
+    if (ignored) {
+        query["status"] = "ignored";
+    }
+
+    if (fulfilled) {
+        query["status"] = "fulfilled";
+    }
 
     const response = await collection
         .find({ targetType })
@@ -175,10 +193,114 @@ const fetch_reports = async (targetType, filters, collection) => {
     };
 };
 
+const ignore_report = async (user, targetId, collection) => {
+    let targetOId;
+
+    try {
+        targetOId = new ObjectId(String(targetId));
+    } catch (error) {
+        return {
+            success: false,
+            message: "Item not Found!",
+            query: {
+                id: targetId,
+            },
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    }
+
+    const doc = {
+        status: "ignored",
+        "meta.ignoredBy": user.username,
+        "meta.ignoredAt": Date.now(),
+    };
+
+    const response = await collection.updateOne(
+        { _id: targetOId },
+        { $set: doc }
+    );
+    if (response.matchedCount === 0) {
+        return {
+            success: false,
+            message: "Item not Found!",
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    }
+
+    return {
+        success: true,
+        message: "Report Ignored",
+        status_code: StatusCodes.OK,
+    };
+};
+
+const delete_reported = async (
+    user,
+    targetId,
+    reportCollection,
+    usersCollection,
+    postsCollection,
+    commentsCollection
+) => {
+    let targetOId;
+
+    try {
+        targetOId = new ObjectId(String(targetId));
+    } catch (error) {
+        return {
+            success: false,
+            message: "Item not Found!",
+            query: {
+                id: targetId,
+            },
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    }
+
+    const targetReport = await reportCollection.findOne({ _id: targetOId });
+    if (!targetReport) {
+        return {
+            success: false,
+            message: "Item not Found!",
+            query: {
+                id: targetId,
+            },
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    }
+
+    const targetType = targetReport.targetType;
+    let targetCollection;
+    if (targetType === "user") {
+        targetCollection = usersCollection;
+    } else if (targetType === "post") {
+        targetCollection = postsCollection;
+    } else if (targetType === "comment") {
+        targetCollection = commentsCollection;
+    }
+
+    const doc = {
+        status: "fulfilled",
+        "meta.deletedBy": user.username,
+        "meta.deletedAt": Date.now(),
+    };
+
+    await targetCollection.deleteOne({ _id: targetReport.targetId });
+    await reportCollection.updateOne({ _id: targetReport._id }, { $set: doc });
+
+    return {
+        success: true,
+        message: "Reported Content Deleted SuccessFully!",
+        status_code: StatusCodes.OK,
+    };
+};
+
 export default {
     fetch_stats,
     change_user_status,
     change_user_role,
     fetch_users,
     fetch_reports,
+    ignore_report,
+    delete_reported,
 };

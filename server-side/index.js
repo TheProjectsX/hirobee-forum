@@ -98,7 +98,7 @@ const checkAdminPrivilege = async (req, res, next) => {
     try {
         const targetUser = await db
             .collection("users")
-            .findOne({ username: user.username });
+            .findOne({ username: user?.username });
 
         if (!targetUser) {
             return res
@@ -130,7 +130,7 @@ const checkModPrivilege = async (req, res, next) => {
     try {
         const targetUser = await db
             .collection("users")
-            .findOne({ username: user.username });
+            .findOne({ username: user?.username });
 
         if (!targetUser) {
             return res
@@ -720,21 +720,32 @@ app.get(
     }
 );
 
-// Get Reported Posts
-app.get(
-    "/admin/reported/posts",
+// Change User Role
+app.put(
+    "/admin/users/:username/role/:role",
     checkAuthentication,
     checkAdminPrivilege,
     async (req, res, next) => {
-        const query = req.query;
+        const user = req.user;
+        const targetUsername = req.params.username;
+        const role = req.params.role;
+
+        if (!["admin", "moderator", "author"].includes(role)) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message:
+                    "Only role to `admin`, `moderator` and `author` is changeable",
+                status_code: StatusCodes.BAD_REQUEST,
+            });
+        }
 
         try {
-            const response = await adminController.fetch_reports(
-                "post",
-                query,
-                db.collection("reports")
+            const response = await adminController.change_user_role(
+                user,
+                targetUsername,
+                role,
+                db.collection("users")
             );
-
             res.status(response.status_code).json(response);
         } catch (error) {
             next(error);
@@ -742,11 +753,13 @@ app.get(
     }
 );
 
-// Get Reported Posts
+/* Protected Moderator Routes (Also access-able by Admin) */
+
+// Get Reported Users
 app.get(
-    "/admin/reported/users",
+    "/moderator/reported/users",
     checkAuthentication,
-    checkAdminPrivilege,
+    checkModPrivilege,
     async (req, res, next) => {
         const query = req.query;
 
@@ -766,9 +779,31 @@ app.get(
 
 // Get Reported Posts
 app.get(
-    "/admin/reported/comments",
+    "/moderator/reported/posts",
     checkAuthentication,
-    checkAdminPrivilege,
+    checkModPrivilege,
+    async (req, res, next) => {
+        const query = req.query;
+
+        try {
+            const response = await adminController.fetch_reports(
+                "post",
+                query,
+                db.collection("reports")
+            );
+
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+// Get Reported Comments
+app.get(
+    "/moderator/reported/comments",
+    checkAuthentication,
+    checkModPrivilege,
     async (req, res, next) => {
         const query = req.query;
 
@@ -786,46 +821,14 @@ app.get(
     }
 );
 
-// Change User Role
-app.put(
-    "/admin/users/:id/role/:role",
-    checkAdminPrivilege,
-    async (req, res, next) => {
-        const user = req.user;
-        const targetId = req.params.id;
-        const role = req.params.role;
-
-        if (!["author", "moderator"].includes(role)) {
-            return res.status(StatusCodes.BAD_REQUEST).json({
-                success: false,
-                message: "Only role to `author` and `moderator` is changeable",
-                status_code: StatusCodes.BAD_REQUEST,
-            });
-        }
-
-        try {
-            const response = await adminController.change_user_role(
-                user,
-                targetId,
-                role,
-                db.collection("users")
-            );
-            res.status(response.status_code).json(response);
-        } catch (error) {
-            next(error);
-        }
-    }
-);
-
-/* Protected Moderator Routes (Also access-able by Admin) */
-
 // Change User Statue
 app.put(
-    "/moderator/users/:id/status/:status",
+    "/admin/users/:username/status/:status",
+    checkAuthentication,
     checkModPrivilege,
     async (req, res, next) => {
         const user = req.user;
-        const targetId = req.params.id;
+        const targetUsername = req.params.username;
         const status = req.params.status;
 
         if (!["active", "banned"].includes(status)) {
@@ -839,9 +842,58 @@ app.put(
         try {
             const response = await adminController.change_user_status(
                 user,
-                targetId,
+                targetUsername,
                 status,
                 db.collection("users")
+            );
+
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+// Ignore a Report
+app.put(
+    "/admin/reported/:id/ignore",
+    checkAuthentication,
+    checkModPrivilege,
+    async (req, res) => {
+        const user = req.user;
+        const targetId = req.params.id;
+
+        try {
+            const response = await adminController.ignore_report(
+                user,
+                targetId,
+                db.collection("reports")
+            );
+
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+// Delete a Reported Content
+app.put(
+    "/admin/reported/:id/delete",
+    checkAuthentication,
+    checkModPrivilege,
+    async (req, res) => {
+        const user = req.user;
+        const targetId = req.params.id;
+
+        try {
+            const response = await adminController.delete_reported(
+                user,
+                targetId,
+                db.collection("reports"),
+                db.collection("users"),
+                db.collection("posts"),
+                db.collection("comments")
             );
 
             res.status(response.status_code).json(response);
