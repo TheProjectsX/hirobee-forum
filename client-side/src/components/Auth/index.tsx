@@ -161,6 +161,7 @@ const Auth = () => {
 
                             <form onSubmit={handleLogin}>
                                 <input
+                                    name="email"
                                     type="text"
                                     value={authValues.email}
                                     onChange={(e) =>
@@ -174,6 +175,7 @@ const Auth = () => {
                                     required
                                 />
                                 <input
+                                    name="password"
                                     type="password"
                                     value={authValues.password}
                                     onChange={(e) =>
@@ -267,6 +269,7 @@ const Auth = () => {
 
                             <form onSubmit={handleRegister}>
                                 <input
+                                    name="username"
                                     type="text"
                                     value={authValues.username}
                                     onChange={(e) =>
@@ -281,6 +284,7 @@ const Auth = () => {
                                     required
                                 />
                                 <input
+                                    name="email"
                                     type="email"
                                     value={authValues.email}
                                     onChange={(e) =>
@@ -294,6 +298,7 @@ const Auth = () => {
                                     required
                                 />
                                 <input
+                                    name="password"
                                     type="password"
                                     value={authValues.password}
                                     onChange={(e) =>

@@ -1,31 +1,61 @@
+"use client";
+
 import React from "react";
 import StatCard from "./StatCard";
 import { PiUsersThree } from "react-icons/pi";
 import { TbFileDescription, TbMessageCircle } from "react-icons/tb";
 import Title from "./Title";
+// import { redirect } from "next/navigation";
+import { ShortNumber } from "@lytieuphong/short-number";
+import { useFetchStatsQuery } from "@/store/features/admin/adminApiSlice";
+import LoadingPlaceholder from "@/components/LoadingPlaceholder";
+import { RiUserCommunityLine } from "react-icons/ri";
+import { LuUserPlus } from "react-icons/lu";
+import { FiFilePlus } from "react-icons/fi";
 
 const Dashboard = () => {
+    const { data: adminStats, isLoading, isSuccess } = useFetchStatsQuery({});
+
     return (
         <div>
             <Title>Site Stats</Title>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-                <StatCard
-                    Icon={PiUsersThree}
-                    label="Total Users"
-                    value={1203}
-                />
-                <StatCard
-                    Icon={TbFileDescription}
-                    label="Total Posts"
-                    value={4567}
-                />
-                <StatCard
-                    Icon={TbMessageCircle}
-                    label="Comments"
-                    value={8931}
-                />
-            </div>
+            {isLoading && <LoadingPlaceholder />}
+
+            {isSuccess && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                    <StatCard
+                        Icon={PiUsersThree}
+                        label="Total Users"
+                        value={ShortNumber(adminStats.total.users)}
+                    />
+                    <StatCard
+                        Icon={TbFileDescription}
+                        label="Total Posts"
+                        value={ShortNumber(adminStats.total.posts)}
+                    />
+                    <StatCard
+                        Icon={TbMessageCircle}
+                        label="Total Comments"
+                        value={ShortNumber(adminStats.total.comments)}
+                    />
+                    <StatCard
+                        Icon={RiUserCommunityLine}
+                        label="Total Subhiro"
+                        value={ShortNumber(adminStats.total.subhiro)}
+                    />
+                    <StatCard
+                        Icon={LuUserPlus}
+                        label="Users This Week"
+                        value={ShortNumber(adminStats.this_week.users)}
+                    />
+                    <StatCard
+                        Icon={FiFilePlus}
+                        label="Posts This Week"
+                        value={ShortNumber(adminStats.this_week.posts)}
+                    />
+                </div>
+            )}
 
             <Title>New SubHiro</Title>
             <div className="text-xs italic text-neutral-400 space-y-2">
