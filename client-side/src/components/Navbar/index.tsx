@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import RoundedButton from "@/components/Buttons/Rounded";
 import Link from "next/link";
 import Popover from "../Popover";
@@ -16,7 +16,6 @@ import { TbMoodEdit } from "react-icons/tb";
 import { MdLogout } from "react-icons/md";
 import { GoGear, GoMegaphone } from "react-icons/go";
 import { GrUserAdmin } from "react-icons/gr";
-import { useFetchUserInfoQuery } from "@/store/features/user/userApiSlice";
 import { useLogoutMutation } from "@/store/features/auth/authApiSlice";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,15 +24,21 @@ import {
     setDrawerOpened,
     SiteConfigState,
 } from "@/store/features/config/configSlice";
+import {
+    fetchUserInfoViaThunk,
+    removeUserInfo,
+    userInfoType,
+} from "@/store/features/user/userInfoSlice";
+import { AppDispatch } from "@/store/app/store";
 
 const Navbar = () => {
     const {
         data: userInfo,
-        refetch: refetchUserInfo,
         isLoading,
         isSuccess,
         isError,
-    } = useFetchUserInfoQuery({});
+    }: userInfoType = useSelector((state: any) => state.user_info);
+    const dispatch = useDispatch<AppDispatch>();
 
     const [logoutUser] = useLogoutMutation();
 
@@ -41,19 +46,21 @@ const Navbar = () => {
         (state: any) => state.site_config
     );
 
-    const dispatch = useDispatch();
     // Logout User
     const handleLogoutUser = async () => {
         try {
             await logoutUser({}).unwrap();
-            await refetchUserInfo();
+            dispatch(removeUserInfo());
             toast.success("Logout Successful!");
         } catch (error: any) {
             toast.error(error?.data?.message ?? "Logout Failed");
         }
     };
 
-    // const
+    // Dispatch Async Thunk to Load Data
+    useEffect(() => {
+        dispatch(fetchUserInfoViaThunk());
+    }, [dispatch]);
 
     return (
         <header className="sticky top-0 px-3 py-1.5 flex justify-between items-center gap-4 border-b border-neutral-300 z-[100] bg-white">

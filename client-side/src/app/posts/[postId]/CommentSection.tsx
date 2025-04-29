@@ -8,9 +8,8 @@ import {
     useFetchCommentsQuery,
     useInsertCommentMutation,
 } from "@/store/features/comments/commentsApiSlice";
-import { useFetchUserInfoQuery } from "@/store/features/user/userApiSlice";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setAuthModalType } from "@/store/features/config/configSlice";
 import PreviewComment, { CommentInterface } from "@/components/PreviewComment";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
@@ -18,8 +17,9 @@ import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 const CommentSection = ({ postId }: { postId: string }) => {
     const dispatch = useDispatch();
 
-    const { data: UserInfo, isLoading: isUserInfoLoading } =
-        useFetchUserInfoQuery({});
+    const { data: UserInfo, isLoading: isUserInfoLoading } = useSelector(
+        (state: any) => state.user_info
+    );
     const [submitComment, { isLoading: isSubmitCommentLoading }] =
         useInsertCommentMutation();
 

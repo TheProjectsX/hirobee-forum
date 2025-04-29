@@ -9,7 +9,6 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import Popover from "@/components/Popover";
 import SquareButton from "@/components/Buttons/Square";
 import { IoFlagOutline } from "react-icons/io5";
-import { useFetchUserInfoQuery } from "@/store/features/user/userApiSlice";
 import { AiOutlineDelete } from "react-icons/ai";
 import { FiEdit3 } from "react-icons/fi";
 import Swal from "sweetalert2";
@@ -18,6 +17,7 @@ import {
     useDeleteCommentMutation,
     useUpdateCommentMutation,
 } from "@/store/features/comments/commentsApiSlice";
+import { useSelector } from "react-redux";
 
 export interface CommentInterface {
     _id: string;
@@ -45,7 +45,7 @@ const PreviewComment = ({
     onUpdate?: () => void;
     onDelete?: () => void;
 }) => {
-    const { data: userInfo } = useFetchUserInfoQuery({});
+    const { data: userInfo } = useSelector((state: any) => state.user_info);
 
     const [deleteComment, { isLoading: isDeleteCommentLoading }] =
         useDeleteCommentMutation();

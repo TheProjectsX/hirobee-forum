@@ -28,10 +28,7 @@ import Clipboard from "../Clipboard";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 
-import {
-    useDeletePostMutation,
-    useFetchUserInfoQuery,
-} from "@/store/features/user/userApiSlice";
+import { useDeletePostMutation } from "@/store/features/user/userApiSlice";
 import {
     useUpdatePostDownvoteMutation,
     useUpdatePostUpvoteMutation,
@@ -39,6 +36,7 @@ import {
 import { FiEdit3 } from "react-icons/fi";
 import { AiOutlineDelete } from "react-icons/ai";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 
 export interface PostInterface {
     _id: string;
@@ -76,7 +74,7 @@ const PreviewPost = ({
         isLoading: isUserInfoLoading,
         isError: isUserInfoError,
         isSuccess: isUserInfoSuccess,
-    } = useFetchUserInfoQuery({});
+    } = useSelector((state: any) => state.user_info);
 
     const [updateUpvote] = useUpdatePostUpvoteMutation();
     const [updateDownvote] = useUpdatePostDownvoteMutation();

@@ -18,9 +18,13 @@ Done
 
 Done
 
-### Add Pagination
+### Calling Fetch User info Multiple times
 
-#### Create Infinite Scroll
+> Create a Global Store State and use Async Thunk 1st time. After that, use manual fetch to get the data and save it
+
+Done
+
+### Add Pagination
 
 ### Update Sidebar Contents
 

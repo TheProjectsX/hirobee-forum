@@ -9,12 +9,14 @@ import {
     useLoginMutation,
     useRegisterMutation,
 } from "@/store/features/auth/authApiSlice";
-import { useFetchUserInfoQuery } from "@/store/features/user/userApiSlice";
+
 import { useDispatch, useSelector } from "react-redux";
 import {
     setAuthModalType,
     SiteConfigState,
 } from "@/store/features/config/configSlice";
+import { fetchUserInfoViaThunk } from "@/store/features/user/userInfoSlice";
+import { AppDispatch } from "@/store/app/store";
 
 const Auth = () => {
     // Open State
@@ -22,7 +24,7 @@ const Auth = () => {
         (state: any) => state.site_config
     );
 
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<AppDispatch>();
 
     // Mutations
     const [
@@ -35,8 +37,8 @@ const Auth = () => {
         { isLoading: isLoginLoading, isSuccess: isLoginSuccess },
     ] = useLoginMutation();
 
-    const { refetch: fetchUserInfo, isSuccess: isFetchUserInfoSuccess } =
-        useFetchUserInfoQuery({});
+    const { isSuccess: isFetchUserInfoSuccess, error: fetchUserInfoError } =
+        useSelector((state: any) => state.user_info);
 
     const [authValues, setAuthValues] = useState<{
         email: string;
@@ -75,7 +77,11 @@ const Auth = () => {
             toast.success("Registration SuccessFul!");
             dispatch(setAuthModalType("close"));
 
-            const userInfoResponse = await fetchUserInfo().unwrap();
+            const userInfoResponse = await dispatch(
+                fetchUserInfoViaThunk()
+            ).unwrap();
+
+            console.log(userInfoResponse);
             // Do other stuffs
         } catch (error: any) {
             toast.error(error?.data?.message ?? "Invalid Credentials");
@@ -108,7 +114,11 @@ const Auth = () => {
             toast.success("Login SuccessFul!");
             dispatch(setAuthModalType("close"));
 
-            const userInfoResponse = await fetchUserInfo().unwrap();
+            const userInfoResponse = await dispatch(
+                fetchUserInfoViaThunk()
+            ).unwrap();
+
+            console.log(userInfoResponse);
             // Do other stuffs
         } catch (error: any) {
             toast.error(error?.data?.message ?? "Invalid Credentials");
