@@ -8,6 +8,7 @@ import { LiaSortSolid } from "react-icons/lia";
 import Title from "../Title";
 import { useFetchUsersQuery } from "@/store/features/admin/adminApiSlice";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
+import EmptyDataLabel from "@/components/EmptyDataLabel";
 
 interface UserDataInterface {
     _id: string;
@@ -23,10 +24,27 @@ interface UserDataInterface {
 }
 
 const UserList = () => {
-    const [currentPage, setCurrentPage] = useState(1);
-    const { data: usersData, isFetching } = useFetchUsersQuery({
-        params: { page: currentPage, limit: 10 },
+    const [queryParams, setQueryParams] = useState<{
+        page: number;
+        limit: number;
+        search: string;
+    }>({
+        page: 1,
+        limit: 10,
+        search: "",
     });
+
+    const { data: usersData, isFetching } = useFetchUsersQuery({
+        params: queryParams,
+    });
+
+    const handleUserSearch = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const target = e.target as HTMLFormElement;
+        const query: string = target.query.value;
+
+        setQueryParams((prev) => ({ ...prev, page: 1, search: query }));
+    };
 
     return (
         <div>
@@ -37,7 +55,7 @@ const UserList = () => {
 
             {/* Search for User */}
             <div className="mb-6 max-w-64">
-                <form onSubmit={(e) => e.preventDefault()}>
+                <form onSubmit={handleUserSearch}>
                     <div
                         className="hover:bg-slate-100 flex items-center gap-2 rounded-full px-3 py-2 cursor-text border-2 border-slate-500 hover:border-slate-300 has-[input:focus]:border-primary"
                         onClick={(e) => {
@@ -49,6 +67,7 @@ const UserList = () => {
                             <IoSearchOutline />
                         </span>
                         <input
+                            name="query"
                             type="text"
                             className="border-none outline-none text-sm w-full"
                             placeholder="Search User"
@@ -60,8 +79,13 @@ const UserList = () => {
             {/* Initial Loading */}
             {!usersData && isFetching && <LoadingPlaceholder />}
 
+            {/* Label when There are no Data to Show */}
+            {usersData && usersData.data.length === 0 && (
+                <EmptyDataLabel>There are no Users to Show</EmptyDataLabel>
+            )}
+
             {/* Table of Contents */}
-            {usersData && (
+            {usersData && usersData.data.length > 0 && (
                 <div className="relative overflow-x-auto shadow-md sm:rounded-lg mt-6">
                     <table className="w-full text-sm text-center text-gray-600">
                         <thead className="text-xs uppercase bg-gray-100 text-gray-700">
@@ -142,16 +166,24 @@ const UserList = () => {
                 </div>
             )}
 
-            {usersData && (
+            {usersData && usersData.data.length > 0 && (
                 <div className="flex gap-2 items-center overflow-x-auto justify-center mt-8">
                     <span className="w-6"></span>
                     <Pagination
-                        currentPage={currentPage}
-                        totalPages={Math.ceil(
-                            usersData.pagination.total_count /
-                                usersData.pagination.limit
+                        currentPage={queryParams.page}
+                        totalPages={Math.max(
+                            1,
+                            Math.ceil(
+                                usersData.pagination.total_count /
+                                    usersData.pagination.limit
+                            )
                         )}
-                        onPageChange={(page: number) => setCurrentPage(page)}
+                        onPageChange={(page: number) =>
+                            setQueryParams((prev) => ({
+                                ...prev,
+                                page: prev.page + 1,
+                            }))
+                        }
                         showIcons
                     />
 
