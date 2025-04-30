@@ -33,3 +33,9 @@ Done (!)
 ### Admin Panel
 
 ### See if it's possible to add base path for the injected reducers
+
+### Add Report Functionality
+
+### Control Logged Out user Actions
+
+### Fix Popover direction

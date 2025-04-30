@@ -11,8 +11,9 @@ import EmptyDataLabel from "@/components/EmptyDataLabel";
 interface ReportedPostsInterface {
     title: string;
     author: string;
-    community: string;
+    targetId: string;
     report: string;
+    reportedBy: string;
     createdAt: number;
 }
 
@@ -37,12 +38,12 @@ const ReportedPosts = () => {
             {/* Table of Contents */}
             {reportedPosts && reportedPosts.data.length > 0 && (
                 <div className="relative overflow-x-auto scrollbar-thin shadow-md sm:rounded-lg mt-6">
-                    <table className="w-full text-sm text-center text-gray-600">
+                    <table className="w-full text-sm text-center text-gray-600 whitespace-nowrap">
                         <thead className="text-xs uppercase bg-gray-100 text-gray-700">
                             <tr>
                                 <th className="px-6 py-3">Title</th>
                                 <th className="px-6 py-3">Author</th>
-                                <th className="px-6 py-3">Community</th>
+                                <th className="px-6 py-3">Reported By</th>
                                 <th className="px-6 py-3">Report</th>
                                 <th className="px-6 py-3">Action</th>
                             </tr>
@@ -56,17 +57,27 @@ const ReportedPosts = () => {
                                     >
                                         <td className="px-6 min-w-[182px] line-clamp-2 overflow-hidden">
                                             <Link
-                                                href={"#"}
+                                                href={`/posts/${item.targetId}`}
                                                 className="block hover:underline"
                                             >
                                                 {item.title}
                                             </Link>
                                         </td>
                                         <td className="px-6 py-4">
-                                            {item.author}
+                                            <Link
+                                                href={`/u/${item.author}`}
+                                                className="block hover:underline"
+                                            >
+                                                u/{item.author}
+                                            </Link>
                                         </td>
                                         <td className="px-6 py-4">
-                                            h/{item.community}
+                                            <Link
+                                                href={`/u/${item.reportedBy}`}
+                                                className="block hover:underline"
+                                            >
+                                                u/{item.reportedBy}
+                                            </Link>
                                         </td>
                                         <td className="px-6 py-4">
                                             {item.report}

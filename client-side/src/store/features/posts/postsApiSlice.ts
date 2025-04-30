@@ -37,6 +37,13 @@ const postsApiSlice = baseApiSlice.injectEndpoints({
                 method: "PUT",
             }),
         }),
+        reportPost: builder.mutation({
+            query: (data) => ({
+                url: `/posts/${data.postId}/report`,
+                method: "POST",
+                body: data.body,
+            }),
+        }),
     }),
 });
 
@@ -44,5 +51,6 @@ export const {
     useFetchPostsQuery,
     useUpdatePostUpvoteMutation,
     useUpdatePostDownvoteMutation,
+    useReportPostMutation,
 } = postsApiSlice;
 export default postsApiSlice;

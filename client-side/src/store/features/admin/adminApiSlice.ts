@@ -16,7 +16,7 @@ const adminApiSlice = baseApiSlice.injectEndpoints({
         }),
         fetchReportedUsers: builder.query({
             query: (data) => ({
-                url: "/admin/reported/users",
+                url: "/moderator/reports/users",
                 params: data.params ?? {},
             }),
             forceRefetch({ currentArg, previousArg }) {
@@ -25,7 +25,7 @@ const adminApiSlice = baseApiSlice.injectEndpoints({
         }),
         fetchReportedPosts: builder.query({
             query: (data) => ({
-                url: "/admin/reported/posts",
+                url: "/moderator/reports/posts",
                 params: data.params ?? {},
             }),
             forceRefetch({ currentArg, previousArg }) {
@@ -34,7 +34,7 @@ const adminApiSlice = baseApiSlice.injectEndpoints({
         }),
         fetchReportedComments: builder.query({
             query: (data) => ({
-                url: "/admin/reported/comments",
+                url: "/moderator/reports/comments",
                 params: data.params ?? {},
             }),
             forceRefetch({ currentArg, previousArg }) {
@@ -49,7 +49,19 @@ const adminApiSlice = baseApiSlice.injectEndpoints({
         }),
         updateUserStatus: builder.mutation({
             query: (data) => ({
-                url: `/admin/users/${data.username}/status/${data.status}`,
+                url: `/moderator/users/${data.username}/status/${data.status}`,
+                method: "PUT",
+            }),
+        }),
+        ignoreReport: builder.mutation({
+            query: (data) => ({
+                url: `/moderator/reports/${data.reportId}/ignore`,
+                method: "PUT",
+            }),
+        }),
+        approveReport: builder.mutation({
+            query: (data) => ({
+                url: `/moderator/reports/${data.reportId}/approve`,
                 method: "PUT",
             }),
         }),

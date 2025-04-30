@@ -30,6 +30,7 @@ import Swal from "sweetalert2";
 
 import { useDeletePostMutation } from "@/store/features/user/userApiSlice";
 import {
+    useReportPostMutation,
     useUpdatePostDownvoteMutation,
     useUpdatePostUpvoteMutation,
 } from "@/store/features/posts/postsApiSlice";
@@ -78,6 +79,7 @@ const PreviewPost = ({
 
     const [updateUpvote] = useUpdatePostUpvoteMutation();
     const [updateDownvote] = useUpdatePostDownvoteMutation();
+    const [reportPost] = useReportPostMutation();
 
     const [deletePost, { isLoading: isDeletePostLoading }] =
         useDeletePostMutation();
@@ -137,6 +139,41 @@ const PreviewPost = ({
             onDelete();
         } catch (error: any) {
             toast.error(error?.data?.message ?? "Failed to Delete Post");
+        }
+    };
+
+    // Report Post
+    const handleReportPost = async (postId: string) => {
+        if (!isUserInfoLoading && isUserInfoError) {
+            return;
+        }
+
+        const result = await Swal.fire({
+            title: "Select your Report",
+            input: "select",
+            inputOptions: {
+                "Spam or self-promotion": "Spam or self-promotion",
+                "Offensive language": "Offensive language",
+                "NSFW content": "NSFW content",
+                "Harassment or bullying": "Harassment or bullying",
+                Misinformation: "Misinformation",
+            },
+            inputPlaceholder: "Select a Report",
+            showCancelButton: true,
+        });
+
+        if (result.isDismissed) return;
+
+        try {
+            const data = {
+                postId,
+                body: { report: result.value },
+            };
+            const response = await reportPost(data).unwrap();
+
+            toast.success("Successfully Reported Post");
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Failed to Send Report");
         }
     };
 
@@ -316,6 +353,9 @@ const PreviewPost = ({
                                         <SquareButton
                                             className="w-full"
                                             Icon={IoFlagOutline}
+                                            onClick={() =>
+                                                handleReportPost(postData._id)
+                                            }
                                         >
                                             Report
                                         </SquareButton>

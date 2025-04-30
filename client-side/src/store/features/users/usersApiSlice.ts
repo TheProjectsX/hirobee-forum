@@ -48,11 +48,19 @@ const usersApiSlice = baseApiSlice.injectEndpoints({
                 return currentArg !== previousArg;
             },
         }),
+        reportUser: builder.mutation({
+            query: (data) => ({
+                url: `/users/${data.username}/report`,
+                method: "POST",
+                body: data.body,
+            }),
+        }),
     }),
 });
 
 export const {
     useFetchSpecificUserPostsQuery,
     useFetchSpecificUserCommentsQuery,
+    useReportUserMutation,
 } = usersApiSlice;
 export default usersApiSlice;

@@ -15,6 +15,7 @@ import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import {
     useDeleteCommentMutation,
+    useReportCommentMutation,
     useUpdateCommentMutation,
 } from "@/store/features/comments/commentsApiSlice";
 import { useSelector } from "react-redux";
@@ -45,12 +46,18 @@ const PreviewComment = ({
     onUpdate?: () => void;
     onDelete?: () => void;
 }) => {
-    const { data: userInfo } = useSelector((state: any) => state.user_info);
+    const {
+        data: userInfo,
+        isLoading: isUserInfoLoading,
+        isError: isUserInfoError,
+        isSuccess: isUserInfoSuccess,
+    } = useSelector((state: any) => state.user_info);
 
     const [deleteComment, { isLoading: isDeleteCommentLoading }] =
         useDeleteCommentMutation();
 
     const [updateComment] = useUpdateCommentMutation();
+    const [reportComment] = useReportCommentMutation();
 
     // Upvote Comment
 
@@ -108,6 +115,42 @@ const PreviewComment = ({
             onDelete();
         } catch (error: any) {
             toast.error(error?.data?.message ?? "Failed to Delete Comment");
+        }
+    };
+
+    // Report Comment
+
+    const handleReportComment = async (commentId: string) => {
+        if (!isUserInfoLoading && isUserInfoError) {
+            return;
+        }
+
+        const result = await Swal.fire({
+            title: "Select your Report",
+            input: "select",
+            inputOptions: {
+                Spam: "Spam",
+                "Offensive content": "Offensive content",
+                Harassment: "Harassment",
+                "Irrelevant or off-topic": "Irrelevant or off-topic",
+                "Personal attacks": "Personal attacks",
+            },
+            inputPlaceholder: "Select a Report",
+            showCancelButton: true,
+        });
+
+        if (result.isDismissed) return;
+
+        try {
+            const data = {
+                commentId: commentId,
+                body: { report: result.value },
+            };
+            const response = await reportComment(data).unwrap();
+
+            toast.success("Successfully Reported Comment");
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Failed to Send Report");
         }
     };
 
@@ -242,6 +285,11 @@ const PreviewComment = ({
                                             <SquareButton
                                                 className="w-full"
                                                 Icon={IoFlagOutline}
+                                                onClick={() =>
+                                                    handleReportComment(
+                                                        commentData._id
+                                                    )
+                                                }
                                             >
                                                 Report
                                             </SquareButton>

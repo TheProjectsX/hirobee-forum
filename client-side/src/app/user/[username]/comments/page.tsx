@@ -13,7 +13,6 @@ const Comments = ({ params }: { params: Promise<{ username: string }> }) => {
 
     const {
         data: commentsData,
-        isLoading,
         isFetching,
         isSuccess,
     } = useFetchSpecificUserCommentsQuery({

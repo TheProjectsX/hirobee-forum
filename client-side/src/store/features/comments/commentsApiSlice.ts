@@ -27,6 +27,13 @@ const commentsApiSlice = baseApiSlice.injectEndpoints({
                 method: "DELETE",
             }),
         }),
+        reportComment: builder.mutation({
+            query: (data) => ({
+                url: `/comments/${data.commentId}/report`,
+                method: "POST",
+                body: data.body,
+            }),
+        }),
     }),
 });
 
@@ -35,5 +42,6 @@ export const {
     useInsertCommentMutation,
     useUpdateCommentMutation,
     useDeleteCommentMutation,
+    useReportCommentMutation,
 } = commentsApiSlice;
 export default commentsApiSlice;

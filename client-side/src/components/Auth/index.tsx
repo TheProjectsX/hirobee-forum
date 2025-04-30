@@ -81,7 +81,6 @@ const Auth = () => {
                 fetchUserInfoViaThunk()
             ).unwrap();
 
-            console.log(userInfoResponse);
             // Do other stuffs
         } catch (error: any) {
             toast.error(error?.data?.message ?? "Invalid Credentials");
@@ -117,8 +116,6 @@ const Auth = () => {
             const userInfoResponse = await dispatch(
                 fetchUserInfoViaThunk()
             ).unwrap();
-
-            console.log(userInfoResponse);
             // Do other stuffs
         } catch (error: any) {
             toast.error(error?.data?.message ?? "Invalid Credentials");

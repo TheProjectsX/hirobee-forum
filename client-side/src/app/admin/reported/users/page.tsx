@@ -12,7 +12,7 @@ interface ReportedUsersInterface {
     username: string;
     reportedBy: string;
     report: string;
-    targetType: string;
+    targetId: string;
     createdAt: number;
 }
 
@@ -38,7 +38,7 @@ const ReportedUsers = () => {
             {reportedUsers && reportedUsers.data.length > 0 && (
                 <div className="relative overflow-x-auto scrollbar-thin shadow-md sm:rounded-lg mt-6">
                     <table className="w-full text-sm text-center text-gray-600">
-                        <thead className="text-xs uppercase bg-gray-100 text-gray-700">
+                        <thead className="text-xs uppercase bg-gray-100 text-gray-700 whitespace-nowrap">
                             <tr>
                                 <th className="px-6 py-3">Username</th>
                                 <th className="px-6 py-3">Reported By</th>

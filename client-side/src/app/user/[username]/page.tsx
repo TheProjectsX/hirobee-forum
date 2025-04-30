@@ -13,12 +13,11 @@ const Posts = ({ params }: { params: Promise<{ username: string }> }) => {
 
     const {
         data: postsData,
-        isLoading,
         isFetching,
         isSuccess,
     } = useFetchSpecificUserPostsQuery({
         username,
-        params: { page: currentPage, limit: 4 },
+        params: { page: currentPage, limit: 8 },
     });
 
     return (
