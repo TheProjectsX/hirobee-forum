@@ -14,6 +14,7 @@ const Popover = ({
     onWrapperBlur = () => {},
     viewOnHover = false,
     indicator = true,
+    closeOnClick = true,
 }: {
     children: React.ReactElement<any, any>;
     content?: string | React.ReactNode;
@@ -26,7 +27,10 @@ const Popover = ({
     onWrapperBlur?: () => void;
     viewOnHover?: boolean;
     indicator?: boolean;
+    closeOnClick?: boolean;
 }) => {
+    const [popoverOpened, setPopoverOpened] = useState<boolean>(false);
+
     const wrapperRef = useRef<HTMLDivElement | null>(null);
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const contentRef = useRef<HTMLDivElement | null>(null);
@@ -41,14 +45,91 @@ const Popover = ({
         className: `${children.props.className || ""} peer`,
         "data-name": "popover-trigger",
         tabIndex: 0,
+        onClick: () =>
+            triggerType === "auto"
+                ? setPopoverOpened((prev) => (closeOnClick ? !prev : prev))
+                : null,
     });
 
+    // Calculate the Direction of Popover
+    const calculatePosition = (
+        position: "top" | "bottom" | "left" | "right",
+        gap: number,
+        triggerRect: DOMRect,
+        contentRect: DOMRect
+    ) => {
+        const innerWidth = window.innerWidth;
+        const innerHeight = window.innerHeight;
+
+        const oppositePosition: any = {
+            top: "bottom",
+            bottom: "top",
+            left: "right",
+            right: "left",
+        };
+
+        const possiblePositions: Array<"top" | "bottom" | "left" | "right"> =
+            [];
+
+        // Check if Top is Possible Direction
+        if (triggerRect.top - gap - contentRect.height > 0) {
+            possiblePositions.push("top");
+        }
+
+        // Check if Bottom is Possible Direction
+        if (triggerRect.bottom + gap + contentRect.height < innerHeight) {
+            possiblePositions.push("bottom");
+        }
+
+        // Check if Left is Possible Direction
+        if (triggerRect.left - gap - contentRect.width > 0) {
+            possiblePositions.push("left");
+        }
+
+        // Check if Right is Possible Direction
+        if (triggerRect.right + gap + contentRect.width < innerWidth) {
+            possiblePositions.push("right");
+        }
+
+        // If Calculated and User given Directions are same
+        if (possiblePositions.includes(position)) return position;
+
+        // If Calculated and User given Directions are opposite
+        if (possiblePositions.includes(oppositePosition[position]))
+            return oppositePosition[position];
+
+        // If There is any Calculated position as User given or Opposite of User given is not possible
+        if (possiblePositions.length > 0) return possiblePositions[0];
+
+        // The direction with most space
+        if (position === "top" || position === "bottom") {
+            const topSpace = triggerRect.top - gap - contentRect.height;
+            const bottomSpace =
+                innerHeight - triggerRect.bottom + gap + contentRect.height;
+
+            return topSpace < bottomSpace ? "top" : "bottom";
+        }
+
+        if (position === "left" || position === "right") {
+            const leftSpace = triggerRect.left - gap - contentRect.width;
+            const rightSpace =
+                innerWidth - triggerRect.right + gap + contentRect.width;
+
+            return leftSpace < rightSpace ? "left" : "right";
+        }
+
+        // Fallback if Non matches
+        return position;
+    };
+
     // This func will calculate the positions of the content
-    const updatePositions = () => {
+    const updatePositions: () => void = () => {
         const gap = 10;
         const indicatorGap = 6;
         const triggerRect = triggerRef.current?.getBoundingClientRect();
         const contentRect = contentRef.current?.getBoundingClientRect();
+
+        if (!triggerRect || !contentRect) return;
 
         const contentWidth = contentRect?.width ?? 0;
         const contentHeight = contentRect?.height ?? 0;
@@ -82,33 +163,13 @@ const Popover = ({
                 right: "left",
             };
 
-        const windowSize = {
-            width: window.innerWidth,
-            height: window.innerHeight,
-        };
-
-        let finalPosition = position;
-
         // Check if the Content goes outside the screen based on position
-        /* Algo: x < 0 || x > window.innerWidth || y < 0 || y > window.innerHeight
-            top: x = trigger.top - gap - content.height
-            bottom: x = trigger.bottom + gap + content.height
-            left: y = trigger.left - gap - content.width
-            right: y = trigger.right + gap + content.width
-        */
-        if (
-            (position === "top" &&
-                (triggerRect?.top ?? 0) - gap - contentHeight < 0) ||
-            (position === "bottom" &&
-                (triggerRect?.bottom ?? 0) + gap + contentHeight >
-                    windowSize.height) ||
-            (position === "left" &&
-                (triggerRect?.left ?? 0) - gap - contentWidth < 0) ||
-            (position === "right" &&
-                (triggerRect?.right ?? 0) + gap + contentWidth < 0)
-        ) {
-            finalPosition = oppositeSide[position];
-        }
+        const finalPosition = calculatePosition(
+            position,
+            gap,
+            triggerRect,
+            contentRect
+        );
 
         popoverIndicatorStyles[oppositeSide[finalPosition]] = `${
             indicatorGap * -1
@@ -129,29 +190,25 @@ const Popover = ({
             center: ["center"],
         };
 
-        const isSameAxis =
-            oppositeAxis[axis as keyof typeof oppositeAxis].includes(position);
+        const sameAxis = oppositeAxis[axis]?.includes(position);
+        const axisToUse = axis === "center" || sameAxis ? "center" : axis;
 
-        const axisToUse =
-            axis === "center" ? "center" : isSameAxis ? "center" : axis;
+        if (axisToUse === "center") {
+            const isVertical = position === "top" || position === "bottom";
+            const offset = isVertical
+                ? contentWidth / 2 - triggerWidth / 2
+                : contentHeight / 2 - triggerHeight / 2;
 
-        if (axisToUse !== "center") {
+            const key = isVertical ? "left" : "top";
+            const centerIndicatorOffset = isVertical
+                ? contentWidth / 2 - 8
+                : contentHeight / 2 - 8;
+
+            popoverContentStyles[key] = `${-offset}px`;
+            popoverIndicatorStyles[key] = `${centerIndicatorOffset}px`;
+        } else {
             popoverContentStyles[axisToUse] = "0px";
             popoverIndicatorStyles[axisToUse] = `${indicatorGap}px`;
-        } else {
-            if (position === "top" || position === "bottom") {
-                // Algo: center = (content.width / 2) - (trigger.width / 2)
-                const offsetLeft = contentWidth / 2 - triggerWidth / 2;
-
-                popoverContentStyles["left"] = `${offsetLeft * -1}px`;
-                popoverIndicatorStyles["left"] = `${contentWidth / 2 - 8}px`;
-            } else {
-                // Algo: center = (content.height / 2) - (trigger.height / 2)
-                const offsetTop = contentHeight / 2 - triggerHeight / 2;
-
-                popoverContentStyles["top"] = `${offsetTop * -1}px`;
-                popoverIndicatorStyles["top"] = `${contentHeight / 2 - 8}px`;
-            }
         }
 
         setPopoverStyle((prev) => ({
@@ -181,7 +238,9 @@ const Popover = ({
     // Check if container blurred
     useEffect(() => {
         const handleWindowClick = (e: MouseEvent) => {
-            const target = e.target as Node;
+            if (!popoverOpened && !contentVisible) return;
+
+            const target = e.target as HTMLElement;
 
             if (
                 wrapperRef.current &&
@@ -189,16 +248,27 @@ const Popover = ({
                 !wrapperRef.current.contains(target) &&
                 !contentRef.current.contains(target)
             ) {
+                if (triggerType === "auto") {
+                    setPopoverOpened(false);
+                }
                 onWrapperBlur();
+            } else if (
+                contentRef.current &&
+                contentRef.current.contains(target) &&
+                (target.closest("a") || target.closest("button"))
+            ) {
+                if (triggerType === "auto") {
+                    setPopoverOpened(false);
+                }
             }
         };
 
-        window.addEventListener("click", handleWindowClick);
+        document.addEventListener("click", handleWindowClick);
 
         return () => {
             document.removeEventListener("click", handleWindowClick);
         };
-    }, []);
+    }, [popoverOpened, contentVisible, triggerType]);
 
     return (
         <div
@@ -213,15 +283,20 @@ const Popover = ({
             {/* Content */}
             <div
                 data-name="popover-content"
-                className={`w-max absolute invisible shadow-[0_0_10px_rgba(0,0,0,0.1)] bg-white z-[999] ${
-                    triggerType === "auto"
-                        ? viewOnHover
-                            ? "transition-[visibility] delay-200 peer-hover:visible group-hover:visible hover:visible"
-                            : "peer-focus:visible group-focus-within:visible"
-                        : contentVisible
-                        ? "!visible"
-                        : ""
-                } ${className}`}
+                className={`w-max absolute invisible bg-white shadow-[0_0_10px_rgba(0,0,0,0.1)] z-[999]
+                    ${
+                        triggerType === "auto"
+                            ? viewOnHover
+                                ? "transition-[visibility] delay-200 peer-hover:visible group-hover:visible hover:visible peer-focus:visible group-focus-within:visible focus:visible"
+                                : popoverOpened
+                                ? "!visible"
+                                : ""
+                            : contentVisible
+                            ? "!visible"
+                            : ""
+                    }
+                    ${className || ""}
+                  `}
                 style={popoverStyle.content}
                 ref={contentRef}
                 tabIndex={0}

@@ -36,6 +36,8 @@ Done
 
 ### See if it's possible to add base path for the injected reducers
 
+Done (Ans: Isn't Possible)
+
 ### Add Report Functionality
 
 Done
@@ -43,3 +45,5 @@ Done
 ### Control Logged Out user Actions
 
 ### Fix Popover direction
+
+Done
