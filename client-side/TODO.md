@@ -42,7 +42,7 @@ Done (Ans: Isn't Possible)
 
 Done
 
-### Control Logged Out user Actions
+### Control Logged In user Actions
 
 ### Protect Route
 

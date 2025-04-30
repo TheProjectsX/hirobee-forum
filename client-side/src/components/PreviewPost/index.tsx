@@ -38,6 +38,7 @@ import { FiEdit3 } from "react-icons/fi";
 import { AiOutlineDelete } from "react-icons/ai";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
+import AuthButtonWrapper from "../AuthButtonWrapper";
 
 export interface PostInterface {
     _id: string;
@@ -350,15 +351,19 @@ const PreviewPost = ({
                                         >
                                             Hide
                                         </SquareButton>
-                                        <SquareButton
-                                            className="w-full"
-                                            Icon={IoFlagOutline}
-                                            onClick={() =>
-                                                handleReportPost(postData._id)
-                                            }
-                                        >
-                                            Report
-                                        </SquareButton>
+                                        <AuthButtonWrapper>
+                                            <SquareButton
+                                                className="w-full"
+                                                Icon={IoFlagOutline}
+                                                onClick={() =>
+                                                    handleReportPost(
+                                                        postData._id
+                                                    )
+                                                }
+                                            >
+                                                Report
+                                            </SquareButton>
+                                        </AuthButtonWrapper>
                                     </>
                                 )}
                             </div>
