@@ -3,12 +3,19 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import Title from "../../Title";
-import { useFetchReportedCommentsQuery } from "@/store/features/admin/adminApiSlice";
+import {
+    useApproveReportMutation,
+    useFetchReportedCommentsQuery,
+    useIgnoreReportMutation,
+} from "@/store/features/admin/adminApiSlice";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 import { Pagination, Spinner } from "flowbite-react";
 import EmptyDataLabel from "@/components/EmptyDataLabel";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 interface ReportedCommentsInterface {
+    _id: string;
     content: string;
     author: string;
     targetId: string;
@@ -19,10 +26,52 @@ interface ReportedCommentsInterface {
 
 const ReportedComments = () => {
     const [currentPage, setCurrentPage] = useState(1);
-    const { data: reportedComments, isFetching } =
-        useFetchReportedCommentsQuery({
-            params: { page: currentPage, limit: 10 },
-        });
+    const {
+        data: reportedComments,
+        refetch,
+        isFetching,
+    } = useFetchReportedCommentsQuery({
+        params: { page: currentPage, limit: 10 },
+    });
+
+    const [approveReport] = useApproveReportMutation();
+    const [ignoreReport] = useIgnoreReportMutation();
+
+    // Handle Approve Delete Comment
+    const handleApproveDeleteComment = async (reportId: string) => {
+        try {
+            const result = await Swal.fire({
+                title: "Are you sure?",
+                text: "Comment will be Permanently Deleted!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes",
+            });
+
+            if (result.isDismissed) return;
+
+            await approveReport({ reportId }).unwrap();
+
+            refetch();
+            toast.success("Comment Deleted");
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Failed to Perform Action");
+        }
+    };
+
+    // Handle Ignore Report
+    const handleIgnoreReport = async (reportId: string) => {
+        try {
+            await ignoreReport({ reportId }).unwrap();
+
+            refetch();
+            // No Need to Alert about it
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Failed to Perform Action");
+        }
+    };
 
     return (
         <div className="">
@@ -52,7 +101,7 @@ const ReportedComments = () => {
                         <tbody className="text-xs">
                             {reportedComments.data.map(
                                 (
-                                    item: ReportedCommentsInterface,
+                                    reportedComment: ReportedCommentsInterface,
                                     idx: number
                                 ) => (
                                     <tr
@@ -60,32 +109,46 @@ const ReportedComments = () => {
                                         className="odd:bg-white even:bg-gray-50 border-b border-gray-200"
                                     >
                                         <td className="px-6 min-w-[182px] line-clamp-2 overflow-hidden">
-                                            {item.content}
+                                            {reportedComment.content}
                                         </td>
                                         <td className="px-6 py-4">
                                             <Link
-                                                href={`/u/${item.author}`}
+                                                href={`/u/${reportedComment.author}`}
                                                 className="block hover:underline"
                                             >
-                                                u/{item.author}
+                                                u/{reportedComment.author}
                                             </Link>
                                         </td>
                                         <td className="px-6 py-4">
                                             <Link
-                                                href={`/u/${item.reportedBy}`}
+                                                href={`/u/${reportedComment.reportedBy}`}
                                                 className="block hover:underline"
                                             >
-                                                u/{item.reportedBy}
+                                                u/{reportedComment.reportedBy}
                                             </Link>
                                         </td>
                                         <td className="px-6 py-4">
-                                            {item.report}
+                                            {reportedComment.report}
                                         </td>
                                         <td className="px-3 py-4 flex flex-col font-medium">
-                                            <button className="text-xs text-red-600 hover:underline whitespace-nowrap py-0.5 px-3">
+                                            <button
+                                                className="text-xs text-red-600 hover:underline whitespace-nowrap py-0.5 px-3"
+                                                onClick={(e) =>
+                                                    handleApproveDeleteComment(
+                                                        reportedComment._id
+                                                    )
+                                                }
+                                            >
                                                 Delete
                                             </button>
-                                            <button className="text-xs text-blue-600 hover:underline py-0.5 px-3">
+                                            <button
+                                                className="text-xs text-blue-600 hover:underline py-0.5 px-3"
+                                                onClick={(e) =>
+                                                    handleIgnoreReport(
+                                                        reportedComment._id
+                                                    )
+                                                }
+                                            >
                                                 Ignore
                                             </button>
                                         </td>

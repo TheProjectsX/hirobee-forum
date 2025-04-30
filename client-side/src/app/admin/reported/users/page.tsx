@@ -3,12 +3,19 @@
 import Link from "next/link";
 import React, { useState } from "react";
 import Title from "../../Title";
-import { useFetchReportedUsersQuery } from "@/store/features/admin/adminApiSlice";
+import {
+    useApproveReportMutation,
+    useFetchReportedUsersQuery,
+    useIgnoreReportMutation,
+} from "@/store/features/admin/adminApiSlice";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 import { Pagination, Spinner } from "flowbite-react";
 import EmptyDataLabel from "@/components/EmptyDataLabel";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 interface ReportedUsersInterface {
+    _id: string;
     username: string;
     reportedBy: string;
     report: string;
@@ -18,9 +25,52 @@ interface ReportedUsersInterface {
 
 const ReportedUsers = () => {
     const [currentPage, setCurrentPage] = useState(1);
-    const { data: reportedUsers, isFetching } = useFetchReportedUsersQuery({
+    const {
+        data: reportedUsers,
+        refetch,
+        isFetching,
+    } = useFetchReportedUsersQuery({
         params: { page: currentPage, limit: 10 },
     });
+
+    const [approveReport] = useApproveReportMutation();
+    const [ignoreReport] = useIgnoreReportMutation();
+
+    // Handle Approve Ban User
+    const handleApproveBanUser = async (reportId: string) => {
+        try {
+            const result = await Swal.fire({
+                title: "Are you sure?",
+                text: `User will be Banned`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes",
+            });
+
+            if (result.isDismissed) return;
+
+            await approveReport({ reportId }).unwrap();
+
+            refetch();
+            toast.success("User Banned");
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Failed to Perform Action");
+        }
+    };
+
+    // Handle Ignore Report
+    const handleIgnoreReport = async (reportId: string) => {
+        try {
+            await ignoreReport({ reportId }).unwrap();
+
+            refetch();
+            // No Need to Alert about it
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Failed to Perform Action");
+        }
+    };
 
     return (
         <div className="">
@@ -48,36 +98,53 @@ const ReportedUsers = () => {
                         </thead>
                         <tbody className="text-xs">
                             {reportedUsers.data.map(
-                                (item: ReportedUsersInterface, idx: number) => (
+                                (
+                                    reportedUser: ReportedUsersInterface,
+                                    idx: number
+                                ) => (
                                     <tr
                                         key={idx}
                                         className="odd:bg-white even:bg-gray-50 border-b border-gray-200"
                                     >
                                         <td className="px-6 py-4 font-medium lg:text-sm">
                                             <Link
-                                                href={`/u/${item.username}`}
+                                                href={`/u/${reportedUser.username}`}
                                                 className="block hover:underline"
                                             >
-                                                {item.username}
+                                                {reportedUser.username}
                                             </Link>
                                         </td>
 
                                         <td className="px-6 py-4">
                                             <Link
-                                                href={`/u/${item.reportedBy}`}
+                                                href={`/u/${reportedUser.reportedBy}`}
                                                 className="block hover:underline"
                                             >
-                                                {item.reportedBy}
+                                                {reportedUser.reportedBy}
                                             </Link>
                                         </td>
                                         <td className="px-6 py-4">
-                                            {item.report}
+                                            {reportedUser.report}
                                         </td>
                                         <td className="px-3 py-4 flex flex-col font-medium">
-                                            <button className="text-xs text-red-600 hover:underline whitespace-nowrap py-0.5 px-3">
+                                            <button
+                                                className="text-xs text-red-600 hover:underline whitespace-nowrap py-0.5 px-3"
+                                                onClick={() =>
+                                                    handleApproveBanUser(
+                                                        reportedUser._id
+                                                    )
+                                                }
+                                            >
                                                 Ban User
                                             </button>
-                                            <button className="text-xs text-blue-600 hover:underline py-0.5 px-3">
+                                            <button
+                                                className="text-xs text-blue-600 hover:underline py-0.5 px-3"
+                                                onClick={() =>
+                                                    handleIgnoreReport(
+                                                        reportedUser._id
+                                                    )
+                                                }
+                                            >
                                                 Ignore
                                             </button>
                                         </td>

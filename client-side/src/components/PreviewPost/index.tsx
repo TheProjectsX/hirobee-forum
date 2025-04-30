@@ -169,7 +169,7 @@ const PreviewPost = ({
                 postId,
                 body: { report: result.value },
             };
-            const response = await reportPost(data).unwrap();
+            await reportPost(data).unwrap();
 
             toast.success("Successfully Reported Post");
         } catch (error: any) {

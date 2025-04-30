@@ -16,7 +16,7 @@ const adminApiSlice = baseApiSlice.injectEndpoints({
         }),
         fetchReportedUsers: builder.query({
             query: (data) => ({
-                url: "/moderator/reports/users",
+                url: "/moderator/reported/users",
                 params: data.params ?? {},
             }),
             forceRefetch({ currentArg, previousArg }) {
@@ -25,7 +25,7 @@ const adminApiSlice = baseApiSlice.injectEndpoints({
         }),
         fetchReportedPosts: builder.query({
             query: (data) => ({
-                url: "/moderator/reports/posts",
+                url: "/moderator/reported/posts",
                 params: data.params ?? {},
             }),
             forceRefetch({ currentArg, previousArg }) {
@@ -34,7 +34,7 @@ const adminApiSlice = baseApiSlice.injectEndpoints({
         }),
         fetchReportedComments: builder.query({
             query: (data) => ({
-                url: "/moderator/reports/comments",
+                url: "/moderator/reported/comments",
                 params: data.params ?? {},
             }),
             forceRefetch({ currentArg, previousArg }) {
@@ -76,5 +76,7 @@ export const {
     useFetchReportedCommentsQuery,
     useUpdateUserRoleMutation,
     useUpdateUserStatusMutation,
+    useIgnoreReportMutation,
+    useApproveReportMutation,
 } = adminApiSlice;
 export default adminApiSlice;
