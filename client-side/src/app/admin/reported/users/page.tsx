@@ -7,7 +7,7 @@ import {
     useApproveReportMutation,
     useFetchReportedUsersQuery,
     useIgnoreReportMutation,
-} from "@/store/features/admin/adminApiSlice";
+} from "@/store/features/moderator/moderatorApiSlice";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 import { Pagination, Spinner } from "flowbite-react";
 import EmptyDataLabel from "@/components/EmptyDataLabel";

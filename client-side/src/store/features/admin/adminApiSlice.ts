@@ -14,54 +14,10 @@ const adminApiSlice = baseApiSlice.injectEndpoints({
                 return currentArg !== previousArg;
             },
         }),
-        fetchReportedUsers: builder.query({
-            query: (data) => ({
-                url: "/moderator/reported/users",
-                params: data.params ?? {},
-            }),
-            forceRefetch({ currentArg, previousArg }) {
-                return currentArg !== previousArg;
-            },
-        }),
-        fetchReportedPosts: builder.query({
-            query: (data) => ({
-                url: "/moderator/reported/posts",
-                params: data.params ?? {},
-            }),
-            forceRefetch({ currentArg, previousArg }) {
-                return currentArg !== previousArg;
-            },
-        }),
-        fetchReportedComments: builder.query({
-            query: (data) => ({
-                url: "/moderator/reported/comments",
-                params: data.params ?? {},
-            }),
-            forceRefetch({ currentArg, previousArg }) {
-                return currentArg !== previousArg;
-            },
-        }),
+
         updateUserRole: builder.mutation({
             query: (data) => ({
                 url: `/admin/users/${data.username}/role/${data.role}`,
-                method: "PUT",
-            }),
-        }),
-        updateUserStatus: builder.mutation({
-            query: (data) => ({
-                url: `/moderator/users/${data.username}/status/${data.status}`,
-                method: "PUT",
-            }),
-        }),
-        ignoreReport: builder.mutation({
-            query: (data) => ({
-                url: `/moderator/reports/${data.reportId}/ignore`,
-                method: "PUT",
-            }),
-        }),
-        approveReport: builder.mutation({
-            query: (data) => ({
-                url: `/moderator/reports/${data.reportId}/approve`,
                 method: "PUT",
             }),
         }),
@@ -71,12 +27,6 @@ const adminApiSlice = baseApiSlice.injectEndpoints({
 export const {
     useFetchStatsQuery,
     useFetchUsersQuery,
-    useFetchReportedUsersQuery,
-    useFetchReportedPostsQuery,
-    useFetchReportedCommentsQuery,
     useUpdateUserRoleMutation,
-    useUpdateUserStatusMutation,
-    useIgnoreReportMutation,
-    useApproveReportMutation,
 } = adminApiSlice;
 export default adminApiSlice;

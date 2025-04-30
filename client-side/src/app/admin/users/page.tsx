@@ -9,12 +9,12 @@ import Title from "../Title";
 import {
     useFetchUsersQuery,
     useUpdateUserRoleMutation,
-    useUpdateUserStatusMutation,
 } from "@/store/features/admin/adminApiSlice";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 import EmptyDataLabel from "@/components/EmptyDataLabel";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
+import { useUpdateUserStatusMutation } from "@/store/features/moderator/moderatorApiSlice";
 
 interface UserDataInterface {
     _id: string;
@@ -48,10 +48,8 @@ const UserList = () => {
         params: queryParams,
     });
 
-    const [updateUserRole, { isLoading: isUpdateUserRoleFetching }] =
-        useUpdateUserRoleMutation();
-    const [updateUserStatus, { isLoading: isUpdateUserStatusFetching }] =
-        useUpdateUserStatusMutation();
+    const [updateUserRole] = useUpdateUserRoleMutation();
+    const [updateUserStatus] = useUpdateUserStatusMutation();
 
     // Search for User
     const handleUserSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -230,9 +228,6 @@ const UserList = () => {
                                                             userData.role;
                                                     }
                                                 }}
-                                                disabled={
-                                                    isUpdateUserRoleFetching
-                                                }
                                             >
                                                 <option value="admin">
                                                     Admin

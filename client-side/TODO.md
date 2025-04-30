@@ -32,9 +32,13 @@ Done (!)
 
 ### Admin Panel
 
+Done
+
 ### See if it's possible to add base path for the injected reducers
 
 ### Add Report Functionality
+
+Done
 
 ### Control Logged Out user Actions
 
