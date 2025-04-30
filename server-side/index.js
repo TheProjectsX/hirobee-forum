@@ -892,6 +892,55 @@ app.get(
     }
 );
 
+// Ignore a Report
+app.put(
+    "/moderator/reports/:id/ignore",
+    checkAuthentication,
+    checkModPrivilege,
+    async (req, res, next) => {
+        const user = req.user;
+        const targetId = req.params.id;
+
+        try {
+            const response = await adminController.ignore_report(
+                user,
+                targetId,
+                db.collection("reports")
+            );
+
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+// Delete a Reported Content
+app.put(
+    "/moderator/reports/:id/approve",
+    checkAuthentication,
+    checkModPrivilege,
+    async (req, res, next) => {
+        const user = req.user;
+        const targetId = req.params.id;
+
+        try {
+            const response = await adminController.delete_reported(
+                user,
+                targetId,
+                db.collection("reports"),
+                db.collection("users"),
+                db.collection("posts"),
+                db.collection("comments")
+            );
+
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
 // Change User Statue
 app.put(
     "/moderator/users/:username/status/:status",
@@ -916,55 +965,6 @@ app.put(
                 targetUsername,
                 status,
                 db.collection("users")
-            );
-
-            res.status(response.status_code).json(response);
-        } catch (error) {
-            next(error);
-        }
-    }
-);
-
-// Ignore a Report
-app.put(
-    "/moderator/reported/:id/ignore",
-    checkAuthentication,
-    checkModPrivilege,
-    async (req, res, next) => {
-        const user = req.user;
-        const targetId = req.params.id;
-
-        try {
-            const response = await adminController.ignore_report(
-                user,
-                targetId,
-                db.collection("reports")
-            );
-
-            res.status(response.status_code).json(response);
-        } catch (error) {
-            next(error);
-        }
-    }
-);
-
-// Delete a Reported Content
-app.put(
-    "/moderator/reported/:id/delete",
-    checkAuthentication,
-    checkModPrivilege,
-    async (req, res, next) => {
-        const user = req.user;
-        const targetId = req.params.id;
-
-        try {
-            const response = await adminController.delete_reported(
-                user,
-                targetId,
-                db.collection("reports"),
-                db.collection("users"),
-                db.collection("posts"),
-                db.collection("comments")
             );
 
             res.status(response.status_code).json(response);

@@ -169,12 +169,12 @@ const fetch_reports = async (targetType, filters, collection) => {
     }
 
     const response = await collection
-        .find({ targetType })
+        .find(query)
         .skip(skip)
         .limit(limit)
         .toArray();
 
-    const totalCount = await collection.countDocuments({ targetType });
+    const totalCount = await collection.countDocuments(query);
 
     const pagination = {
         has_next_page: totalCount > skip + response.length,
@@ -279,7 +279,6 @@ const delete_reported = async (
 
     // If target is User, we can't delete user, we need to ban him
     if (targetType === "user") {
-        targetCollection = usersCollection;
         await usersCollection.updateOne(
             { _id: targetReport.targetId },
             { $set: { status: "banned" } }
@@ -303,6 +302,8 @@ const delete_reported = async (
         targetCollection = postsCollection;
     } else if (targetType === "comment") {
         targetCollection = commentsCollection;
+    } else {
+        console.log(targetType);
     }
 
     await targetCollection.deleteOne({ _id: targetReport.targetId });
