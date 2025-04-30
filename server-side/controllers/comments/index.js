@@ -173,4 +173,81 @@ const delete_comment = async (user, commentId, collection) => {
     };
 };
 
-export default { insert_comment, update_comment, update_vote, delete_comment };
+const report_comment = async (
+    user,
+    commentId,
+    data,
+    reportsCollection,
+    commentsCollection
+) => {
+    if (!data?.report) {
+        return {
+            success: false,
+            message: "Invalid Body provided",
+            status_code: StatusCodes.BAD_REQUEST,
+        };
+    }
+
+    let commentOid;
+    try {
+        commentOid = new ObjectId(String(commentId));
+    } catch (error) {
+        return {
+            success: false,
+            message: "Comment not Found!",
+            query: {
+                id: commentId,
+            },
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    }
+
+    const targetComment = await commentsCollection.findOne({ _id: commentOid });
+
+    if (!targetComment) {
+        return {
+            success: false,
+            message: "Comment not Found!",
+            query: {
+                id: commentId,
+            },
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    }
+
+    const reportBody = {
+        content: targetComment.content,
+        author: targetComment.authorId,
+        targetId: commentOid,
+        targetType: "comment",
+        report: data.report,
+        reportedBy: user.username,
+        meta: {},
+        status: "pending",
+        createdAt: Date.now(),
+    };
+
+    const response = await reportsCollection.insertOne(reportBody);
+
+    if (response.acknowledged) {
+        return {
+            success: true,
+            message: "Comment Reported!",
+            status_code: StatusCodes.CREATED,
+        };
+    } else {
+        return {
+            success: false,
+            message: "Failed to Report Comment",
+            status_code: StatusCodes.INTERNAL_SERVER_ERROR,
+        };
+    }
+};
+
+export default {
+    insert_comment,
+    update_comment,
+    update_vote,
+    delete_comment,
+    report_comment,
+};

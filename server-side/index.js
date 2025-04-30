@@ -416,6 +416,31 @@ app.get("/users/:username/comments", async (req, res, next) => {
     }
 });
 
+// Report User
+app.post(
+    "/users/:username/report",
+    checkAuthentication,
+    async (req, res, next) => {
+        const user = req.user;
+        const body = req.body;
+        const username = req.params.username;
+
+        try {
+            const response = await usersController.report_user(
+                user,
+                username,
+                body,
+                db.collection("reports"),
+                db.collection("users")
+            );
+
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
 /* Public Post Routes */
 // TODO: ADD GET_COMMENTS
 // Get all Posts
@@ -492,11 +517,25 @@ app.put("/posts/:id/:target", checkAuthentication, async (req, res, next) => {
 });
 
 // Report Post
-app.post(
-    "/posts/:id/report",
-    checkAuthentication,
-    async (req, res, next) => {}
-);
+app.post("/posts/:id/report", checkAuthentication, async (req, res, next) => {
+    const user = req.user;
+    const body = req.body;
+    const postId = req.params.id;
+
+    try {
+        const response = await postsController.report_post(
+            user,
+            postId,
+            body,
+            db.collection("reports"),
+            db.collection("posts")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
 
 /* Private Comment Routes */
 
@@ -575,6 +614,31 @@ app.put(
                 user,
                 commentId,
                 { target },
+                db.collection("comments")
+            );
+
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+// Report Comment
+app.post(
+    "/comments/:id/report",
+    checkAuthentication,
+    async (req, res, next) => {
+        const user = req.user;
+        const body = req.body;
+        const commentId = req.params.id;
+
+        try {
+            const response = await commentsController.report_comment(
+                user,
+                commentId,
+                body,
+                db.collection("reports"),
                 db.collection("comments")
             );
 
@@ -830,7 +894,7 @@ app.get(
 
 // Change User Statue
 app.put(
-    "/admin/users/:username/status/:status",
+    "/moderator/users/:username/status/:status",
     checkAuthentication,
     checkModPrivilege,
     async (req, res, next) => {
@@ -863,7 +927,7 @@ app.put(
 
 // Ignore a Report
 app.put(
-    "/admin/reported/:id/ignore",
+    "/moderator/reported/:id/ignore",
     checkAuthentication,
     checkModPrivilege,
     async (req, res, next) => {
@@ -886,7 +950,7 @@ app.put(
 
 // Delete a Reported Content
 app.put(
-    "/admin/reported/:id/delete",
+    "/moderator/reported/:id/delete",
     checkAuthentication,
     checkModPrivilege,
     async (req, res, next) => {

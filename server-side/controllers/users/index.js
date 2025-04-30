@@ -109,4 +109,49 @@ const fetch_comments = async (username, filters, collection) => {
     };
 };
 
-export default { get_specific, fetch_posts, fetch_comments };
+const report_user = async (
+    user,
+    username,
+    data,
+    reportsCollection,
+    usersCollection
+) => {
+    if (!data?.report) {
+        return {
+            success: false,
+            message: "Invalid Body provided",
+            status_code: StatusCodes.BAD_REQUEST,
+        };
+    }
+
+    const targetUser = await usersCollection.findOne({ username });
+
+    const reportBody = {
+        username: targetUser.username,
+        targetId: targetUser._id,
+        targetType: "user",
+        report: data.report,
+        reportedBy: user.username,
+        meta: {},
+        status: "pending",
+        createdAt: Date.now(),
+    };
+
+    const response = await reportsCollection.insertOne(reportBody);
+
+    if (response.acknowledged) {
+        return {
+            success: true,
+            message: "User Reported!",
+            status_code: StatusCodes.CREATED,
+        };
+    } else {
+        return {
+            success: false,
+            message: "Failed to Report User",
+            status_code: StatusCodes.INTERNAL_SERVER_ERROR,
+        };
+    }
+};
+
+export default { get_specific, fetch_posts, fetch_comments, report_user };

@@ -232,8 +232,14 @@ const fetch_comments = async (postId, filters, collection) => {
     };
 };
 
-const report_post = async (user, data, reportsCollection, postsCollection) => {
-    if (!data.postId || !data.report) {
+const report_post = async (
+    user,
+    postId,
+    data,
+    reportsCollection,
+    postsCollection
+) => {
+    if (!data?.report) {
         return {
             success: false,
             message: "Invalid Body provided",
@@ -243,13 +249,13 @@ const report_post = async (user, data, reportsCollection, postsCollection) => {
 
     let postOid;
     try {
-        postOid = new ObjectId(String(data.postId));
+        postOid = new ObjectId(String(postId));
     } catch (error) {
         return {
             success: false,
             message: "Post not Found!",
             query: {
-                id: data.postId,
+                id: postId,
             },
             status_code: StatusCodes.NOT_FOUND,
         };
@@ -257,10 +263,20 @@ const report_post = async (user, data, reportsCollection, postsCollection) => {
 
     const targetPost = await postsCollection.findOne({ _id: postOid });
 
+    if (!targetPost) {
+        return {
+            success: false,
+            message: "Post not Found!",
+            query: {
+                id: postId,
+            },
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    }
+
     const reportBody = {
         title: targetPost.title,
         author: targetPost.authorId,
-        subhiro: targetPost.subhiro,
         targetId: postOid,
         targetType: "post",
         report: data.report,

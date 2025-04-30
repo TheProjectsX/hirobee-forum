@@ -270,20 +270,40 @@ const delete_reported = async (
     }
 
     const targetType = targetReport.targetType;
-    let targetCollection;
-    if (targetType === "user") {
-        targetCollection = usersCollection;
-    } else if (targetType === "post") {
-        targetCollection = postsCollection;
-    } else if (targetType === "comment") {
-        targetCollection = commentsCollection;
-    }
 
     const doc = {
         status: "fulfilled",
         "meta.deletedBy": user.username,
         "meta.deletedAt": Date.now(),
     };
+
+    // If target is User, we can't delete user, we need to ban him
+    if (targetType === "user") {
+        targetCollection = usersCollection;
+        await usersCollection.updateOne(
+            { _id: targetReport.targetId },
+            { $set: { status: "banned" } }
+        );
+
+        await reportCollection.updateOne(
+            { _id: targetReport._id },
+            { $set: doc }
+        );
+
+        return {
+            success: true,
+            message: "User Banned",
+            status_code: StatusCodes.OK,
+        };
+    }
+
+    let targetCollection;
+
+    if (targetType === "post") {
+        targetCollection = postsCollection;
+    } else if (targetType === "comment") {
+        targetCollection = commentsCollection;
+    }
 
     await targetCollection.deleteOne({ _id: targetReport.targetId });
     await reportCollection.updateOne({ _id: targetReport._id }, { $set: doc });
