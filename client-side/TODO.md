@@ -44,6 +44,10 @@ Done
 
 ### Control Logged Out user Actions
 
+### Protect Route
+
+Done (using HOC)
+
 ### Fix Popover direction
 
 Done

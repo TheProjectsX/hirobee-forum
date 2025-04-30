@@ -1,3 +1,5 @@
+"use client";
+
 import Footer from "@/components/Footer";
 import PageLayout, { MainDiv, Sidebar } from "@/components/PageLayout";
 import Link from "next/link";
@@ -6,6 +8,7 @@ import { LuLayoutDashboard } from "react-icons/lu";
 import { PiUsersFour } from "react-icons/pi";
 import { AiOutlineFileUnknown } from "react-icons/ai";
 import { TbMessageCircleQuestion, TbUserQuestion } from "react-icons/tb";
+import withAdmin from "@/hoc/withAdmin";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
     return (
@@ -59,4 +62,4 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     );
 };
 
-export default Layout;
+export default withAdmin(Layout);

@@ -5,6 +5,7 @@ interface SquareButtonProps
     extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     label?: string;
     Icon?: IconType;
+    iconClassName?: string;
 }
 
 const SquareButton = ({
@@ -12,6 +13,7 @@ const SquareButton = ({
     className,
     label,
     Icon,
+    iconClassName,
     ...options
 }: SquareButtonProps) => {
     return (
@@ -19,7 +21,9 @@ const SquareButton = ({
             className={`py-3 px-6 hover:bg-slate-50 active:bg-slate-100 cursor-pointer flex items-center gap-1.5 ${className}`}
             {...options}
         >
-            <span className="w-6">{Icon && <Icon className="text-xl" />}</span>
+            <span className="w-6">
+                {Icon && <Icon className={`text-xl ${iconClassName}`} />}
+            </span>
             <span className="text-sm">{children ?? label}</span>
         </button>
     );

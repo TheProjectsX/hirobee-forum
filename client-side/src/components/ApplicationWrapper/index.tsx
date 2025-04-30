@@ -22,7 +22,7 @@ const ProviderWrapped = ({ children }: { children: React.ReactNode }) => {
 
     return (
         <>
-            <NextTopLoader />
+            <NextTopLoader showSpinner={false} />
             <ToastContainer
                 position="top-center"
                 autoClose={3000}
@@ -44,11 +44,7 @@ const ProviderWrapped = ({ children }: { children: React.ReactNode }) => {
                 <Drawer
                     drawerContent={<DrawerContent />}
                     drawerOpened={siteConfig.drawerOpened}
-                    onDrawerOpened={() => {
-                        console.log("CLICKED");
-                        console.log(dispatch(setDrawerOpened(true)));
-                        console.log("AFTER CLICK");
-                    }}
+                    onDrawerOpened={() => dispatch(setDrawerOpened(true))}
                     onDrawerClosed={() => dispatch(setDrawerOpened(false))}
                 >
                     {children}

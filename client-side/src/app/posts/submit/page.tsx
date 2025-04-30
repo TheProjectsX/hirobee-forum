@@ -6,6 +6,7 @@ import PageLayout, { MainDiv, Sidebar } from "@/components/PageLayout";
 import Popover from "@/components/Popover";
 import { PostInterface } from "@/components/PreviewPost";
 import SidebarPost from "@/components/PreviewPost/SidebarPost";
+import withAuth from "@/hoc/withAuth";
 import {
     useFetchSinglePostQuery,
     useFetchUserPostsQuery,
@@ -354,18 +355,6 @@ const SubmitPost = ({
                         </label>
 
                         <div className="flex justify-end gap-3">
-                            {/* <RoundedButton
-                                className={`!px-6 ${
-                                    postValues.title.length > 5
-                                        ? "!bg-blue-700 hover:!bg-blue-800 !text-white"
-                                        : "bg-neutral-300 !text-neutral-500 pointer-events-none"
-                                }`}
-                                disabled={postValues.title.length < 5}
-                            >
-                                <span className="text-sm font-semibold">
-                                    Save Draft
-                                </span>
-                            </RoundedButton> */}
                             <RoundedButton
                                 className={`!px-6 ${
                                     postValues.title.length < 5 ||
@@ -421,4 +410,4 @@ const SubmitPost = ({
     );
 };
 
-export default SubmitPost;
+export default withAuth(SubmitPost);

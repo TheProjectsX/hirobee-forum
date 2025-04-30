@@ -150,43 +150,53 @@ const Navbar = () => {
                                 <div className="py-2 min-w-60">
                                     <Link href={"/me"}>
                                         <SquareButton
-                                            className="w-full !py-4"
+                                            className="w-full !py-2 gap-3"
                                             Icon={CgProfile}
+                                            iconClassName="!text-2xl"
                                         >
-                                            <span className="text-slate-700">
-                                                Visit Profile
+                                            <span className="flex flex-col">
+                                                <span className="text-slate-700">
+                                                    Visit Profile
+                                                </span>
+                                                <span className="text-xs text-slate-500">
+                                                    u/{userInfo.username}
+                                                </span>
                                             </span>
                                         </SquareButton>
                                     </Link>
 
                                     <SquareButton
-                                        className="w-full !py-4"
+                                        className="w-full !py-4 gap-3"
                                         Icon={TbMoodEdit}
+                                        iconClassName="!text-2xl"
                                     >
                                         <span className="text-slate-700">
                                             Edit Avatar
                                         </span>
                                     </SquareButton>
                                     <SquareButton
-                                        className="w-full !py-4"
+                                        className="w-full !py-4 gap-3"
                                         Icon={IoTrophyOutline}
+                                        iconClassName="!text-2xl"
                                     >
                                         <span className="text-slate-700">
                                             Achievements
                                         </span>
                                     </SquareButton>
                                     <SquareButton
-                                        className="w-full !py-4"
+                                        className="w-full !py-4 gap-3"
                                         Icon={CgDarkMode}
+                                        iconClassName="!text-2xl"
                                     >
                                         <span className="text-slate-700">
                                             Dark Mode
                                         </span>
                                     </SquareButton>
                                     <SquareButton
-                                        className="w-full !py-4"
+                                        className="w-full !py-4 gap-3"
                                         Icon={MdLogout}
                                         onClick={handleLogoutUser}
+                                        iconClassName="!text-2xl"
                                     >
                                         <span className="text-slate-700">
                                             Logout
@@ -195,12 +205,12 @@ const Navbar = () => {
 
                                     {userInfo.role === "admin" && (
                                         <>
-                                            {" "}
                                             <div className="pb-2 mb-2 mx-2 border-b border-neutral-300"></div>
                                             <Link href={"/admin"}>
                                                 <SquareButton
-                                                    className="w-full !py-4"
+                                                    className="w-full !py-4 gap-3"
                                                     Icon={GrUserAdmin}
+                                                    iconClassName="!text-2xl"
                                                 >
                                                     <span className="text-slate-700">
                                                         Admin Dashboard
@@ -213,8 +223,9 @@ const Navbar = () => {
                                     <div className="pb-2 mb-2 mx-2 border-b border-neutral-300"></div>
                                     <Link href={"#"}>
                                         <SquareButton
-                                            className="w-full !py-4"
+                                            className="w-full !py-4 gap-3"
                                             Icon={GoMegaphone}
+                                            iconClassName="!text-2xl"
                                         >
                                             <span className="text-slate-700">
                                                 Advertise on Hirobee
@@ -225,8 +236,9 @@ const Navbar = () => {
                                     <div className="pb-2 mb-2 mx-2 border-b border-neutral-300"></div>
                                     <Link href={"#"}>
                                         <SquareButton
-                                            className="w-full !py-4"
+                                            className="w-full !py-4 gap-3"
                                             Icon={GoGear}
+                                            iconClassName="!text-2xl"
                                         >
                                             <span className="text-slate-700">
                                                 Settings
