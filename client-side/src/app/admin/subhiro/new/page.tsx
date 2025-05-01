@@ -6,9 +6,17 @@ import RoundedButton from "@/components/Buttons/Rounded";
 import { useDropzone } from "react-dropzone";
 import { IoMdClose } from "react-icons/io";
 import useDynamicInput from "@/components/DynamicInput";
+import { toast } from "react-toastify";
+import { useCreateSubhiroMutation } from "@/store/features/moderator/moderatorApiSlice";
+import { useRouter } from "next/navigation";
+import { Spinner } from "flowbite-react";
 
 const NewSubhiro = () => {
-    const [formStage, setFormStage] = useState<number>(3);
+    const [createSubhiro, { isLoading: isCreateSubhiroLoading }] =
+        useCreateSubhiroMutation();
+
+    const [formStage, setFormStage] = useState<number>(1);
+    const [isUploading, setIsUploading] = useState<boolean>(false);
 
     const [subhiroValues, setSubhiroValues] = useState<{
         displayname: string;
@@ -29,6 +37,9 @@ const NewSubhiro = () => {
     const [profilePictureFile, setProfilePictureFile] = useState<Array<any>>(
         []
     );
+
+    const router = useRouter();
+
     const [bannerFile, setBannerFile] = useState<Array<any>>([]);
     const { getRootProps: getPPRootProps, getInputProps: getPPInputProps } =
         useDropzone({
@@ -71,7 +82,6 @@ const NewSubhiro = () => {
     // Multi Input
     const { DynamicInput, values } = useDynamicInput({
         defaultCount: 2,
-        minItems: 2,
         maxItems: 8,
     });
 
@@ -82,16 +92,86 @@ const NewSubhiro = () => {
         }));
     }, [values]);
 
+    const uploadToImgbb = async (file: File) => {
+        const formData = new FormData();
+        formData.append("image", file);
+
+        try {
+            const res = await fetch(
+                `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_APIKEY}`,
+                {
+                    method: "POST",
+                    body: formData,
+                }
+            );
+
+            const data = await res.json();
+            return data;
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
+    };
+
+    // Handle New Subhiro Create
+    const handleCreateSubhiro = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setIsUploading(true);
+
+        // Upload Profile Picture
+        if (profilePictureFile.length > 0) {
+            const imageData = await uploadToImgbb(profilePictureFile[0]);
+            if (!imageData?.success) {
+                toast.error("Failed to Upload Image File");
+                setIsUploading(false);
+                return;
+            }
+
+            setSubhiroValues((prev) => ({
+                ...prev,
+                profile_picture: imageData.data.display_url,
+            }));
+        }
+
+        // Upload Banner
+        if (bannerFile.length > 0) {
+            const imageData = await uploadToImgbb(bannerFile[0]);
+            if (!imageData?.success) {
+                toast.error("Failed to Upload Image File");
+                setIsUploading(false);
+                return;
+            }
+
+            setSubhiroValues((prev) => ({
+                ...prev,
+                banner: imageData.data.display_url,
+            }));
+        }
+
+        // Upload Data to Server
+        try {
+            const response = await createSubhiro({
+                body: { ...subhiroValues },
+            }).unwrap();
+
+            toast.success("Subhiro Created!");
+            router.push(`/subhiro/${response.id}`);
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Failed to Create Subhiro");
+            setIsUploading(false);
+        }
+    };
+
     return (
         <div>
             <Title>New Subhiro</Title>
 
             {/* New Subhiro */}
-            <form onSubmit={(e) => e.preventDefault()}>
+            <form onSubmit={handleCreateSubhiro} className="space-y-5">
                 {/* Form Stage 1 - Display name, Hiro name and Description */}
                 {formStage === 1 && (
                     <>
-                        <label className="flex flex-col gap-2 mb-5">
+                        <label className="flex flex-col gap-2">
                             <p className="px-2 font-semibold">
                                 <span className="">Display Name</span>
                                 <span className="text-red-600">*</span>
@@ -99,7 +179,7 @@ const NewSubhiro = () => {
                             <input
                                 type="text"
                                 className="w-full px-3.5 py-2.5 border-2 border-neutral-500 focus:border-[dodgerBlue] rounded-2xl outline-none text-sm"
-                                placeholder="Enter display name of Subhiro"
+                                placeholder="Enter display name of Subhiro (Min 5)"
                                 maxLength={30}
                                 minLength={5}
                                 value={subhiroValues.displayname}
@@ -113,7 +193,7 @@ const NewSubhiro = () => {
                             />
                         </label>
 
-                        <label className="flex flex-col gap-2 mb-5">
+                        <label className="flex flex-col gap-2">
                             <p className="px-2 font-semibold">
                                 <span className="">Hironame</span>
                                 <span className="text-red-600">*</span>
@@ -121,7 +201,7 @@ const NewSubhiro = () => {
                             <input
                                 type="text"
                                 className="w-full px-3.5 py-2.5 border-2 border-neutral-500 focus:border-[dodgerBlue] rounded-2xl outline-none text-sm"
-                                placeholder="Enter name of Subhiro"
+                                placeholder="Enter name of Subhiro (Min 5)"
                                 maxLength={12}
                                 minLength={5}
                                 value={subhiroValues.hironame}
@@ -138,7 +218,7 @@ const NewSubhiro = () => {
                             />
                         </label>
 
-                        <label className="flex flex-col gap-2 mb-5">
+                        <label className="flex flex-col gap-2">
                             <p className="px-2">
                                 <span className="font-semibold">
                                     Description
@@ -150,9 +230,9 @@ const NewSubhiro = () => {
                             </p>
                             <textarea
                                 className="w-full px-3.5 py-2.5 border-2 border-neutral-500 focus:border-[dodgerBlue] rounded-2xl outline-none text-sm"
-                                placeholder="Write description of Subhiro"
+                                placeholder="Write description of Subhiro (Min 20)"
                                 rows={5}
-                                minLength={10}
+                                minLength={20}
                                 value={subhiroValues.description}
                                 onChange={(e) =>
                                     setSubhiroValues((prev) => ({
@@ -170,7 +250,7 @@ const NewSubhiro = () => {
                 {formStage === 2 && (
                     <>
                         {/* Profile picture */}
-                        <div className="flex flex-col gap-2 mb-5">
+                        <div className="flex flex-col gap-2">
                             <p className="px-2 font-semibold">
                                 <span className="">Profile Picture</span>
                                 <span className="text-red-600">*</span>
@@ -222,7 +302,7 @@ const NewSubhiro = () => {
                         </div>
 
                         {/* Banner  */}
-                        <div className="flex flex-col gap-2 mb-5">
+                        <div className="flex flex-col gap-2">
                             <p className="px-2 font-semibold">
                                 <span className="">Banner</span>
                             </p>
@@ -275,7 +355,7 @@ const NewSubhiro = () => {
 
                 {/* Form Stage 3 - Rules */}
                 {formStage === 3 && (
-                    <div className="flex flex-col gap-4 mb-5 items-center">
+                    <div className="flex flex-col gap-4 items-center">
                         <p className="px-2 font-semibold">
                             <span className="">Rules</span>
                             <span className="text-red-600">*</span>
@@ -304,8 +384,83 @@ const NewSubhiro = () => {
                     </div>
                 )}
 
+                {/* Form Stage 4 - Create */}
+                {formStage === 4 && (
+                    <div className="rounded-xl shadow-lg border overflow-hidden max-w-xl mx-auto">
+                        {/* Banner */}
+                        <div className="h-40 w-full bg-gray-200">
+                            {bannerFile.length > 0 ? (
+                                <img
+                                    src={bannerFile[0].preview}
+                                    alt="Banner"
+                                    className="h-full w-full object-cover"
+                                />
+                            ) : (
+                                <div className="h-full w-full flex items-center justify-center text-gray-500 text-sm">
+                                    No Banner
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Profile Picture and Name */}
+                        <div className="p-4 flex items-center gap-4">
+                            {profilePictureFile.length > 0 ? (
+                                <img
+                                    src={profilePictureFile[0].preview}
+                                    alt="Profile"
+                                    className="w-16 h-16 rounded-full object-cover"
+                                />
+                            ) : (
+                                <div className="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center text-gray-500 text-sm">
+                                    N/A
+                                </div>
+                            )}
+
+                            <div>
+                                <h2 className="text-xl font-bold">
+                                    {subhiroValues.displayname}
+                                </h2>
+                                <p className="text-sm text-gray-500">
+                                    @{subhiroValues.hironame}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Description */}
+                        <div className="px-4 pb-4">
+                            <p className="text-sm text-gray-700">
+                                {subhiroValues.description ||
+                                    "No description provided."}
+                            </p>
+                        </div>
+
+                        {/* Rules */}
+                        <div className="bg-gray-50 p-4 border-t">
+                            <h3 className="font-semibold text-sm mb-2">
+                                Rules
+                            </h3>
+                            {subhiroValues.rules.length ? (
+                                <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
+                                    {subhiroValues.rules.map((rule, index) => (
+                                        <li key={index}>{rule}</li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p className="text-sm text-gray-400 italic">
+                                    No rules provided.
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                )}
+
                 {/* Controls */}
-                <div className="flex justify-end gap-3">
+                <div className="flex justify-end items-center gap-3 pt-5">
+                    <p>
+                        <strong>{formStage.toString().padStart(2, "0")}</strong>{" "}
+                        of <strong>04</strong> Steps
+                    </p>
+
                     <RoundedButton
                         className={`!px-6 ${
                             formStage < 2
@@ -321,29 +476,33 @@ const NewSubhiro = () => {
 
                     {formStage === 4 && (
                         <RoundedButton
-                            className={`!px-6 ${
-                                subhiroValues.rules.length < 2
-                                    ? "bg-neutral-300 !text-neutral-500 pointer-events-none"
-                                    : "!bg-[dodgerBlue] hover:!bg-blue-600 !text-white"
-                            }`}
-                            disabled={subhiroValues.rules.length < 2}
+                            className={`!px-6 !bg-[dodgerBlue] hover:!bg-blue-600 !text-white disabled:!bg-neutral-300 disabled:!text-neutral-500 pointer-events-none}`}
+                            disabled={isUploading || isCreateSubhiroLoading}
                             type="submit"
                         >
-                            Create
+                            {isUploading || isCreateSubhiroLoading ? (
+                                <Spinner size="md" />
+                            ) : (
+                                "Create"
+                            )}
                         </RoundedButton>
                     )}
 
                     {formStage < 4 && (
                         <RoundedButton
-                            className={`!px-6 ${
+                            className={`!px-6 !bg-[dodgerBlue] hover:!bg-blue-600 !text-white disabled:!bg-neutral-300 disabled:!text-neutral-500 pointer-events-none"
+                                    }`}
+                            disabled={
                                 (formStage === 1 &&
-                                    subhiroValues.hironame.length < 5) ||
+                                    (subhiroValues.displayname.length < 5 ||
+                                        subhiroValues.hironame.length < 5 ||
+                                        subhiroValues.description.length <
+                                            20)) ||
                                 (formStage === 2 &&
-                                    profilePictureFile.length === 0)
-                                    ? "bg-neutral-300 !text-neutral-500 pointer-events-none"
-                                    : "!bg-[dodgerBlue] hover:!bg-blue-600 !text-white"
-                            }`}
-                            disabled={subhiroValues.hironame.length < 5}
+                                    profilePictureFile.length === 0) ||
+                                (formStage === 3 &&
+                                    subhiroValues.rules.length < 2)
+                            }
                             onClick={() => setFormStage((prev) => prev + 1)}
                             type="button"
                         >

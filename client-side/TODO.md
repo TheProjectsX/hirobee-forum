@@ -63,3 +63,7 @@ Done
 ### User Join Hirobee
 
 ### Create Hirobee
+
+Done
+
+#### Check if the Multi input can be done something other than onBlur

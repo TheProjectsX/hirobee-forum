@@ -47,6 +47,13 @@ const moderatorApiSlice = baseApiSlice.injectEndpoints({
                 method: "PUT",
             }),
         }),
+        createSubhiro: builder.mutation({
+            query: (data) => ({
+                url: "/moderator/subhiro",
+                method: "POST",
+                body: data.body,
+            }),
+        }),
     }),
 });
 
@@ -57,6 +64,7 @@ export const {
     useUpdateUserStatusMutation,
     useIgnoreReportMutation,
     useApproveReportMutation,
+    useCreateSubhiroMutation,
 } = moderatorApiSlice;
 
 export default moderatorApiSlice;
