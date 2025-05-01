@@ -342,7 +342,7 @@ const SubmitPost = ({
                             </p>
                             <textarea
                                 className="w-full px-3.5 py-2.5 border-2 border-neutral-500 focus:border-[dodgerBlue] rounded-2xl outline-none text-sm"
-                                placeholder="Write post title"
+                                placeholder="Write post Body"
                                 rows={5}
                                 value={postValues.content}
                                 onChange={(e) =>

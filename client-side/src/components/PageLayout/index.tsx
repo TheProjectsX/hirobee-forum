@@ -22,8 +22,8 @@ const PageLayout = ({
             className={`relative grid overflow-visible grid-cols-[1fr_320px] gap-6 w-full max-width mx-auto px-3 pt-3 ${
                 wrap
                     ? global__breakpoint === "770px"
-                        ? "max-[770px]:grid-rows-2 max-[770px]:grid-cols-2"
-                        : "max-[950px]:grid-rows-2 max-[950px]:grid-cols-2"
+                        ? "max-[770px]:grid-cols-1 !gap-10"
+                        : "max-[950px]:grid-cols-1 !gap-10"
                     : global__breakpoint === "770px"
                     ? "max-[770px]:grid-cols-1"
                     : "max-[950px]:grid-cols-1"
@@ -41,7 +41,10 @@ export const MainDiv = ({
     ...options
 }: HTMLAttributes<HTMLElement>) => {
     return (
-        <main className={`grow ${className}`} {...options}>
+        <main
+            className={`${global__wrap ? "" : "grow"} ${className}`}
+            {...options}
+        >
             {children}
         </main>
     );

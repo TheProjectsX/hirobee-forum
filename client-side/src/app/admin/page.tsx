@@ -57,7 +57,7 @@ const Dashboard = () => {
         <div>
             <Title>Site Stats</Title>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <StatCard
                     Icon={PiUsersThree}
                     label="Total Users"
@@ -110,7 +110,7 @@ const Dashboard = () => {
                 />
             </div>
 
-            <Title>New SubHiro</Title>
+            {/* <Title>New SubHiro</Title>
             <div className="text-xs italic text-neutral-400 space-y-2">
                 <p>
                     This part of the Design is left for the future me to deal
@@ -128,7 +128,7 @@ const Dashboard = () => {
                     if I feel like I have time or find motivation to do so, I
                     will create this section
                 </p>
-            </div>
+            </div> */}
         </div>
     );
 };

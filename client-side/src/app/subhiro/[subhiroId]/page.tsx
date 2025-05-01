@@ -101,7 +101,7 @@ const SubHiro = () => {
                         {[...Array(6)].map((i, idx) => (
                             <React.Fragment key={idx}>
                                 <div className="pb-1 mb-1 border-b border-neutral-300"></div>
-                                <PreviewPost />
+                                {/* <PreviewPost /> */}
                             </React.Fragment>
                         ))}
                     </div>

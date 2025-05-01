@@ -8,11 +8,12 @@ import { LuLayoutDashboard } from "react-icons/lu";
 import { PiUsersFour } from "react-icons/pi";
 import { AiOutlineFileUnknown } from "react-icons/ai";
 import { TbMessageCircleQuestion, TbUserQuestion } from "react-icons/tb";
+import { VscGroupByRefType } from "react-icons/vsc";
 import withAdmin from "@/hoc/withAdmin";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
     return (
-        <PageLayout>
+        <PageLayout breakpoint="770px" wrap>
             <MainDiv className="sm:px-2 overflow-x-hidden">{children}</MainDiv>
             <Sidebar>
                 <div className="w-full p-4 bg-gray-100 rounded-xl">
@@ -52,6 +53,13 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                         >
                             <TbMessageCircleQuestion className="text-xl" />
                             Reported Comments
+                        </Link>
+                        <Link
+                            href="/admin/subhiro/new"
+                            className="w-full px-4 py-3 rounded bg-white hover:bg-slate-100 flex items-center gap-3"
+                        >
+                            <VscGroupByRefType className="text-xl" />
+                            Create New Subhiro
                         </Link>
                     </div>
                 </div>

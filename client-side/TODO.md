@@ -34,6 +34,8 @@ Done (!)
 
 Done
 
+### Subhiro
+
 ### See if it's possible to add base path for the injected reducers
 
 Done (Ans: Isn't Possible)
@@ -55,3 +57,9 @@ Done (using HOC)
 Done
 
 ### Update User profile (/me)
+
+Done
+
+### User Join Hirobee
+
+### Create Hirobee
