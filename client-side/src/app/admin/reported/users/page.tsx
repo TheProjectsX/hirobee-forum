@@ -108,7 +108,7 @@ const ReportedUsers = () => {
                                     >
                                         <td className="px-6 py-4 font-medium lg:text-sm">
                                             <Link
-                                                href={`/u/${reportedUser.username}`}
+                                                href={`/user/${reportedUser.username}`}
                                                 className="block hover:underline"
                                             >
                                                 {reportedUser.username}
@@ -117,7 +117,7 @@ const ReportedUsers = () => {
 
                                         <td className="px-6 py-4">
                                             <Link
-                                                href={`/u/${reportedUser.reportedBy}`}
+                                                href={`/user/${reportedUser.reportedBy}`}
                                                 className="block hover:underline"
                                             >
                                                 {reportedUser.reportedBy}

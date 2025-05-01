@@ -44,6 +44,8 @@ Done
 
 ### Control Logged In user Actions
 
+Done
+
 ### Protect Route
 
 Done (using HOC)
@@ -51,3 +53,5 @@ Done (using HOC)
 ### Fix Popover direction
 
 Done
+
+### Update User profile (/me)

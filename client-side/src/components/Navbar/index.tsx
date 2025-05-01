@@ -148,7 +148,7 @@ const Navbar = () => {
                             indicator={false}
                             content={
                                 <div className="py-2 min-w-60">
-                                    <Link href={"/me"}>
+                                    <Link href={`/user/${userInfo.username}`}>
                                         <SquareButton
                                             className="w-full !py-2 gap-3"
                                             Icon={CgProfile}

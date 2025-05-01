@@ -284,7 +284,7 @@ const PreviewPost = ({
                             </p>
                             {postData.subhiro?.hironame && (
                                 <Link
-                                    href={`/u/${postData.author.username}`}
+                                    href={`/user/${postData.author.username}`}
                                     className="font-this text-neutral-600 hover:text-blue-800"
                                 >
                                     u/{postData.author.username}
@@ -407,35 +407,40 @@ const PreviewPost = ({
             <div className="flex items-center gap-2">
                 <p className="rounded-full text-neutral-700 bg-slate-200 flex items-center cursor-pointer z-[1]">
                     <span className="flex items-center">
-                        <Button
-                            className={`!p-1.5 hover:[&_svg]:text-orange-600 ${
-                                postData.upvotedBy.includes(userInfo?.username)
-                                    ? "[&_svg]:text-orange-600"
-                                    : ""
-                            }`}
-                            Icon={TbArrowBigUp}
-                            onClick={async (e) => {
-                                const target = e.currentTarget as HTMLElement;
-                                const span =
-                                    target.nextElementSibling as HTMLElement;
-                                const status = await handleUpvote();
-                                if (!status) return;
+                        <AuthButtonWrapper>
+                            <Button
+                                className={`!p-1.5 hover:[&_svg]:text-orange-600 ${
+                                    postData.upvotedBy.includes(
+                                        userInfo?.username
+                                    )
+                                        ? "[&_svg]:text-orange-600"
+                                        : ""
+                                }`}
+                                Icon={TbArrowBigUp}
+                                onClick={async (e) => {
+                                    const target =
+                                        e.currentTarget as HTMLElement;
+                                    const span =
+                                        target.nextElementSibling as HTMLElement;
+                                    const status = await handleUpvote();
+                                    if (!status) return;
 
-                                if (span) {
-                                    span.innerText = status?.newCount;
-                                }
+                                    if (span) {
+                                        span.innerText = status?.newCount;
+                                    }
 
-                                if (status.action === "added") {
-                                    target.classList.add(
-                                        "[&_svg]:text-orange-600"
-                                    );
-                                } else if (status.action === "removed") {
-                                    target.classList.remove(
-                                        "[&_svg]:text-orange-600"
-                                    );
-                                }
-                            }}
-                        ></Button>
+                                    if (status.action === "added") {
+                                        target.classList.add(
+                                            "[&_svg]:text-orange-600"
+                                        );
+                                    } else if (status.action === "removed") {
+                                        target.classList.remove(
+                                            "[&_svg]:text-orange-600"
+                                        );
+                                    }
+                                }}
+                            ></Button>
+                        </AuthButtonWrapper>
                         <span className="text-xs font-semibold">
                             {postData.upvotedBy.length}
                         </span>
@@ -445,37 +450,40 @@ const PreviewPost = ({
                         <span className="text-xs font-semibold">
                             {postData.downvotedBy.length}
                         </span>
-                        <Button
-                            className={`!p-1.5 hover:[&_svg]:text-purple-600 ${
-                                postData.downvotedBy.includes(
-                                    userInfo?.username
-                                )
-                                    ? "[&_svg]:text-purple-600"
-                                    : ""
-                            }`}
-                            Icon={TbArrowBigDown}
-                            onClick={async (e) => {
-                                const target = e.currentTarget as HTMLElement;
-                                const span =
-                                    target.previousElementSibling as HTMLElement;
-                                const status = await handleDownvote();
-                                if (!status) return;
+                        <AuthButtonWrapper>
+                            <Button
+                                className={`!p-1.5 hover:[&_svg]:text-purple-600 ${
+                                    postData.downvotedBy.includes(
+                                        userInfo?.username
+                                    )
+                                        ? "[&_svg]:text-purple-600"
+                                        : ""
+                                }`}
+                                Icon={TbArrowBigDown}
+                                onClick={async (e) => {
+                                    const target =
+                                        e.currentTarget as HTMLElement;
+                                    const span =
+                                        target.previousElementSibling as HTMLElement;
+                                    const status = await handleDownvote();
+                                    if (!status) return;
 
-                                if (span) {
-                                    span.innerText = status?.newCount;
-                                }
+                                    if (span) {
+                                        span.innerText = status?.newCount;
+                                    }
 
-                                if (status.action === "added") {
-                                    target.classList.add(
-                                        "[&_svg]:text-purple-600"
-                                    );
-                                } else if (status.action === "removed") {
-                                    target.classList.remove(
-                                        "[&_svg]:text-purple-600"
-                                    );
-                                }
-                            }}
-                        ></Button>
+                                    if (status.action === "added") {
+                                        target.classList.add(
+                                            "[&_svg]:text-purple-600"
+                                        );
+                                    } else if (status.action === "removed") {
+                                        target.classList.remove(
+                                            "[&_svg]:text-purple-600"
+                                        );
+                                    }
+                                }}
+                            ></Button>
+                        </AuthButtonWrapper>
                     </span>
                 </p>
                 <Button Icon={FaRegComment} className="z-[1]">

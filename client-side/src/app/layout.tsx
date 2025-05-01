@@ -9,7 +9,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body className="flex flex-col light">
+            <body className="flex flex-col light min-h-screen">
                 <ApplicationWrapper>{children}</ApplicationWrapper>
             </body>
         </html>

@@ -8,13 +8,15 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { IoFlagOutline } from "react-icons/io5";
 import { CiMail } from "react-icons/ci";
 import { LiaUserAltSlashSolid } from "react-icons/lia";
-import { TbShare3 } from "react-icons/tb";
+import { TbMoodEdit, TbShare3 } from "react-icons/tb";
 import { ShortNumber } from "@lytieuphong/short-number";
 import { UserDataInterface } from "../layout";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { useReportUserMutation } from "@/store/features/users/usersApiSlice";
+import Link from "next/link";
+import { CgProfile } from "react-icons/cg";
 
 const SidebarSection = ({ userData }: { userData: UserDataInterface }) => {
     const {
@@ -138,7 +140,7 @@ const SidebarSection = ({ userData }: { userData: UserDataInterface }) => {
                     </>
                 )}
 
-                <div className="pb-2.5 mb-2.5 border-b border-neutral-400"></div>
+                <div className="pb-4 mb-4 border-b border-neutral-400"></div>
 
                 {/* Gender */}
                 <p className="flex items-center gap-2 px-2">
@@ -154,7 +156,7 @@ const SidebarSection = ({ userData }: { userData: UserDataInterface }) => {
                     )}
                 </p>
 
-                <div className="pb-2.5 mb-2.5 border-b border-neutral-400"></div>
+                <div className="pb-4 mb-4 border-b border-neutral-400"></div>
 
                 {/* Statistics */}
                 <div className="flex items-center gap-3 justify-around text-sm text-center">
@@ -184,6 +186,59 @@ const SidebarSection = ({ userData }: { userData: UserDataInterface }) => {
                         <span className="text-neutral-500">Cake Day</span>
                     </p>
                 </div>
+
+                {userInfo && (
+                    <>
+                        {" "}
+                        <div className="pb-4 mb-4 border-b border-neutral-400"></div>
+                        {/* Settings */}
+                        <div>
+                            <h3 className="uppercase text-sm font-semibold mb-2">
+                                Settings
+                            </h3>
+
+                            <div className="flex items-center justify-between gap-2 px-2 py-2 mb-3">
+                                <div className="flex gap-2 items-center">
+                                    <CgProfile className="text-3xl text-slate-600" />
+                                    <p className="flex flex-col">
+                                        <span className="text-sm">Profile</span>
+                                        <span className="text-xs text-neutral-600">
+                                            Customize your profile
+                                        </span>
+                                    </p>
+                                </div>
+
+                                <Link href={"#"}>
+                                    <RoundedButton className="bg-slate-200 hover:underline">
+                                        <span className="text-xs font-semibold px-2">
+                                            Update
+                                        </span>
+                                    </RoundedButton>
+                                </Link>
+                            </div>
+
+                            <div className="flex items-center justify-between gap-2 px-2 py-2 mb-3">
+                                <div className="flex gap-2 items-center">
+                                    <TbMoodEdit className="text-3xl text-slate-600" />
+                                    <p className="flex flex-col">
+                                        <span className="text-sm">Avatar</span>
+                                        <span className="text-xs text-neutral-600">
+                                            Customize and Style
+                                        </span>
+                                    </p>
+                                </div>
+
+                                <Link href={"#"}>
+                                    <RoundedButton className="bg-slate-200 hover:underline">
+                                        <span className="text-xs font-semibold px-2">
+                                            Update
+                                        </span>
+                                    </RoundedButton>
+                                </Link>
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );

@@ -165,7 +165,7 @@ const PreviewComment = ({
             {/* User Info */}
             <div className="flex items-center text-xs">
                 <Link
-                    href={`/u/${commentData.author.username}`}
+                    href={`/user/${commentData.author.username}`}
                     className="mr-2 z-[1]"
                 >
                     <figure className="w-8 h-8 rounded-full overflow-hidden">
@@ -179,7 +179,7 @@ const PreviewComment = ({
                 </Link>
 
                 <Link
-                    href={`/u/${commentData.author.username}`}
+                    href={`/user/${commentData.author.username}`}
                     className="z-[1]"
                 >
                     <span className="font-semibold underline-offset-4 hover:underline">

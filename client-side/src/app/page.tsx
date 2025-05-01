@@ -25,7 +25,7 @@ export default function Home() {
                 {/* Posts */}
                 {isSuccess && (
                     <InfiniteScroll
-                        className="!overflow-hidden"
+                        className="!overflow-visible"
                         dataLength={postsData.data?.length}
                         next={() => setCurrentPage((prev) => prev + 1)}
                         hasMore={postsData.pagination.has_next_page}

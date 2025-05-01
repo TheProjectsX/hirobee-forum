@@ -113,7 +113,7 @@ const ReportedComments = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <Link
-                                                href={`/u/${reportedComment.author}`}
+                                                href={`/user/${reportedComment.author}`}
                                                 className="block hover:underline"
                                             >
                                                 u/{reportedComment.author}
@@ -121,7 +121,7 @@ const ReportedComments = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <Link
-                                                href={`/u/${reportedComment.reportedBy}`}
+                                                href={`/user/${reportedComment.reportedBy}`}
                                                 className="block hover:underline"
                                             >
                                                 u/{reportedComment.reportedBy}

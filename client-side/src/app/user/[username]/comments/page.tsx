@@ -30,7 +30,7 @@ const Comments = ({ params }: { params: Promise<{ username: string }> }) => {
 
             {isSuccess && commentsData.data.length > 0 && (
                 <InfiniteScroll
-                    className="!overflow-hidden"
+                    className="!overflow-visible"
                     dataLength={commentsData.data?.length}
                     next={() => setCurrentPage((prev) => prev + 1)}
                     hasMore={commentsData.pagination?.has_next_page}

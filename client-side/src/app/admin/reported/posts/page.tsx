@@ -118,7 +118,7 @@ const ReportedPosts = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <Link
-                                                href={`/u/${reportedPost.author}`}
+                                                href={`/user/${reportedPost.author}`}
                                                 className="block hover:underline"
                                             >
                                                 u/{reportedPost.author}
@@ -126,7 +126,7 @@ const ReportedPosts = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             <Link
-                                                href={`/u/${reportedPost.reportedBy}`}
+                                                href={`/user/${reportedPost.reportedBy}`}
                                                 className="block hover:underline"
                                             >
                                                 u/{reportedPost.reportedBy}
