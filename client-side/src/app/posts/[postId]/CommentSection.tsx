@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAuthModalType } from "@/store/features/config/configSlice";
 import PreviewComment, { CommentInterface } from "@/components/PreviewComment";
 import LoadingPlaceholder from "@/components/LoadingPlaceholder";
+import AuthButtonWrapper from "@/components/AuthButtonWrapper";
 
 const CommentSection = ({ postId }: { postId: string }) => {
     const dispatch = useDispatch();
@@ -62,21 +63,23 @@ const CommentSection = ({ postId }: { postId: string }) => {
             {/* Comment Box */}
             <div className="mb-2.5">
                 {!commentBoxStatus.opened && (
-                    <button
-                        className="block w-full outline-none border border-neutral-400 rounded-full px-4 py-2.5 text-slate-500 text-left text-sm cursor-text"
-                        onClick={(e) => {
-                            if (!UserInfo && !isUserInfoLoading) {
-                                return dispatch(setAuthModalType("login"));
-                            }
+                    <AuthButtonWrapper>
+                        <button
+                            className="block w-full outline-none border border-neutral-400 rounded-full px-4 py-2.5 text-slate-500 text-left text-sm cursor-text"
+                            onClick={(e) => {
+                                if (!UserInfo && !isUserInfoLoading) {
+                                    return dispatch(setAuthModalType("login"));
+                                }
 
-                            setCommentBoxStatus((prev) => ({
-                                ...prev,
-                                opened: true,
-                            }));
-                        }}
-                    >
-                        Add a comment
-                    </button>
+                                setCommentBoxStatus((prev) => ({
+                                    ...prev,
+                                    opened: true,
+                                }));
+                            }}
+                        >
+                            Add a comment
+                        </button>
+                    </AuthButtonWrapper>
                 )}
 
                 {commentBoxStatus.opened && (

@@ -5,9 +5,10 @@ import Title from "../../Title";
 import RoundedButton from "@/components/Buttons/Rounded";
 import { useDropzone } from "react-dropzone";
 import { IoMdClose } from "react-icons/io";
+import useDynamicInput from "@/components/DynamicInput";
 
 const NewSubhiro = () => {
-    const [formStage, setFormStage] = useState<number>(2);
+    const [formStage, setFormStage] = useState<number>(3);
 
     const [subhiroValues, setSubhiroValues] = useState<{
         displayname: string;
@@ -66,6 +67,20 @@ const NewSubhiro = () => {
             );
         },
     });
+
+    // Multi Input
+    const { DynamicInput, values } = useDynamicInput({
+        defaultCount: 2,
+        minItems: 2,
+        maxItems: 8,
+    });
+
+    useEffect(() => {
+        setSubhiroValues((prev) => ({
+            ...prev,
+            rules: values.filter((v) => v !== ""),
+        }));
+    }, [values]);
 
     return (
         <div>
@@ -259,14 +274,43 @@ const NewSubhiro = () => {
                 )}
 
                 {/* Form Stage 3 - Rules */}
-                {formStage === 3 && <></>}
+                {formStage === 3 && (
+                    <div className="flex flex-col gap-4 mb-5 items-center">
+                        <p className="px-2 font-semibold">
+                            <span className="">Rules</span>
+                            <span className="text-red-600">*</span>
+                            <span className="text-xs ml-2">
+                                (Minimum 2 Required)
+                            </span>
+                        </p>
 
+                        <DynamicInput
+                            className="w-fit [&_>div]:space-y-3.5"
+                            customInput={
+                                <input
+                                    type="text"
+                                    className="min-w-80 rounded-lg focus:outline-[dodgerBlue]  bg-slate-100 hover:bg-slate-200 px-4 py-3 text-sm"
+                                    placeholder="Enter Rule Here..."
+                                    minLength={10}
+                                    required
+                                />
+                            }
+                            customAddButton={
+                                <RoundedButton className="!px-4 !bg-[dodgerBlue] hover:!bg-blue-600 text-white text-sm disabled:!bg-gray-500 disabled:pointer-events-none">
+                                    Add More
+                                </RoundedButton>
+                            }
+                        />
+                    </div>
+                )}
+
+                {/* Controls */}
                 <div className="flex justify-end gap-3">
                     <RoundedButton
                         className={`!px-6 ${
                             formStage < 2
                                 ? "bg-neutral-300 !text-neutral-500 pointer-events-none"
-                                : "!bg-blue-700 hover:!bg-blue-800 !text-white"
+                                : "!bg-[dodgerBlue] hover:!bg-blue-600 !text-white"
                         }`}
                         disabled={formStage < 2}
                         onClick={() => setFormStage((prev) => prev - 1)}
@@ -275,22 +319,21 @@ const NewSubhiro = () => {
                         Previous
                     </RoundedButton>
 
-                    {formStage === 3 && (
+                    {formStage === 4 && (
                         <RoundedButton
                             className={`!px-6 ${
                                 subhiroValues.rules.length < 2
                                     ? "bg-neutral-300 !text-neutral-500 pointer-events-none"
-                                    : "!bg-blue-700 hover:!bg-blue-800 !text-white"
+                                    : "!bg-[dodgerBlue] hover:!bg-blue-600 !text-white"
                             }`}
                             disabled={subhiroValues.rules.length < 2}
-                            onClick={() => setFormStage((prev) => prev + 1)}
                             type="submit"
                         >
                             Create
                         </RoundedButton>
                     )}
 
-                    {formStage < 3 && (
+                    {formStage < 4 && (
                         <RoundedButton
                             className={`!px-6 ${
                                 (formStage === 1 &&
@@ -298,7 +341,7 @@ const NewSubhiro = () => {
                                 (formStage === 2 &&
                                     profilePictureFile.length === 0)
                                     ? "bg-neutral-300 !text-neutral-500 pointer-events-none"
-                                    : "!bg-blue-700 hover:!bg-blue-800 !text-white"
+                                    : "!bg-[dodgerBlue] hover:!bg-blue-600 !text-white"
                             }`}
                             disabled={subhiroValues.hironame.length < 5}
                             onClick={() => setFormStage((prev) => prev + 1)}
