@@ -76,6 +76,7 @@ export const postUpdateFilter = (body) => {
 export const subhiroCreateFilter = (body) => {
     if (!body) return {};
     const approved_keys = [
+        "displayname",
         "hironame",
         "description",
         "rules",
@@ -93,17 +94,22 @@ export const subhiroCreateFilter = (body) => {
 
 export const subhiroCreateValidator = (body) => {
     const required_keys = [
+        "displayname",
         "hironame",
         "description",
         "rules",
         "profile_picture",
-        "banner",
+        // "banner",
     ];
     const minLength = new RegExp(`^.{${5},}$`);
 
     if (!body || typeof body !== "object") return false;
 
-    if (!minLength.test(body.title) || !minLength.test(body.body)) {
+    if (
+        !minLength.test(body.display_name) ||
+        !minLength.test(body.hironame) ||
+        !minLength.test(body.description)
+    ) {
         return false;
     }
 

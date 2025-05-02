@@ -64,7 +64,11 @@ const fetch_posts = async (filters, collection) => {
     };
 };
 
-const fetch_single_post = async (postId, collection) => {
+const fetch_single_post = async (
+    postId,
+    postsCollection,
+    subhiroCollection
+) => {
     let postOid;
 
     try {
@@ -80,7 +84,7 @@ const fetch_single_post = async (postId, collection) => {
         };
     }
 
-    const response = await collection
+    const response = await postsCollection
         .aggregate([
             {
                 $match: {
@@ -105,11 +109,19 @@ const fetch_single_post = async (postId, collection) => {
         };
     }
 
+    const postData = response[0];
+    let subhiroData = {};
+
+    if (postData.subhiro?.hironame) {
+        subhiroData;
+    }
+
     return {
         success: true,
         message: "Post fetched",
         status_code: StatusCodes.OK,
-        ...response[0],
+        ...postData,
+        subhiroData,
     };
 };
 

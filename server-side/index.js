@@ -703,7 +703,7 @@ app.get("/subhiro/:id/posts", async (req, res, next) => {
 
 // Create new Subhiro
 app.post(
-    "/subhiro",
+    "/moderator/subhiro",
     checkAuthentication,
     checkModPrivilege,
     async (req, res, next) => {
