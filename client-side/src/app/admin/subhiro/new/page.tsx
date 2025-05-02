@@ -5,11 +5,11 @@ import Title from "../../Title";
 import RoundedButton from "@/components/Buttons/Rounded";
 import { useDropzone } from "react-dropzone";
 import { IoMdClose } from "react-icons/io";
-import useDynamicInput from "@/components/DynamicInput";
 import { toast } from "react-toastify";
 import { useCreateSubhiroMutation } from "@/store/features/moderator/moderatorApiSlice";
 import { useRouter } from "next/navigation";
 import { Spinner } from "flowbite-react";
+import DynamicInput from "@/components/DynamicInput";
 
 const NewSubhiro = () => {
     const [createSubhiro, { isLoading: isCreateSubhiroLoading }] =
@@ -78,19 +78,6 @@ const NewSubhiro = () => {
             );
         },
     });
-
-    // Multi Input
-    const { DynamicInput, values } = useDynamicInput({
-        defaultCount: 2,
-        maxItems: 8,
-    });
-
-    useEffect(() => {
-        setSubhiroValues((prev) => ({
-            ...prev,
-            rules: values.filter((v) => v !== ""),
-        }));
-    }, [values]);
 
     const uploadToImgbb = async (file: File) => {
         const formData = new FormData();
@@ -365,22 +352,42 @@ const NewSubhiro = () => {
                         </p>
 
                         <DynamicInput
-                            className="w-fit [&_>div]:space-y-3.5"
-                            customInput={
-                                <input
-                                    type="text"
-                                    className="min-w-80 rounded-lg focus:outline-[dodgerBlue]  bg-slate-100 hover:bg-slate-200 px-4 py-3 text-sm"
-                                    placeholder="Enter Rule Here..."
-                                    minLength={10}
-                                    required
-                                />
+                            onChange={(values) =>
+                                setSubhiroValues((prev) => ({
+                                    ...prev,
+                                    rules: values.filter((v) => v !== ""),
+                                }))
                             }
+                            defaultValues={subhiroValues.rules}
+                            defaultItemsCount={2}
+                            minItems={2}
+                            maxItems={8}
+                            className="w-fit [&_>div]:space-y-3.5"
                             customAddButton={
                                 <RoundedButton className="!px-4 !bg-[dodgerBlue] hover:!bg-blue-600 text-white text-sm disabled:!bg-gray-500 disabled:pointer-events-none">
                                     Add More
                                 </RoundedButton>
                             }
-                        />
+                        >
+                            {(inputProps, removeButtonProps) => (
+                                <div className="flex items-center gap-2 mb-2">
+                                    <input
+                                        type="text"
+                                        className="min-w-80 rounded-lg focus:outline-[dodgerBlue]  bg-slate-100 hover:bg-slate-200 px-4 py-3 text-sm"
+                                        placeholder="Enter Rule Here..."
+                                        minLength={10}
+                                        required
+                                        {...inputProps}
+                                    />
+                                    <button
+                                        className="rounded-full p-1 bg-slate-200 hover:text-red-600 disabled:pointer-events-none"
+                                        {...removeButtonProps}
+                                    >
+                                        <IoMdClose />
+                                    </button>
+                                </div>
+                            )}
+                        </DynamicInput>
                     </div>
                 )}
 

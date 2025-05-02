@@ -9,6 +9,9 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
+            <head>
+                <script src="https://unpkg.com/react-scan/dist/auto.global.js" />
+            </head>
             <body className="flex flex-col light min-h-screen">
                 <ApplicationWrapper>{children}</ApplicationWrapper>
             </body>
