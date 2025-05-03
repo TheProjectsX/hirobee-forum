@@ -64,11 +64,7 @@ const fetch_posts = async (filters, collection) => {
     };
 };
 
-const fetch_single_post = async (
-    postId,
-    postsCollection,
-    subhiroCollection
-) => {
+const fetch_single_post = async (postId, collection) => {
     let postOid;
 
     try {
@@ -84,7 +80,7 @@ const fetch_single_post = async (
         };
     }
 
-    const response = await postsCollection
+    const response = await collection
         .aggregate([
             {
                 $match: {

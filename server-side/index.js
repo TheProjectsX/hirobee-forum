@@ -363,6 +363,47 @@ app.delete("/me/posts/:id", checkAuthentication, async (req, res, next) => {
     }
 });
 
+// Join Subhiro
+app.put("/me/subhiro/:id/join", checkAuthentication, async (req, res, next) => {
+    const user = req.user;
+    const subhiroId = req.params.id;
+
+    try {
+        const response = await currentUserController.join_subhiro(
+            user,
+            subhiroId,
+            db.collection("users"),
+            db.collection("subhiro")
+        );
+
+        res.status(response.status_code).json(response);
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Leave Subhiro
+app.put(
+    "/me/subhiro/:id/leave",
+    checkAuthentication,
+    async (req, res, next) => {
+        const user = req.user;
+        const subhiroId = req.params.id;
+
+        try {
+            const response = await currentUserController.leave_subhiro(
+                user,
+                subhiroId,
+                db.collection("users")
+            );
+
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
 /* Public User Routes */
 // Get User via Username
 app.get("/users/:username", async (req, res, next) => {

@@ -50,6 +50,7 @@ const register = async (body, collection) => {
         role: "author",
         status: "active",
         meta: {},
+        joinedSubhiros: [],
         password: hashedPassword,
         createdAt: Date.now(),
     };

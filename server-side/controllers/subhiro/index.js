@@ -3,7 +3,10 @@ import {
     subhiroCreateFilter,
     subhiroCreateValidator,
 } from "../../utils/validators.js";
-import { postAggregationPipeline } from "../../utils/variables.js";
+import {
+    postAggregationPipeline,
+    subhiroAggregationPipeline,
+} from "../../utils/variables.js";
 import { toNumber } from "../../utils/helpers.js";
 
 const search_subhiro = async (filters, collection) => {
@@ -25,9 +28,21 @@ const search_subhiro = async (filters, collection) => {
 };
 
 const fetch_details = async (subhiroId, collection) => {
-    const response = await collection.findOne({ hironame: subhiroId });
+    const response = await collection
+        .aggregate([
+            {
+                $match: {
+                    hironame: { $regex: `^${subhiroId}$`, $options: "i" },
+                },
+            },
+            ...subhiroAggregationPipeline,
+            {
+                $limit: 1,
+            },
+        ])
+        .toArray();
 
-    if (!response) {
+    if (response.length === 0) {
         return {
             success: false,
             message: "SubHiro not Found",
@@ -41,7 +56,7 @@ const fetch_details = async (subhiroId, collection) => {
     return {
         success: true,
         message: "Fetched SubHiro",
-        ...response,
+        ...response[0],
         status_code: StatusCodes.OK,
     };
 };

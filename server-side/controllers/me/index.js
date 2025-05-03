@@ -284,6 +284,67 @@ const delete_post = async (user, postId, collection) => {
     };
 };
 
+const join_subhiro = async (
+    user,
+    subhiroId,
+    usersCollection,
+    subhiroCollection
+) => {
+    const targetSubhiro = await subhiroCollection.findOne({
+        hironame: subhiroId,
+    });
+    if (!targetSubhiro) {
+        return {
+            success: false,
+            message: "Post not Found!",
+            query: {
+                id: postId,
+            },
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    }
+
+    const response = await usersCollection.updateOne(
+        { username: user.username },
+        { $addToSet: { joinedSubhiros: subhiroId } }
+    );
+
+    if (response.modifiedCount === 0) {
+        return {
+            success: false,
+            message: "Already Joined!",
+            status_code: StatusCodes.BAD_REQUEST,
+        };
+    }
+
+    return {
+        success: true,
+        message: "Joined SubHiro",
+        status_code: StatusCodes.OK,
+    };
+};
+
+const leave_subhiro = async (user, subhiroId, collection) => {
+    const response = await collection.updateOne(
+        { username: user.username },
+        { $pull: { joinedSubhiros: subhiroId } }
+    );
+
+    if (response.modifiedCount === 0) {
+        return {
+            success: false,
+            message: "You are not joined Yet!",
+            status_code: StatusCodes.BAD_REQUEST,
+        };
+    }
+
+    return {
+        success: true,
+        message: "Left SubHiro",
+        status_code: StatusCodes.OK,
+    };
+};
+
 export default {
     fetch_info,
     update_info,
@@ -292,4 +353,6 @@ export default {
     create_post,
     update_post,
     delete_post,
+    join_subhiro,
+    leave_subhiro,
 };

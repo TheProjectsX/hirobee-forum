@@ -141,12 +141,12 @@ export const subhiroAggregationPipeline = [
             from: "users",
             localField: "hironame",
             foreignField: "joinedSubhiros",
-            as: "posts",
+            as: "users",
         },
     },
     {
         $addFields: {
-            usersCount: { $size: "$posts" },
+            membersCount: { $size: "$users" },
         },
     },
     {
@@ -160,6 +160,19 @@ export const subhiroAggregationPipeline = [
     {
         $addFields: {
             postsCount: { $size: "$posts" },
+        },
+    },
+    {
+        $project: {
+            displayname: 1,
+            hironame: 1,
+            description: 1,
+            profile_picture: 1,
+            banner: 1,
+            rules: 1,
+            membersCount: 1,
+            postsCount: 1,
+            createdAt: 1,
         },
     },
 ];
