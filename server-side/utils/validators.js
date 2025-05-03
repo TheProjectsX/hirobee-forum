@@ -115,3 +115,21 @@ export const subhiroCreateValidator = (body) => {
 
     return required_keys.every((key) => key in body);
 };
+
+export const subhiroUpdateFilter = (body) => {
+    if (!body) return {};
+    const approved_keys = [
+        "displayname",
+        "description",
+        "rules",
+        "profile_picture",
+        "banner",
+    ];
+
+    const filteredBody = approved_keys.reduce((acc, key) => {
+        if (key in body) acc[key] = body[key];
+        return acc;
+    }, {});
+
+    return filteredBody;
+};

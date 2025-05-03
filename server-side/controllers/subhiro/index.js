@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import {
     subhiroCreateFilter,
     subhiroCreateValidator,
+    subhiroUpdateFilter,
 } from "../../utils/validators.js";
 import {
     postAggregationPipeline,
@@ -147,4 +148,47 @@ const create_subhiro = async (user, body, collection) => {
     };
 };
 
-export default { fetch_details, fetch_posts, create_subhiro, search_subhiro };
+const update_subhiro = async (user, subhiroId, body, collection) => {
+    const filteredBody = subhiroUpdateFilter(body);
+
+    const response = await collection.updateOne(
+        {
+            hironame: { $regex: subhiroId, $options: "i" },
+        },
+        { $set: { ...filteredBody, updatedAt: Date.now() } }
+    );
+
+    if (response.matchedCount === 0) {
+        return {
+            success: false,
+            message: "Subhiro not Found!",
+            query: {
+                id: subhiroId,
+            },
+            status_code: StatusCodes.NOT_FOUND,
+        };
+    }
+
+    if (!response.acknowledged) {
+        return {
+            success: false,
+            message: "Failed to Update SubHiro",
+            status_code: StatusCodes.INTERNAL_SERVER_ERROR,
+        };
+    }
+
+    return {
+        success: true,
+        message: "SubHiro Updated",
+        id: filteredBody.hironame,
+        status_code: StatusCodes.CREATED,
+    };
+};
+
+export default {
+    fetch_details,
+    fetch_posts,
+    create_subhiro,
+    search_subhiro,
+    update_subhiro,
+};

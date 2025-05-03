@@ -771,6 +771,31 @@ app.post(
     }
 );
 
+// Update Subhiro
+app.put(
+    "/moderator/subhiro/:id",
+    checkAuthentication,
+    checkModPrivilege,
+    async (req, res, next) => {
+        const { id: subhiroId } = req.params;
+        const user = req.user;
+        const body = req.body;
+
+        try {
+            const response = await subhiroController.update_subhiro(
+                user,
+                subhiroId,
+                body,
+                db.collection("subhiro")
+            );
+
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
 /* Protected Admin Routes */
 
 // Get Stats of Forum
