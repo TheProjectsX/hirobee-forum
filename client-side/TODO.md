@@ -66,6 +66,8 @@ Done
 
 ### User Join Hirobee
 
+Done
+
 ### Create Hirobee
 
 Done

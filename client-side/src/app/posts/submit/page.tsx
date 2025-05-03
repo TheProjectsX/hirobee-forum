@@ -54,61 +54,59 @@ const SubmitPost = ({
 
     const router = useRouter();
 
-    const [communitySearch, setCommunitySearch] = useState<{
+    const [subhiroSearch, setSubhiroSearch] = useState<{
         visible: boolean;
         data: Array<{
             profile_picture: string;
             hironame: string;
-            members: string;
+            membersCount: string;
         }>;
     }>({
         visible: false,
         data: [],
     });
     const [postValues, setPostValues] = useState<{
-        community: null | {
-            profile_picture: string;
-            hironame: string;
-            members: string;
-        };
         title: string;
         content: string;
         images: Array<string>;
+        subhiro: string | null;
+        subhiroData: {
+            profile_picture: string;
+            hironame: string;
+            membersCount: string;
+        } | null;
     }>({
-        community: null,
         title: "",
         content: "",
         images: [],
+        subhiro: null,
+        subhiroData: null,
     });
 
     // Handle Community Search
-    const handleCommunitySearch = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleCommunitySearch = async (
+        e: React.FormEvent<HTMLFormElement>
+    ) => {
         e.preventDefault();
+        const target = e.target as HTMLFormElement;
 
-        setCommunitySearch((prev) => ({ ...prev, visible: true }));
+        setSubhiroSearch((prev) => ({ ...prev, visible: true }));
 
-        setTimeout(() => {
-            setCommunitySearch((prev) => ({
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/subhiro/search?query=${target.query.value}`
+            );
+
+            const searchResponse = await response.json();
+
+            setSubhiroSearch((prev) => ({
                 ...prev,
-                data: [
-                    {
-                        profile_picture: "https://placehold.co/300",
-                        hironame: "AskHiro",
-                        members: "554K",
-                    },
-                    {
-                        profile_picture: "https://placehold.co/300",
-                        hironame: "AskHiro",
-                        members: "900K",
-                    },
-                    {
-                        profile_picture: "https://placehold.co/300",
-                        hironame: "AskHiro",
-                        members: "699K",
-                    },
-                ],
+                data: searchResponse.data,
             }));
-        }, 300);
+        } catch (error: any) {
+            setSubhiroSearch((prev) => ({ ...prev, visible: false }));
+            toast.error(error?.data?.message ?? "Failed to get Search Result");
+        }
     };
 
     // Check if is in Post Edit Mode! and update data
@@ -118,7 +116,8 @@ const SubmitPost = ({
         setPostValues({
             title: targetPost.title,
             content: targetPost.content ?? "",
-            community: targetPost.subhiro?.hironame ? targetPost.subhiro : null,
+            subhiro: targetPost.subhiro?.hironame ?? null,
+            subhiroData: targetPost.subhiro ?? null,
             images: targetPost.images ?? [],
         });
     }, [isTargetPostSuccess]);
@@ -165,9 +164,9 @@ const SubmitPost = ({
                             parentStyles={{ width: "100%" }}
                             className="!w-full rounded-xl overflow-hidden"
                             triggerType="manual"
-                            contentVisible={communitySearch.visible}
+                            contentVisible={subhiroSearch.visible}
                             onWrapperBlur={() =>
-                                setCommunitySearch((prev) => ({
+                                setSubhiroSearch((prev) => ({
                                     ...prev,
                                     visible: false,
                                 }))
@@ -175,7 +174,7 @@ const SubmitPost = ({
                             indicator={false}
                             content={
                                 <>
-                                    {communitySearch.data.length === 0 ? (
+                                    {subhiroSearch.data.length === 0 ? (
                                         <p className="flex items-center justify-center px-4 py-3">
                                             <Spinner
                                                 aria-label="Default"
@@ -183,45 +182,40 @@ const SubmitPost = ({
                                             />
                                         </p>
                                     ) : (
-                                        communitySearch.data.map(
-                                            (item, idx) => (
-                                                <div
-                                                    key={idx}
-                                                    className="flex items-center gap-3 cursor-pointer hover:bg-slate-100 px-4 py-3"
-                                                    onClick={(e) => {
-                                                        setPostValues(
-                                                            (prev) => ({
-                                                                ...prev,
-                                                                community: item,
-                                                            })
-                                                        );
-                                                        setCommunitySearch(
-                                                            (prev) => ({
-                                                                ...prev,
-                                                                visible: false,
-                                                            })
-                                                        );
-                                                    }}
-                                                >
-                                                    <img
-                                                        src={
-                                                            item.profile_picture
-                                                        }
-                                                        alt="SubHiro Profile Picture"
-                                                        className="rounded-full w-8 h-8"
-                                                    />
-                                                    <h3 className="flex flex-col">
-                                                        <span className="text-sm font-medium">
-                                                            h/{item.hironame}
-                                                        </span>
-                                                        <span className="text-xs text-neutral-500 font-medium">
-                                                            {item.members}{" "}
-                                                            Members
-                                                        </span>
-                                                    </h3>
-                                                </div>
-                                            )
-                                        )
+                                        subhiroSearch.data.map((item, idx) => (
+                                            <div
+                                                key={idx}
+                                                className="flex items-center gap-3 cursor-pointer hover:bg-slate-100 px-4 py-3"
+                                                onClick={(e) => {
+                                                    setPostValues((prev) => ({
+                                                        ...prev,
+                                                        subhiro: item.hironame,
+                                                        subhiroData: item,
+                                                    }));
+                                                    setSubhiroSearch(
+                                                        (prev) => ({
+                                                            ...prev,
+                                                            visible: false,
+                                                        })
+                                                    );
+                                                }}
+                                            >
+                                                <img
+                                                    src={item.profile_picture}
+                                                    alt="SubHiro Profile Picture"
+                                                    className="rounded-full w-8 h-8"
+                                                />
+                                                <h3 className="flex flex-col">
+                                                    <span className="text-sm font-medium">
+                                                        h/{item.hironame}
+                                                    </span>
+                                                    <span className="text-xs text-neutral-500 font-medium">
+                                                        {item.membersCount}{" "}
+                                                        Members
+                                                    </span>
+                                                </h3>
+                                            </div>
+                                        ))
                                     )}
                                 </>
                             }
@@ -247,6 +241,7 @@ const SubmitPost = ({
                                     <IoSearchOutline />
                                 </span>
                                 <input
+                                    name="query"
                                     type="text"
                                     className={`border-none outline-none text-sm w-full ${
                                         targetPostId !== undefined
@@ -255,7 +250,7 @@ const SubmitPost = ({
                                     }`}
                                     placeholder="Search for Community"
                                     onFocus={() =>
-                                        setCommunitySearch((prev) => ({
+                                        setSubhiroSearch((prev) => ({
                                             ...prev,
                                             visible: prev.data.length > 0,
                                         }))
@@ -266,7 +261,7 @@ const SubmitPost = ({
                         </Popover>
                     </form>
 
-                    {postValues.community && (
+                    {postValues.subhiroData && (
                         <div className="flex items-end justify-between gap-2">
                             <div className="px-2">
                                 <p className="font-semibold mb-2.5">
@@ -275,19 +270,26 @@ const SubmitPost = ({
                                 <div className="flex items-center gap-3">
                                     <img
                                         src={
-                                            postValues.community.profile_picture
+                                            postValues.subhiroData
+                                                .profile_picture
                                         }
                                         alt="SubHiro Profile Picture"
                                         className="rounded-full w-8 h-8"
                                     />
                                     <h3 className="flex flex-col">
                                         <span className="text-sm font-medium">
-                                            h/{postValues.community.hironame}
+                                            h/{postValues.subhiroData.hironame}
                                         </span>
-                                        <span className="text-xs text-neutral-500 font-medium">
-                                            {postValues.community.members}{" "}
-                                            Members
-                                        </span>
+                                        {postValues.subhiroData
+                                            .membersCount && (
+                                            <span className="text-xs text-neutral-500 font-medium">
+                                                {
+                                                    postValues.subhiroData
+                                                        .membersCount
+                                                }{" "}
+                                                Members
+                                            </span>
+                                        )}
                                     </h3>
                                 </div>
                             </div>
@@ -296,7 +298,7 @@ const SubmitPost = ({
                                 onClick={() =>
                                     setPostValues((prev) => ({
                                         ...prev,
-                                        community: null,
+                                        subhiro: null,
                                     }))
                                 }
                             >
