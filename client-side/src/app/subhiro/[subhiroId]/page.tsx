@@ -7,8 +7,8 @@ import PreviewPost, { PostInterface } from "@/components/PreviewPost";
 import { useFetchSubhiroPostsQuery } from "@/store/features/subhiro/subhiroApiSlice";
 import InfiniteScroll from "react-infinite-scroll-component";
 
-const Posts = ({ params }: { params: Promise<{ username: string }> }) => {
-    const { username } = use(params);
+const Posts = ({ params }: { params: Promise<{ subhiroId: string }> }) => {
+    const { subhiroId } = use(params);
     const [currentPage, setCurrentPage] = useState(1);
 
     const {
@@ -16,7 +16,7 @@ const Posts = ({ params }: { params: Promise<{ username: string }> }) => {
         isFetching,
         isSuccess,
     } = useFetchSubhiroPostsQuery({
-        username,
+        subhiroId,
         params: { page: currentPage, limit: 8 },
     });
 

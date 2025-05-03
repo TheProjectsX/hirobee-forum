@@ -30,11 +30,15 @@ Done (!)
 
 ### Update Sidebar Contents
 
+Done
+
 ### Admin Panel
 
 Done
 
 ### Subhiro
+
+Done
 
 ### See if it's possible to add base path for the injected reducers
 

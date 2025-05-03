@@ -73,11 +73,9 @@ export default function Home() {
                     {isSuccess &&
                         postsData.data
                             ?.slice(0, 5)
-                            .map((post: {}, idx: number) => (
+                            .map((post: PostInterface, idx: number) => (
                                 <React.Fragment key={idx}>
-                                    <SidebarPost
-                                        postData={post as PostInterface}
-                                    />
+                                    <SidebarPost postData={post} />
                                     <div className="pb-0.5 mb-0.5 border-b border-neutral-300"></div>
                                 </React.Fragment>
                             ))}

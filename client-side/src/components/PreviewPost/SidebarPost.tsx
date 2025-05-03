@@ -11,8 +11,8 @@ const SidebarPost = ({ postData }: { postData: PostInterface }) => {
                         <Link
                             href={
                                 postData.subhiro?.hironame
-                                    ? `/h/${postData.subhiro.hironame}`
-                                    : `/h/${postData.author.username}`
+                                    ? `/subhiro/${postData.subhiro.hironame}`
+                                    : `/user/${postData.author.username}`
                             }
                             className="flex gap-2 items-center z-[1]"
                         >

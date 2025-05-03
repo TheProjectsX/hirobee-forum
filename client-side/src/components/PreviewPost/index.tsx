@@ -194,8 +194,8 @@ const PreviewPost = ({
                         <Link
                             href={
                                 postData.subhiro?.hironame
-                                    ? `/h/${postData.subhiro.hironame}`
-                                    : `/u/${postData.author.username}`
+                                    ? `/subhiro/${postData.subhiro.hironame}`
+                                    : `/user/${postData.author.username}`
                             }
                             className="flex gap-1.5 items-center z-[1]"
                         >
@@ -241,8 +241,8 @@ const PreviewPost = ({
                         <Link
                             href={
                                 postData.subhiro?.hironame
-                                    ? `/h/${postData.subhiro.hironame}`
-                                    : `/u/${postData.author.username}`
+                                    ? `/subhiro/${postData.subhiro.hironame}`
+                                    : `/user/${postData.author.username}`
                             }
                             className="flex gap-1.5 items-center z-[1] h-full"
                         >
@@ -264,8 +264,8 @@ const PreviewPost = ({
                                 <Link
                                     href={
                                         postData.subhiro?.hironame
-                                            ? `/h/${postData.subhiro.hironame}`
-                                            : `/u/${postData.author.username}`
+                                            ? `/subhiro/${postData.subhiro.hironame}`
+                                            : `/user/${postData.author.username}`
                                     }
                                 >
                                     <span className="hover:text-blue-800 font-medium text-sm">

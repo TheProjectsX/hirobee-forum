@@ -30,7 +30,7 @@ const Join = ({ subhiroId }: { subhiroId: string }) => {
         try {
             await joinSubhiro({ subhiroId }).unwrap();
             dispatch(addJoinedSubhiros({ subhiroId }));
-            toast.success("Joined Subhiro");
+            toast.success(`Joined h/${subhiroId}`);
         } catch (error: any) {
             toast.error(error?.data?.message ?? "Failed to Join Subhiro");
         }
@@ -40,7 +40,7 @@ const Join = ({ subhiroId }: { subhiroId: string }) => {
         try {
             await leaveSubhiro({ subhiroId }).unwrap();
             dispatch(removeJoinedSubhiros({ subhiroId }));
-            toast.success("Left Subhiro");
+            toast.success(`Left h/${subhiroId}`);
         } catch (error: any) {
             toast.error(error?.data?.message ?? "Failed to Leave Subhiro");
         }
@@ -50,7 +50,7 @@ const Join = ({ subhiroId }: { subhiroId: string }) => {
 
     return userInfo?.joinedSubhiros?.includes(subhiroId) ? (
         <RoundedButton
-            className="border border-neutral-600 px-3.5 disabled:pointer-events-none"
+            className="border border-neutral-600 px-3.5 py-1.5 disabled:pointer-events-none"
             onClick={() => handleLeaveSubhiro(subhiroId)}
             disabled={isLeaveSubhiroLoading}
         >
@@ -59,7 +59,7 @@ const Join = ({ subhiroId }: { subhiroId: string }) => {
     ) : (
         <AuthButtonWrapper>
             <RoundedButton
-                className="!bg-green-600 hover:!bg-green-700 px-3.5 disabled:pointer-events-none"
+                className="!bg-green-600 hover:!bg-green-700 px-3.5 py-1.5 disabled:pointer-events-none"
                 onClick={() => handleJoinSubhiro(subhiroId)}
                 disabled={isJoinSubhiroLoading}
             >
