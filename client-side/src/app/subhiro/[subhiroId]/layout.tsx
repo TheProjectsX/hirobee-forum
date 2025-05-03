@@ -52,7 +52,7 @@ const SubHiroLayout = async ({
             <div>
                 {/* Banner */}
                 <div
-                    className="bg-center bg-no-repeat bg-cover h-16 md:h-24 md:mx-3 md:mt-2 md:rounded-2xl bg-gray-200"
+                    className="bg-center bg-no-repeat bg-cover h-20 md:h-30 md:mx-3 md:mt-2 md:rounded-2xl bg-gray-200"
                     style={
                         subhiroData.banner
                             ? {

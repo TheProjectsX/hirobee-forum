@@ -399,7 +399,7 @@ const PreviewPost = ({
 
                 {/* Images */}
                 {postData.images && postData.images.length > 0 && (
-                    <div className="w-full mb-4">
+                    <div className="w-full mb-4 z-[1] relative">
                         <GalleryCarousel images={postData.images} />
                     </div>
                 )}

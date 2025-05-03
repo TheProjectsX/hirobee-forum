@@ -2,6 +2,11 @@ import baseApiSlice from "@/store/app/baseApi/baseApiSlice";
 
 const subhiroApiSlice = baseApiSlice.injectEndpoints({
     endpoints: (builder) => ({
+        fetchSubhiro: builder.query({
+            query: (data) => ({
+                url: `/subhiro/${data.subhiroId}`,
+            }),
+        }),
         fetchSubhiroPosts: builder.query({
             query: (data) => ({
                 url: `/subhiro/${data.subhiroId}/posts`,
@@ -28,6 +33,7 @@ const subhiroApiSlice = baseApiSlice.injectEndpoints({
     }),
 });
 
-export const { useFetchSubhiroPostsQuery } = subhiroApiSlice;
+export const { useFetchSubhiroQuery, useFetchSubhiroPostsQuery } =
+    subhiroApiSlice;
 
 export default subhiroApiSlice;

@@ -81,3 +81,5 @@ Was a fricking hassle! Lesson learned: Don't use state while returning component
 ### User Settings Page
 
 Done
+
+### Edit SubHiro ----->>> DON'T!!! NOT NOW!!!!! ENOUGH is ENOUGH!

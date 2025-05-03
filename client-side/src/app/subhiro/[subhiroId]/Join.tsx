@@ -59,7 +59,7 @@ const Join = ({ subhiroId }: { subhiroId: string }) => {
     ) : (
         <AuthButtonWrapper>
             <RoundedButton
-                className="!bg-green-600 hover:!bg-green-700 px-3.5 py-1.5 disabled:pointer-events-none"
+                className="!bg-[dodgerBlue] hover:!bg-blue-600 px-3.5 py-1.5 disabled:pointer-events-none"
                 onClick={() => handleJoinSubhiro(subhiroId)}
                 disabled={isJoinSubhiroLoading}
             >
