@@ -49,6 +49,7 @@ export const postAggregationPipeline = [
             createdAt: 1,
             updatedAt: 1,
             commentsCount: 1,
+            images: 1,
             author: {
                 username: "$author.username",
                 profile_picture: "$author.profile_picture",

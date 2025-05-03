@@ -169,6 +169,7 @@ const create_post = async (user, body, collection) => {
         content: filteredBody.content,
         authorId: user.username,
         subhiroId: filteredBody.subhiro ?? null,
+        images: filteredBody.images ?? [],
         upvotedBy: [],
         downvotedBy: [],
         createdAt: Date.now(),
