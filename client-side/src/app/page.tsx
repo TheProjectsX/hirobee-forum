@@ -11,23 +11,70 @@ import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 export default function Home() {
-    const [currentPage, setCurrentPage] = useState(1);
+    const [params, setParams] = useState<{
+        page: number;
+        limit: number;
+        sortBy: string;
+    }>({
+        page: 1,
+        limit: 8,
+        sortBy: "new",
+    });
     const {
         data: postsData,
         refetch,
         isFetching,
         isSuccess,
-    } = useFetchPostsQuery({ params: { page: currentPage, limit: 8 } });
+    } = useFetchPostsQuery({ params: params });
 
     return (
         <PageLayout>
             <MainDiv className="">
+                {/* Header */}
+                <div className="mb-2 px-4 flex items-center gap-3">
+                    <select
+                        value={params.sortBy}
+                        onChange={(e) =>
+                            setParams((prev) => ({
+                                ...prev,
+                                sortBy: e.target.value,
+                                page: 1,
+                            }))
+                        }
+                        className="bg-neutral-100 rounded-full text-sm px-2.5 py-1.5 outline-none text-neutral-600 font-semibold"
+                    >
+                        <option value="" disabled>
+                            Sort By
+                        </option>
+                        <option value="new">New</option>
+                        <option value="old">Old</option>
+                    </select>
+
+                    <select
+                        defaultValue={"list"}
+                        className="bg-neutral-100 rounded-full text-sm px-2.5 py-1.5 outline-none text-neutral-600 font-semibold"
+                    >
+                        <option value="" disabled>
+                            Layout
+                        </option>
+                        <option value="list">List</option>
+                        <option value="grid" disabled>
+                            Grid
+                        </option>
+                    </select>
+                </div>
+
                 {/* Posts */}
                 {isSuccess && (
                     <InfiniteScroll
                         className="!overflow-visible"
                         dataLength={postsData.data?.length}
-                        next={() => setCurrentPage((prev) => prev + 1)}
+                        next={() =>
+                            setParams((prev) => ({
+                                ...prev,
+                                page: prev.page + 1,
+                            }))
+                        }
                         hasMore={postsData.pagination.has_next_page}
                         loader=""
                     >
