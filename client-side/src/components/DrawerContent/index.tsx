@@ -31,7 +31,7 @@ const DrawerContent = () => {
                     </li>
                     <li>
                         <NavLink
-                            href={"/h/popular"}
+                            href={"/tag/popular"}
                             Icon={BsArrowUpRightCircle}
                         >
                             Popular
@@ -42,13 +42,16 @@ const DrawerContent = () => {
                     {userData ? (
                         <>
                             <li>
-                                <NavLink href={"/explore"} Icon={LuTextSearch}>
+                                <NavLink
+                                    href={"/tag/explore"}
+                                    Icon={LuTextSearch}
+                                >
                                     Explore
                                 </NavLink>
                             </li>
                             <li>
                                 <NavLink
-                                    href={"/h/all"}
+                                    href={"/tag/all"}
                                     Icon={MdOutlineSsidChart}
                                 >
                                     All
@@ -65,7 +68,7 @@ const DrawerContent = () => {
             <Dropdown label="SubHiro" border>
                 <ul>
                     <li>
-                        <NavLink href={"/h/technology"}>Technology</NavLink>
+                        <NavLink href={"/tag/technology"}>Technology</NavLink>
                     </li>
                 </ul>
             </Dropdown>

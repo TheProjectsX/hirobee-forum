@@ -228,7 +228,9 @@ const PreviewPost = ({
                 {fullPreview && (
                     <div className="flex items-center gap-2 mb-1.5">
                         {postData.subhiro?.hironame && (
-                            <Link href={`/h/${postData.subhiro.hironame}`}>
+                            <Link
+                                href={`/subhiro/${postData.subhiro.hironame}`}
+                            >
                                 <Button
                                     Icon={MdArrowBack}
                                     className="!p-1.5 [&_svg]:text-xl"

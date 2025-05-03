@@ -36,7 +36,10 @@ const Post = async ({ params }: { params: Promise<{ postId: string }> }) => {
             <Sidebar className="h-fit">
                 <div className="px-3.5 py-5 bg-slate-100/80 rounded-md">
                     <header className="flex items-center gap-2 justify-between mb-3">
-                        <Link href={"/h/"} className="font-semibold text-lg">
+                        <Link
+                            href={`/subhiro/someId`}
+                            className="font-semibold text-lg"
+                        >
                             h/AskHirobee
                         </Link>
                         <RoundedButton className="!bg-blue-700 hover:!bg-blue-800 !px-6">

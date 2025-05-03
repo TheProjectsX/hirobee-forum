@@ -39,6 +39,17 @@ const userInfoSlice = createSlice({
             state["isSuccess"] = false;
             state["isLoading"] = false;
         },
+        addJoinedSubhiros: (state, action) => {
+            state["data"]["joinedSubhiros"].push(action.payload.subhiroId);
+        },
+        removeJoinedSubhiros: (state, action) => {
+            state["data"]["joinedSubhiros"].splice(
+                state["data"]["joinedSubhiros"].indexOf(
+                    action.payload.subhiroId
+                ),
+                1
+            );
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -61,5 +72,6 @@ const userInfoSlice = createSlice({
     },
 });
 
-export const { removeUserInfo } = userInfoSlice.actions;
+export const { removeUserInfo, addJoinedSubhiros, removeJoinedSubhiros } =
+    userInfoSlice.actions;
 export default userInfoSlice.reducer;

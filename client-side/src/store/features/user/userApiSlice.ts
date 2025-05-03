@@ -32,6 +32,18 @@ const userApiSlice = baseApiSlice.injectEndpoints({
                 method: "DELETE",
             }),
         }),
+        joinSubhiro: builder.mutation({
+            query: (data) => ({
+                url: `/me/subhiro/${data.subhiroId}/join`,
+                method: "PUT",
+            }),
+        }),
+        leaveSubhiro: builder.mutation({
+            query: (data) => ({
+                url: `/me/subhiro/${data.subhiroId}/leave`,
+                method: "PUT",
+            }),
+        }),
     }),
 });
 
@@ -42,5 +54,7 @@ export const {
     useInsertPostMutation,
     useUpdatePostMutation,
     useDeletePostMutation,
+    useJoinSubhiroMutation,
+    useLeaveSubhiroMutation,
 } = userApiSlice;
 export default userApiSlice;
