@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import React, { useState } from "react";
-import Title from "../../Title";
+import Title from "@/components/Title";
 import {
     useApproveReportMutation,
     useFetchReportedUsersQuery,

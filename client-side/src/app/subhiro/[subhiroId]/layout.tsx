@@ -13,6 +13,7 @@ import Highlights from "./Highlights";
 import { notFound } from "next/navigation";
 import { ShortNumber } from "@lytieuphong/short-number";
 import Join from "./Join";
+import AuthButtonWrapper from "@/components/AuthButtonWrapper";
 
 interface SubhiroDataInterface {
     displayname: string;
@@ -61,7 +62,7 @@ const SubHiroLayout = async ({
                     }
                 ></div>
 
-                <header className="flex flex-col sm:flex-row flex-wrap gap-2 sm:justify-between sm:items-center p-3 md:py-1.5">
+                <header className="flex flex-wrap gap-2 justify-between items-center p-3 md:py-1.5">
                     <div className="flex items-center gap-1 md:pl-4">
                         <div className="w-12 h-12 bg-white p-1.5 md:p-0.5 md:mx-6 rounded-full md:scale-[180%] md:relative -top-4">
                             <img
@@ -87,13 +88,6 @@ const SubHiroLayout = async ({
 
                     {/* Extra Info */}
                     <div className="flex items-center gap-2">
-                        <RoundedButton className="border border-neutral-500 px-3.5">
-                            <FiPlus className="text-xl" />
-                            <span className="text-sm font-medium px-1">
-                                Create Post
-                            </span>
-                        </RoundedButton>
-
                         <Join subhiroId={subhiroId} />
                     </div>
                 </header>

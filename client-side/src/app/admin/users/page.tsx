@@ -5,7 +5,7 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { LiaSortSolid } from "react-icons/lia";
-import Title from "../Title";
+import Title from "@/components/Title";
 import {
     useFetchUsersQuery,
     useUpdateUserRoleMutation,

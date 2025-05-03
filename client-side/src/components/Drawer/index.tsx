@@ -6,6 +6,7 @@ import {
     MdKeyboardDoubleArrowLeft,
     MdKeyboardDoubleArrowRight,
 } from "react-icons/md";
+import { usePathname } from "next/navigation";
 
 interface DrawerProps {
     children: React.ReactNode;
@@ -23,6 +24,7 @@ const Drawer = ({
     onDrawerClosed,
 }: DrawerProps) => {
     const wrapperRef = useRef<HTMLDivElement>(null);
+    const pathname = usePathname();
 
     useEffect(() => {
         const top = wrapperRef.current?.getBoundingClientRect().top;
@@ -44,6 +46,11 @@ const Drawer = ({
         window.addEventListener("resize", handleScrollBlock);
         return () => window.removeEventListener("resize", handleScrollBlock);
     }, [drawerOpened]);
+
+    // Close Drawer if path changes
+    useEffect(() => {
+        onDrawerClosed();
+    }, [pathname]);
 
     return (
         <div

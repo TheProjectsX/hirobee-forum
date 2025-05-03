@@ -234,7 +234,7 @@ const Navbar = () => {
                                     </Link>
 
                                     <div className="pb-2 mb-2 mx-2 border-b border-neutral-300"></div>
-                                    <Link href={"#"}>
+                                    <Link href={"/settings"}>
                                         <SquareButton
                                             className="w-full !py-4 gap-3"
                                             Icon={GoGear}

@@ -3,6 +3,13 @@ import baseApiSlice from "@/store/app/baseApi/baseApiSlice";
 const userApiSlice = baseApiSlice.injectEndpoints({
     endpoints: (builder) => ({
         fetchUserInfo: builder.query({ query: () => "/me" }),
+        updateUserInfo: builder.mutation({
+            query: (data) => ({
+                url: "/me",
+                method: "PUT",
+                body: data.body,
+            }),
+        }),
         fetchUserPosts: builder.query({
             query: (params) => ({
                 url: "/me/posts",
@@ -49,6 +56,7 @@ const userApiSlice = baseApiSlice.injectEndpoints({
 
 export const {
     useFetchUserInfoQuery,
+    useUpdateUserInfoMutation,
     useFetchUserPostsQuery,
     useFetchSinglePostQuery,
     useInsertPostMutation,

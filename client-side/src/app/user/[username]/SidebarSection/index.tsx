@@ -64,16 +64,15 @@ const SidebarSection = ({ userData }: { userData: UserDataInterface }) => {
     };
 
     return (
-        <div className="bg-slate-100/80 rounded-2xl">
-            <div className="w-full max-h-14 min-h-[1px] mb-5">
-                {userData.banner && (
-                    <img
-                        src={userData.banner}
-                        alt="Banner Image"
-                        className="w-full h-full rounded-t-2xl"
-                    />
-                )}
-            </div>
+        <div className="bg-slate-100/80 rounded-2xl mt-4">
+            <div
+                className="w-full overflow-hidden h-22 bg-gray-300 rounded-t-2xl bg-center bg-no-repeat bg-cover mb-2"
+                style={
+                    userData.banner
+                        ? { backgroundImage: `url(${userData.banner})` }
+                        : {}
+                }
+            ></div>
 
             <div className="px-3.5 pb-4">
                 {/* Basic */}
@@ -132,10 +131,10 @@ const SidebarSection = ({ userData }: { userData: UserDataInterface }) => {
                 {userData.bio && (
                     <>
                         <p className="text-sm text-slate-500 px-2">
-                            {userData.bio}
+                            "{userData.bio}"
                         </p>
                         <p className="text-right text-sm italic text-neutral-500 px-2">
-                            - {userData.username}
+                            - {userData.displayname}
                         </p>
                     </>
                 )}
@@ -208,7 +207,7 @@ const SidebarSection = ({ userData }: { userData: UserDataInterface }) => {
                                     </p>
                                 </div>
 
-                                <Link href={"#"}>
+                                <Link href={"/settings"}>
                                     <RoundedButton className="bg-slate-200 hover:underline">
                                         <span className="text-xs font-semibold px-2">
                                             Update

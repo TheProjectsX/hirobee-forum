@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Title from "../../Title";
+import Title from "@/components/Title";
 import RoundedButton from "@/components/Buttons/Rounded";
 import { useDropzone } from "react-dropzone";
 import { IoMdClose } from "react-icons/io";
@@ -34,12 +34,11 @@ const NewSubhiro = () => {
         rules: [],
     });
 
+    const router = useRouter();
+
     const [profilePictureFile, setProfilePictureFile] = useState<Array<any>>(
         []
     );
-
-    const router = useRouter();
-
     const [bannerFile, setBannerFile] = useState<Array<any>>([]);
     const { getRootProps: getPPRootProps, getInputProps: getPPInputProps } =
         useDropzone({
@@ -329,7 +328,7 @@ const NewSubhiro = () => {
                                         {bannerFile.length > 0
                                             ? "Re-Select"
                                             : "Select"}{" "}
-                                        Profile Picture
+                                        Banner
                                     </p>
                                     <p className="text-sm italic text-neutral-400">
                                         (Only .jpg and .png Images)
@@ -469,11 +468,7 @@ const NewSubhiro = () => {
                     </p>
 
                     <RoundedButton
-                        className={`!px-6 ${
-                            formStage < 2
-                                ? "bg-neutral-300 !text-neutral-500 pointer-events-none"
-                                : "!bg-[dodgerBlue] hover:!bg-blue-600 !text-white"
-                        }`}
+                        className={`!px-6 !bg-[dodgerBlue] hover:!bg-blue-600 !text-white disabled:!bg-neutral-300 disabled:!text-neutral-500 disabled:pointer-events-none`}
                         disabled={formStage < 2}
                         onClick={() => setFormStage((prev) => prev - 1)}
                         type="button"
@@ -483,7 +478,7 @@ const NewSubhiro = () => {
 
                     {formStage === 4 && (
                         <RoundedButton
-                            className={`!px-6 !bg-[dodgerBlue] hover:!bg-blue-600 !text-white disabled:!bg-neutral-300 disabled:!text-neutral-500 pointer-events-none}`}
+                            className={`!px-6 !bg-[dodgerBlue] hover:!bg-blue-600 !text-white disabled:!bg-neutral-300 disabled:!text-neutral-500 disabled:pointer-events-none`}
                             disabled={isUploading || isCreateSubhiroLoading}
                             type="submit"
                         >
@@ -497,8 +492,7 @@ const NewSubhiro = () => {
 
                     {formStage < 4 && (
                         <RoundedButton
-                            className={`!px-6 !bg-[dodgerBlue] hover:!bg-blue-600 !text-white disabled:!bg-neutral-300 disabled:!text-neutral-500 pointer-events-none"
-                                    }`}
+                            className={`!px-6 !bg-[dodgerBlue] hover:!bg-blue-600 !text-white disabled:!bg-neutral-300 disabled:!text-neutral-500 disabled:pointer-events-none"`}
                             disabled={
                                 (formStage === 1 &&
                                     (subhiroValues.displayname.length < 5 ||

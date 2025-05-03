@@ -68,7 +68,9 @@ const DrawerContent = () => {
             <Dropdown label="SubHiro" border>
                 <ul>
                     <li>
-                        <NavLink href={"/tag/technology"}>Technology</NavLink>
+                        <NavLink href={"/subhiro/askhirobee"}>
+                            h/AskHirobee
+                        </NavLink>
                     </li>
                 </ul>
             </Dropdown>

@@ -4,7 +4,7 @@ import React from "react";
 import StatCard from "./StatCard";
 import { PiUsersThree } from "react-icons/pi";
 import { TbFileDescription, TbMessageCircle } from "react-icons/tb";
-import Title from "./Title";
+import Title from "@/components/Title";
 // import { redirect } from "next/navigation";
 import { ShortNumber } from "@lytieuphong/short-number";
 import { useFetchStatsQuery } from "@/store/features/admin/adminApiSlice";

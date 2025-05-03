@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 const Popover = ({
@@ -34,6 +35,8 @@ const Popover = ({
     const wrapperRef = useRef<HTMLDivElement | null>(null);
     const triggerRef = useRef<HTMLDivElement | null>(null);
     const contentRef = useRef<HTMLDivElement | null>(null);
+
+    const pathname = usePathname();
 
     const [popoverStyle, setPopoverStyle] = useState<{
         content: {};
@@ -252,15 +255,17 @@ const Popover = ({
                     setPopoverOpened(false);
                 }
                 onWrapperBlur();
-            } else if (
-                contentRef.current &&
-                contentRef.current.contains(target) &&
-                (target.closest("a") || target.closest("button"))
-            ) {
-                if (triggerType === "auto") {
-                    setPopoverOpened(false);
-                }
             }
+
+            // else if (
+            //     contentRef.current &&
+            //     contentRef.current.contains(target) &&
+            //     (target.closest("a") || target.closest("button"))
+            // ) {
+            //     if (triggerType === "auto") {
+            //         setPopoverOpened(false);
+            //     }
+            // }
         };
 
         document.addEventListener("click", handleWindowClick);
@@ -269,6 +274,11 @@ const Popover = ({
             document.removeEventListener("click", handleWindowClick);
         };
     }, [popoverOpened, contentVisible, triggerType]);
+
+    // Close Popover if path changes
+    useEffect(() => {
+        setPopoverOpened(false);
+    }, [pathname]);
 
     return (
         <div
