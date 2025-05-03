@@ -6,6 +6,7 @@ import {
 import {
     postAggregationPipeline,
     subhiroAggregationPipeline,
+    subhiroSearchAggregationPipeline,
 } from "../../utils/variables.js";
 import { toNumber } from "../../utils/helpers.js";
 
@@ -17,7 +18,17 @@ const search_subhiro = async (filters, collection) => {
         query.$or = [{ hironame: { $regex: search, $options: "i" } }];
     }
 
-    const response = await collection.find(query).limit(limit).toArray();
+    const response = await collection
+        .aggregate([
+            {
+                $match: query,
+            },
+            ...subhiroSearchAggregationPipeline,
+            {
+                $limit: limit,
+            },
+        ])
+        .toArray();
 
     return {
         success: true,

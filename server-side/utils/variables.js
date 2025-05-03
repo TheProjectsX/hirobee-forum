@@ -135,6 +135,30 @@ export const specificUserAggregationPipeline = [
     },
 ];
 
+export const subhiroSearchAggregationPipeline = [
+    {
+        $lookup: {
+            from: "users",
+            localField: "hironame",
+            foreignField: "joinedSubhiros",
+            as: "users",
+        },
+    },
+    {
+        $addFields: {
+            membersCount: { $size: "$users" },
+        },
+    },
+    {
+        $project: {
+            displayname: 1,
+            hironame: 1,
+            profile_picture: 1,
+            membersCount: 1,
+        },
+    },
+];
+
 export const subhiroAggregationPipeline = [
     {
         $lookup: {
