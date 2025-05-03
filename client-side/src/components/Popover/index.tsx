@@ -293,7 +293,7 @@ const Popover = ({
             {/* Content */}
             <div
                 data-name="popover-content"
-                className={`w-max absolute invisible bg-white shadow-[0_0_10px_rgba(0,0,0,0.1)] z-[999]
+                className={`w-max absolute invisible bg-white shadow-[0_0_10px_rgba(0,0,0,0.1)] z-[45]
                     ${
                         triggerType === "auto"
                             ? viewOnHover

@@ -384,7 +384,7 @@ const PreviewPost = ({
                     className={`${
                         fullPreview
                             ? "text-lg md:text-2xl mb-2 font-semibold"
-                            : "text-lg mb-0.5 font-medium"
+                            : "text-base sm:text-lg mb-0.5 font-medium"
                     }`}
                 >
                     {postData.title}
@@ -399,7 +399,7 @@ const PreviewPost = ({
 
                 {/* Images */}
                 {postData.images && postData.images.length > 0 && (
-                    <div className="w-full pt-3">
+                    <div className="w-full mb-4">
                         <GalleryCarousel images={postData.images} />
                     </div>
                 )}

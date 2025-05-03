@@ -492,7 +492,7 @@ const NewSubhiro = () => {
 
                     {formStage < 4 && (
                         <RoundedButton
-                            className={`!px-6 !bg-[dodgerBlue] hover:!bg-blue-600 !text-white disabled:!bg-neutral-300 disabled:!text-neutral-500 disabled:pointer-events-none"`}
+                            className={`!px-6 !bg-[dodgerBlue] hover:!bg-blue-600 !text-white disabled:!bg-neutral-300 disabled:!text-neutral-500 disabled:pointer-events-none`}
                             disabled={
                                 (formStage === 1 &&
                                     (subhiroValues.displayname.length < 5 ||

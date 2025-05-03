@@ -19,6 +19,9 @@ import React, { use, useEffect, useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { MdClose } from "react-icons/md";
 import { toast } from "react-toastify";
+import { TabItem, Tabs } from "flowbite-react";
+import DynamicInput from "@/components/DynamicInput";
+import { IoMdClose } from "react-icons/io";
 
 const SubmitPost = ({
     searchParams,
@@ -311,7 +314,8 @@ const SubmitPost = ({
                 {/* Post Box */}
                 <div>
                     <form onSubmit={handleSubmitPost}>
-                        <label className="flex flex-col gap-2 mb-5">
+                        {/* Title */}
+                        <label className="flex flex-col gap-2">
                             <p className="px-2 font-semibold">
                                 <span className="">Title</span>
                                 <span className="text-red-600">*</span>
@@ -335,36 +339,97 @@ const SubmitPost = ({
                                 <span>{postValues.title.length} / 250</span>
                             </p>
                         </label>
-                        <label className="flex flex-col gap-2 mb-5">
-                            <p className="px-2 ">
-                                <span className="font-semibold mr-2">Body</span>
-                                <span className="text-xs">
-                                    (Markdown Supported [?])
-                                </span>
-                            </p>
-                            <textarea
-                                className="w-full px-3.5 py-2.5 border-2 border-neutral-500 focus:border-[dodgerBlue] rounded-2xl outline-none text-sm"
-                                placeholder="Write post Body"
-                                rows={5}
-                                value={postValues.content}
-                                onChange={(e) =>
-                                    setPostValues((prev) => ({
-                                        ...prev,
-                                        content: e.target.value,
-                                    }))
-                                }
-                            />
-                        </label>
+
+                        {/* Body */}
+
+                        <Tabs
+                            aria-label="Tabs with underline"
+                            variant="underline"
+                        >
+                            <TabItem title="Text" active>
+                                <label className="flex flex-col gap-2 mb-5">
+                                    <p className="px-2 ">
+                                        <span className="font-semibold mr-2">
+                                            Body
+                                        </span>
+                                        <span className="text-xs">
+                                            (Markdown Supported [?])
+                                        </span>
+                                    </p>
+                                    <textarea
+                                        className="w-full px-3.5 py-2.5 border-2 border-neutral-500 focus:border-[dodgerBlue] rounded-2xl outline-none text-sm"
+                                        placeholder="Write post Body"
+                                        rows={5}
+                                        value={postValues.content}
+                                        onChange={(e) =>
+                                            setPostValues((prev) => ({
+                                                ...prev,
+                                                content: e.target.value,
+                                            }))
+                                        }
+                                    />
+                                </label>
+                            </TabItem>
+                            <TabItem title="Images">
+                                <p className="px-2 mb-4">
+                                    <span className="font-semibold mr-2">
+                                        Image Urls
+                                    </span>
+                                    <span
+                                        className="text-xs cursor-pointer"
+                                        title="Well, I don't have money to pay for image database!"
+                                    >
+                                        (?)
+                                    </span>
+                                </p>
+
+                                <DynamicInput
+                                    onChange={(values) =>
+                                        setPostValues((prev) => ({
+                                            ...prev,
+                                            images: values.filter(
+                                                (v) => v !== ""
+                                            ),
+                                        }))
+                                    }
+                                    defaultItemsCount={1}
+                                    minItems={1}
+                                    maxItems={6}
+                                    className="w-fit [&_>div]:space-y-3.5"
+                                    customAddButton={
+                                        <RoundedButton
+                                            className="!px-4 !bg-[dodgerBlue] hover:!bg-blue-600 text-white text-sm disabled:!bg-gray-500 disabled:pointer-events-none"
+                                            type="button"
+                                        >
+                                            Add More Image
+                                        </RoundedButton>
+                                    }
+                                >
+                                    {(inputProps, removeButtonProps) => (
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <input
+                                                type="text"
+                                                className="min-w-80 rounded-lg focus:outline-[dodgerBlue]  bg-slate-100 hover:bg-slate-200 px-4 py-3 text-sm"
+                                                placeholder="Enter Rule Here..."
+                                                minLength={10}
+                                                required
+                                                {...inputProps}
+                                            />
+                                            <button
+                                                className="rounded-full p-1 bg-slate-200 hover:text-red-600 disabled:pointer-events-none"
+                                                {...removeButtonProps}
+                                            >
+                                                <IoMdClose />
+                                            </button>
+                                        </div>
+                                    )}
+                                </DynamicInput>
+                            </TabItem>
+                        </Tabs>
 
                         <div className="flex justify-end gap-3">
                             <RoundedButton
-                                className={`!px-6 ${
-                                    postValues.title.length < 5 ||
-                                    isInsertPostLoading ||
-                                    isUpdatePostLoading
-                                        ? "bg-neutral-300 !text-neutral-500 pointer-events-none"
-                                        : "!bg-blue-700 hover:!bg-blue-800 !text-white"
-                                }`}
+                                className={`!px-6 !bg-[dodgerBlue] hover:!bg-blue-600 !text-white disabled:!bg-neutral-300 disabled:!text-neutral-500 disabled:pointer-events-none`}
                                 disabled={
                                     postValues.title.length < 5 ||
                                     isInsertPostLoading ||

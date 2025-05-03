@@ -127,6 +127,7 @@ const Auth = () => {
             <Modal
                 show={siteConfig.authModalType !== "close"}
                 onClose={() => dispatch(setAuthModalType("close"))}
+                className="[&_[role='dialog']]:!h-auto"
                 size="lg"
                 popup
                 dismissible

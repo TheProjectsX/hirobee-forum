@@ -30,11 +30,13 @@ const GalleryCarousel = ({ images }: { images: Array<string> }) => {
                             src={image}
                             alt="Image"
                             className="absolute left-0 top-0 h-full w-full object-cover opacity-30 scale-[1.2] blur-[24px]"
+                            loading="lazy"
                         />
                         <img
                             src={image}
                             alt="Image"
                             className="max-h-[540px]"
+                            loading="lazy"
                         />
                     </div>
                 ))}
