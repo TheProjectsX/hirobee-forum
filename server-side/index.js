@@ -506,7 +506,8 @@ app.get("/posts/:id", async (req, res, next) => {
     try {
         const response = await postsController.fetch_single_post(
             postId,
-            db.collection("posts")
+            db.collection("posts"),
+            db.collection("subhiro")
         );
 
         res.status(response.status_code).json(response);

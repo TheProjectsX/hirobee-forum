@@ -70,7 +70,11 @@ const fetch_posts = async (subhiroId, filters, collection) => {
 
     const response = await collection
         .aggregate([
-            { $match: { subhiro: subhiroId } },
+            {
+                $match: {
+                    subhiro: { $regex: `^${subhiroId}$`, $options: "i" },
+                },
+            },
             ...postAggregationPipeline,
             { $skip: skip },
             { $limit: Number(limit) },

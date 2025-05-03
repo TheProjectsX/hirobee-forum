@@ -3,6 +3,7 @@ import { ObjectId } from "mongodb";
 import {
     commentAggregationPipeline,
     postAggregationPipeline,
+    subhiroAggregationPipeline,
 } from "../../utils/variables.js";
 import { toNumber } from "../../utils/helpers.js";
 
@@ -64,7 +65,11 @@ const fetch_posts = async (filters, collection) => {
     };
 };
 
-const fetch_single_post = async (postId, collection) => {
+const fetch_single_post = async (
+    postId,
+    postsCollection,
+    subhiroCollection
+) => {
     let postOid;
 
     try {
@@ -80,7 +85,7 @@ const fetch_single_post = async (postId, collection) => {
         };
     }
 
-    const response = await collection
+    const response = await postsCollection
         .aggregate([
             {
                 $match: {
@@ -106,10 +111,48 @@ const fetch_single_post = async (postId, collection) => {
     }
 
     const postData = response[0];
-    let subhiroData = {};
+    let subhiroData = null;
+    let authorRecentPosts = null;
 
     if (postData.subhiro?.hironame) {
-        subhiroData;
+        const response = await subhiroCollection
+            .aggregate([
+                {
+                    $match: {
+                        hironame: {
+                            $regex: `^${postData.subhiro?.hironame}$`,
+                            $options: "i",
+                        },
+                    },
+                },
+                ...subhiroAggregationPipeline,
+                {
+                    $limit: 1,
+                },
+            ])
+            .toArray();
+        if (response.length > 0) {
+            subhiroData = response[0];
+        }
+    } else {
+        const response = await postsCollection
+            .aggregate([
+                {
+                    $match: {
+                        authorId: postData.author.username,
+                    },
+                },
+                ...postAggregationPipeline,
+                {
+                    $sort: { createdAt: -1 },
+                },
+                {
+                    $limit: 6,
+                },
+            ])
+            .toArray();
+
+        authorRecentPosts = response;
     }
 
     return {
@@ -118,6 +161,7 @@ const fetch_single_post = async (postId, collection) => {
         status_code: StatusCodes.OK,
         ...postData,
         subhiroData,
+        authorRecentPosts,
     };
 };
 

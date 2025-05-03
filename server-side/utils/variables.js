@@ -151,7 +151,7 @@ export const subhiroAggregationPipeline = [
     },
     {
         $lookup: {
-            from: "users",
+            from: "posts",
             localField: "hironame",
             foreignField: "subhiro",
             as: "posts",
