@@ -49,7 +49,7 @@ const SubHiroLayout = async ({
     return (
         <div>
             {/* Top Preview */}
-            <div>
+            <div className="max-width mx-auto px-3 pt-3">
                 {/* Banner */}
                 <div
                     className="bg-center bg-no-repeat bg-cover h-20 md:h-30 md:mx-3 md:mt-2 md:rounded-2xl bg-gray-200"

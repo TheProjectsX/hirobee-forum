@@ -277,7 +277,7 @@ const PreviewPost = ({
                                 <span className="text-neutral-500">•</span>
                                 <span className="text-neutral-500">
                                     {formatDistanceToNow(
-                                        new Date(1744814420921),
+                                        new Date(postData.createdAt),
                                         {
                                             addSuffix: true,
                                         }

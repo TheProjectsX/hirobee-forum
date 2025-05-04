@@ -410,9 +410,7 @@ const SubmitPost = ({
                                             <input
                                                 type="text"
                                                 className="min-w-80 rounded-lg focus:outline-[dodgerBlue]  bg-slate-100 hover:bg-slate-200 px-4 py-3 text-sm"
-                                                placeholder="Enter Rule Here..."
-                                                minLength={10}
-                                                required
+                                                placeholder="Enter Photo Url"
                                                 {...inputProps}
                                             />
                                             <button
@@ -430,6 +428,7 @@ const SubmitPost = ({
                         <div className="flex justify-end gap-3">
                             <RoundedButton
                                 className={`!px-6 !bg-[dodgerBlue] hover:!bg-blue-600 !text-white disabled:!bg-neutral-300 disabled:!text-neutral-500 disabled:pointer-events-none`}
+                                type="submit"
                                 disabled={
                                     postValues.title.length < 5 ||
                                     isInsertPostLoading ||

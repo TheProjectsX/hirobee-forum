@@ -251,7 +251,7 @@ const PreviewComment = ({
                     {/* Here may be some content or line in the future */}
                 </div>
                 <div className="text-sm">
-                    <div className="px-2 whitespace-pre-line text-neutral-800 mb-0.5">
+                    <div className="px-2 whitespace-pre-line text-neutral-800 mb-2">
                         {commentData.content}
                     </div>
 

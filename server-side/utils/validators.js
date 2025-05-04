@@ -50,11 +50,11 @@ export const postCreateFilter = (body) => {
 
 export const postCreateValidator = (body) => {
     const required_keys = ["title"];
-    const minLength = new RegExp(`^.{${5},}$`);
+    const minLength = 5;
 
     if (!body || typeof body !== "object") return false;
 
-    if (!minLength.test(body.title)) {
+    if (typeof body.title !== "string" || body.title.length < minLength) {
         return false;
     }
 
@@ -99,16 +99,20 @@ export const subhiroCreateValidator = (body) => {
         "description",
         "rules",
         "profile_picture",
-        // "banner",
     ];
-    const minLength = new RegExp(`^.{${5},}$`);
+    const minLength = 5;
 
-    if (!body || typeof body !== "object") return false;
-
+    if (!body || typeof body !== "object") {
+        return false;
+    }
     if (
-        !minLength.test(body.display_name) ||
-        !minLength.test(body.hironame) ||
-        !minLength.test(body.description)
+        typeof body.displayname !== "string" ||
+        body.displayname.length < minLength ||
+        typeof body.hironame !== "string" ||
+        body.hironame.length < minLength ||
+        typeof body.description !== "string" ||
+        body.description.length < minLength ||
+        typeof body.profile_picture !== "string"
     ) {
         return false;
     }

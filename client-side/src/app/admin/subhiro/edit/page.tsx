@@ -134,6 +134,10 @@ const NewSubhiro = ({
     const handleUpdateSubhiro = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsUploading(true);
+        const images = {
+            profile_picture: null,
+            banner: null,
+        };
 
         // Upload Profile Picture
         if (profilePictureFile.length > 0) {
@@ -144,10 +148,13 @@ const NewSubhiro = ({
                 return;
             }
 
+            const profile_picture = imageData.data.display_url;
             setSubhiroValues((prev) => ({
                 ...prev,
-                profile_picture: imageData.data.display_url,
+                profile_picture,
             }));
+
+            images["profile_picture"] = profile_picture;
         }
 
         // Upload Banner
@@ -159,17 +166,20 @@ const NewSubhiro = ({
                 return;
             }
 
+            const banner = imageData.data.display_url;
             setSubhiroValues((prev) => ({
                 ...prev,
-                banner: imageData.data.display_url,
+                banner,
             }));
+
+            images["banner"] = banner;
         }
 
         // Upload Data to Server
         try {
             const response = await updateSubhiro({
                 subhiroId,
-                body: { ...subhiroValues },
+                body: { ...subhiroValues, ...images },
             }).unwrap();
 
             toast.success("Subhiro Updated!");
@@ -440,7 +450,7 @@ const NewSubhiro = ({
                                     {subhiroValues.displayname}
                                 </h2>
                                 <p className="text-sm text-gray-500">
-                                    @{targetSubhiroData.hironame}
+                                    h/{targetSubhiroData.hironame}
                                 </p>
                             </div>
                         </div>
