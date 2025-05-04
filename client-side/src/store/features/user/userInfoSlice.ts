@@ -5,8 +5,12 @@ export const fetchUserInfoViaThunk = createAsyncThunk(
     "user_info/fetch",
     async (data, { dispatch }) => {
         const result = await dispatch(
-            userApiSlice.endpoints.fetchUserInfo.initiate({})
+            userApiSlice.endpoints.fetchUserInfo.initiate(
+                {},
+                { forceRefetch: true }
+            )
         );
+        console.log(result);
 
         if (result.isSuccess) {
             return result.data;

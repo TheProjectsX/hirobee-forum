@@ -186,7 +186,7 @@ const SidebarSection = ({ userData }: { userData: UserDataInterface }) => {
                     </p>
                 </div>
 
-                {userInfo && (
+                {userInfo && userData.username === userInfo.username && (
                     <>
                         {" "}
                         <div className="pb-4 mb-4 border-b border-neutral-400"></div>

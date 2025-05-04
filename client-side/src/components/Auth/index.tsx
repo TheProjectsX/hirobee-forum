@@ -73,13 +73,11 @@ const Auth = () => {
 
         // Send Request
         try {
-            const registerResponse = await registerUser(credentials).unwrap();
+            await registerUser(credentials).unwrap();
+            await dispatch(fetchUserInfoViaThunk()).unwrap();
+
             toast.success("Registration SuccessFul!");
             dispatch(setAuthModalType("close"));
-
-            const userInfoResponse = await dispatch(
-                fetchUserInfoViaThunk()
-            ).unwrap();
 
             // Do other stuffs
         } catch (error: any) {
@@ -109,13 +107,12 @@ const Auth = () => {
 
         // Send Request
         try {
-            const loginResponse = await loginUser(credentials).unwrap();
+            await loginUser(credentials).unwrap();
+            await dispatch(fetchUserInfoViaThunk()).unwrap();
+
             toast.success("Login SuccessFul!");
             dispatch(setAuthModalType("close"));
 
-            const userInfoResponse = await dispatch(
-                fetchUserInfoViaThunk()
-            ).unwrap();
             // Do other stuffs
         } catch (error: any) {
             toast.error(error?.data?.message ?? "Invalid Credentials");
@@ -165,7 +162,10 @@ const Auth = () => {
                                     onChange={(e) =>
                                         setAuthValues((prev) => ({
                                             ...prev,
-                                            email: e.target.value,
+                                            email: e.target.value.replaceAll(
+                                                /[^a-zA-Z0-9@._-]/g,
+                                                ""
+                                            ),
                                         }))
                                     }
                                     placeholder="Enter Username or Email"
@@ -288,7 +288,10 @@ const Auth = () => {
                                     onChange={(e) =>
                                         setAuthValues((prev) => ({
                                             ...prev,
-                                            email: e.target.value,
+                                            email: e.target.value.replaceAll(
+                                                /[^a-zA-Z0-9@._-]/g,
+                                                ""
+                                            ),
                                         }))
                                     }
                                     placeholder="Enter Email"

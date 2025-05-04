@@ -154,7 +154,7 @@ const Navbar = () => {
                                             Icon={CgProfile}
                                             iconClassName="!text-2xl"
                                         >
-                                            <span className="flex flex-col">
+                                            <span className="flex flex-col items-start">
                                                 <span className="text-slate-700">
                                                     Visit Profile
                                                 </span>

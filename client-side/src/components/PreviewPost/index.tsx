@@ -506,7 +506,7 @@ const PreviewPost = ({
                     content={
                         <div className="min-w-36">
                             <Clipboard
-                                value={`/posts/${postData._id}`}
+                                value={`#baseUrl/posts/${postData._id}`}
                                 onCopied={() => {
                                     toast.info("Copied!", { autoClose: 1000 });
                                 }}
