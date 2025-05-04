@@ -88,7 +88,7 @@ const update_comment = async (user, commentId, body, collection) => {
     };
 };
 
-const update_vote = async (user, commentId, meta, collection) => {
+const update_vote = async (user, commentId, target, collection) => {
     let commentOid;
 
     try {
@@ -104,15 +104,11 @@ const update_vote = async (user, commentId, meta, collection) => {
         };
     }
 
-    const doc = {};
-
-    doc[meta.action === "add" ? "$addToSet" : "$pull"] = {
-        [meta.target === "upvote" ? "upvotedBy" : "downvotedBy"]: user.username,
-    };
-
-    const response = await collection.updateOne({ _id: commentOid }, doc);
-
-    if (response.matchedCount === 0) {
+    const targetPost = await collection.findOne(
+        { _id: commentOid },
+        { projection: { upvotedBy: 1, downvotedBy: 1 } }
+    );
+    if (!targetPost) {
         return {
             success: false,
             message: "Comment not Found!",
@@ -121,20 +117,57 @@ const update_vote = async (user, commentId, meta, collection) => {
             },
             status_code: StatusCodes.NOT_FOUND,
         };
-    } else if (response.modifiedCount === 0) {
+    }
+
+    const doc = {};
+    const returnResponse = {};
+
+    if (target === "upvote") {
+        if (targetPost.upvotedBy.includes(user.username)) {
+            doc["$pull"] = {
+                upvotedBy: user.username,
+            };
+            returnResponse["newCount"] = targetPost.upvotedBy.length - 1;
+            returnResponse["action"] = "removed";
+        } else {
+            doc["$addToSet"] = {
+                upvotedBy: user.username,
+            };
+            returnResponse["newCount"] = targetPost.upvotedBy.length + 1;
+            returnResponse["action"] = "added";
+        }
+    } else if (target === "downvote") {
+        if (targetPost.downvotedBy.includes(user.username)) {
+            doc["$pull"] = {
+                downvotedBy: user.username,
+            };
+            returnResponse["newCount"] = targetPost.downvotedBy.length - 1;
+            returnResponse["action"] = "removed";
+        } else {
+            doc["$addToSet"] = {
+                downvotedBy: user.username,
+            };
+            returnResponse["newCount"] = targetPost.downvotedBy.length + 1;
+            returnResponse["action"] = "added";
+        }
+    }
+
+    const response = await collection.updateOne({ _id: commentOid }, doc);
+
+    if (response.modifiedCount === 0) {
         return {
             success: false,
-            message: "Already performed this action",
-            status_code: StatusCodes.NOT_FOUND,
+            message: "Failed to Update Vote",
+            status_code: StatusCodes.INTERNAL_SERVER_ERROR,
         };
     }
     return {
         success: true,
-        message: `Vote ${meta.action === "add" ? "Added" : "Removed"}`,
+        message: `Vote ${returnResponse.action}`,
         status_code: StatusCodes.OK,
+        ...returnResponse,
     };
 };
-
 const delete_comment = async (user, commentId, collection) => {
     let commentOid;
 

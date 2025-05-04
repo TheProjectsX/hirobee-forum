@@ -646,7 +646,7 @@ app.delete("/comments/:id", checkAuthentication, async (req, res, next) => {
 
 // Update Votes
 app.put(
-    "/comments/:id/:target/",
+    "/comments/:id/:target",
     checkAuthentication,
     async (req, res, next) => {
         const user = req.user;
@@ -660,7 +660,7 @@ app.put(
             const response = await commentsController.update_vote(
                 user,
                 commentId,
-                { target },
+                target,
                 db.collection("comments")
             );
 
@@ -670,7 +670,6 @@ app.put(
         }
     }
 );
-
 // Report Comment
 app.post(
     "/comments/:id/report",

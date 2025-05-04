@@ -27,6 +27,18 @@ const commentsApiSlice = baseApiSlice.injectEndpoints({
                 method: "DELETE",
             }),
         }),
+        updateCommentUpvote: builder.mutation({
+            query: (data) => ({
+                url: `/comments/${data.commentId}/upvote`,
+                method: "PUT",
+            }),
+        }),
+        updateCommentDownvote: builder.mutation({
+            query: (data) => ({
+                url: `/comments/${data.commentId}/downvote`,
+                method: "PUT",
+            }),
+        }),
         reportComment: builder.mutation({
             query: (data) => ({
                 url: `/comments/${data.commentId}/report`,
@@ -42,6 +54,8 @@ export const {
     useInsertCommentMutation,
     useUpdateCommentMutation,
     useDeleteCommentMutation,
+    useUpdateCommentUpvoteMutation,
+    useUpdateCommentDownvoteMutation,
     useReportCommentMutation,
 } = commentsApiSlice;
 export default commentsApiSlice;

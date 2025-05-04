@@ -16,9 +16,13 @@ import { toast } from "react-toastify";
 import {
     useDeleteCommentMutation,
     useReportCommentMutation,
+    useUpdateCommentDownvoteMutation,
     useUpdateCommentMutation,
+    useUpdateCommentUpvoteMutation,
 } from "@/store/features/comments/commentsApiSlice";
 import { useSelector } from "react-redux";
+import AuthButtonWrapper from "../AuthButtonWrapper";
+import Button from "../PreviewPost/Button";
 
 export interface CommentInterface {
     _id: string;
@@ -57,9 +61,41 @@ const PreviewComment = ({
         useDeleteCommentMutation();
 
     const [updateComment] = useUpdateCommentMutation();
+    const [updateUpvote] = useUpdateCommentUpvoteMutation();
+    const [updateDownvote] = useUpdateCommentDownvoteMutation();
     const [reportComment] = useReportCommentMutation();
 
-    // Upvote Comment
+    // Upvote Post
+    const handleUpvote = async (commentId: string) => {
+        if (!isUserInfoLoading && isUserInfoError) {
+            return;
+        }
+
+        try {
+            const response = await updateUpvote({
+                commentId,
+            }).unwrap();
+            return { newCount: response.newCount, action: response.action };
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Failed to Update Vote");
+        }
+    };
+
+    // Downvote Post
+    const handleDownvote = async (commentId: string) => {
+        if (!isUserInfoLoading && isUserInfoError) {
+            return;
+        }
+
+        try {
+            const response = await updateDownvote({
+                commentId,
+            }).unwrap();
+            return { newCount: response.newCount, action: response.action };
+        } catch (error: any) {
+            toast.error(error?.data?.message ?? "Failed to Update Vote");
+        }
+    };
 
     // Update Comment (For Author of Comment only)
     const handleUpdateComment = async (commentId: string, content: string) => {
@@ -119,7 +155,6 @@ const PreviewComment = ({
     };
 
     // Report Comment
-
     const handleReportComment = async (commentId: string) => {
         if (!isUserInfoLoading && isUserInfoError) {
             return;
@@ -221,16 +256,97 @@ const PreviewComment = ({
                     </div>
 
                     <div className="flex items-center text-xs">
-                        <p className="flex items-center">
-                            <RoundedButton className="!p-2 hover:text-orange-600 z-[1]">
-                                <TbArrowBigUp className="text-base" />
-                            </RoundedButton>
-                            <span className="font-semibold text-neutral-500">
-                                {commentData.upvotedBy.length}
+                        {/* Vote */}
+                        <p className="rounded-full text-neutral-700 bg-slate-200 flex items-center cursor-pointer z-[1]">
+                            <span className="flex items-center">
+                                <AuthButtonWrapper>
+                                    <Button
+                                        className={`!p-1.5 hover:[&_svg]:text-orange-600 ${
+                                            commentData.upvotedBy.includes(
+                                                userInfo?.username
+                                            )
+                                                ? "[&_svg]:text-orange-600"
+                                                : ""
+                                        }`}
+                                        Icon={TbArrowBigUp}
+                                        onClick={async (e) => {
+                                            const target =
+                                                e.currentTarget as HTMLElement;
+                                            const span =
+                                                target.nextElementSibling as HTMLElement;
+                                            const status = await handleUpvote(
+                                                commentData._id
+                                            );
+                                            if (!status) return;
+
+                                            if (span) {
+                                                span.innerText =
+                                                    status?.newCount;
+                                            }
+
+                                            if (status.action === "added") {
+                                                target.classList.add(
+                                                    "[&_svg]:text-orange-600"
+                                                );
+                                            } else if (
+                                                status.action === "removed"
+                                            ) {
+                                                target.classList.remove(
+                                                    "[&_svg]:text-orange-600"
+                                                );
+                                            }
+                                        }}
+                                    ></Button>
+                                </AuthButtonWrapper>
+                                <span className="text-xs font-semibold">
+                                    {commentData.upvotedBy.length}
+                                </span>
                             </span>
-                            <RoundedButton className="!p-2 hover:text-purple-600 z-[1]">
-                                <TbArrowBigDown className="text-base" />
-                            </RoundedButton>
+                            <span className="pr-1.5 mr-1.5 border-r border-neutral-500 h-4"></span>
+                            <span className="flex items-center">
+                                <span className="text-xs font-semibold">
+                                    {commentData.downvotedBy.length}
+                                </span>
+                                <AuthButtonWrapper>
+                                    <Button
+                                        className={`!p-1.5 hover:[&_svg]:text-purple-600 ${
+                                            commentData.downvotedBy.includes(
+                                                userInfo?.username
+                                            )
+                                                ? "[&_svg]:text-purple-600"
+                                                : ""
+                                        }`}
+                                        Icon={TbArrowBigDown}
+                                        onClick={async (e) => {
+                                            const target =
+                                                e.currentTarget as HTMLElement;
+                                            const span =
+                                                target.previousElementSibling as HTMLElement;
+                                            const status = await handleDownvote(
+                                                commentData._id
+                                            );
+                                            if (!status) return;
+
+                                            if (span) {
+                                                span.innerText =
+                                                    status?.newCount;
+                                            }
+
+                                            if (status.action === "added") {
+                                                target.classList.add(
+                                                    "[&_svg]:text-purple-600"
+                                                );
+                                            } else if (
+                                                status.action === "removed"
+                                            ) {
+                                                target.classList.remove(
+                                                    "[&_svg]:text-purple-600"
+                                                );
+                                            }
+                                        }}
+                                    ></Button>
+                                </AuthButtonWrapper>
+                            </span>
                         </p>
 
                         <RoundedButton className="!px-3">

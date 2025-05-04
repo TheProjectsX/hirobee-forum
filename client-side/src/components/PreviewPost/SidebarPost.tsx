@@ -5,7 +5,7 @@ import { PostInterface } from ".";
 const SidebarPost = ({ postData }: { postData: PostInterface }) => {
     return (
         <article className="bg-slate-100/80 py-3.5">
-            <div className="flex justify-between items-start gap-2">
+            <div className="flex justify-between items-start gap-2 mb-2">
                 <div>
                     <header className="mb-1">
                         <Link
@@ -38,7 +38,7 @@ const SidebarPost = ({ postData }: { postData: PostInterface }) => {
 
                     <Link
                         href={`/posts/${postData._id}`}
-                        className="line-clamp-2 text-sm text-neutral-500 mb-4 font-medium underline-offset-4 hover:underline"
+                        className="line-clamp-2 text-sm text-neutral-500 font-medium underline-offset-4 hover:underline"
                     >
                         {postData.title}
                     </Link>

@@ -87,15 +87,15 @@ const PreviewPost = ({
 
     const router = useRouter();
 
-    // Private Route
-    const handleUpvote = async () => {
+    // Upvote Post
+    const handleUpvote = async (postId: string) => {
         if (!isUserInfoLoading && isUserInfoError) {
             return;
         }
 
         try {
             const response = await updateUpvote({
-                postId: postData._id,
+                postId,
             }).unwrap();
             return { newCount: response.newCount, action: response.action };
         } catch (error: any) {
@@ -103,15 +103,15 @@ const PreviewPost = ({
         }
     };
 
-    // Private Route
-    const handleDownvote = async () => {
+    // Downvote Post
+    const handleDownvote = async (postId: string) => {
         if (!isUserInfoLoading && isUserInfoError) {
             return;
         }
 
         try {
             const response = await updateDownvote({
-                postId: postData._id,
+                postId,
             }).unwrap();
             return { newCount: response.newCount, action: response.action };
         } catch (error: any) {
@@ -407,6 +407,7 @@ const PreviewPost = ({
 
             {/* Content Control Buttons */}
             <div className="flex items-center gap-2">
+                {/* Vote */}
                 <p className="rounded-full text-neutral-700 bg-slate-200 flex items-center cursor-pointer z-[1]">
                     <span className="flex items-center">
                         <AuthButtonWrapper>
@@ -424,7 +425,9 @@ const PreviewPost = ({
                                         e.currentTarget as HTMLElement;
                                     const span =
                                         target.nextElementSibling as HTMLElement;
-                                    const status = await handleUpvote();
+                                    const status = await handleUpvote(
+                                        postData._id
+                                    );
                                     if (!status) return;
 
                                     if (span) {
@@ -467,7 +470,9 @@ const PreviewPost = ({
                                         e.currentTarget as HTMLElement;
                                     const span =
                                         target.previousElementSibling as HTMLElement;
-                                    const status = await handleDownvote();
+                                    const status = await handleDownvote(
+                                        postData._id
+                                    );
                                     if (!status) return;
 
                                     if (span) {
