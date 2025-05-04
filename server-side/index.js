@@ -747,54 +747,6 @@ app.get("/subhiro/:id/posts", async (req, res, next) => {
 
 /* Protected SubHiro Routes */
 
-// Create new Subhiro
-app.post(
-    "/moderator/subhiro",
-    checkAuthentication,
-    checkModPrivilege,
-    async (req, res, next) => {
-        const user = req.user;
-        const body = req.body;
-
-        try {
-            const response = await subhiroController.create_subhiro(
-                user,
-                body,
-                db.collection("subhiro")
-            );
-
-            res.status(response.status_code).json(response);
-        } catch (error) {
-            next(error);
-        }
-    }
-);
-
-// Update Subhiro
-app.put(
-    "/moderator/subhiro/:id",
-    checkAuthentication,
-    checkModPrivilege,
-    async (req, res, next) => {
-        const { id: subhiroId } = req.params;
-        const user = req.user;
-        const body = req.body;
-
-        try {
-            const response = await subhiroController.update_subhiro(
-                user,
-                subhiroId,
-                body,
-                db.collection("subhiro")
-            );
-
-            res.status(response.status_code).json(response);
-        } catch (error) {
-            next(error);
-        }
-    }
-);
-
 /* Protected Admin Routes */
 
 // Get Stats of Forum
@@ -896,6 +848,54 @@ app.put(
 );
 
 /* Protected Moderator Routes (Also access-able by Admin) */
+
+// Create new Subhiro
+app.post(
+    "/moderator/subhiro",
+    checkAuthentication,
+    checkModPrivilege,
+    async (req, res, next) => {
+        const user = req.user;
+        const body = req.body;
+
+        try {
+            const response = await subhiroController.create_subhiro(
+                user,
+                body,
+                db.collection("subhiro")
+            );
+
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+// Update Subhiro
+app.put(
+    "/moderator/subhiro/:id",
+    checkAuthentication,
+    checkModPrivilege,
+    async (req, res, next) => {
+        const { id: subhiroId } = req.params;
+        const user = req.user;
+        const body = req.body;
+
+        try {
+            const response = await subhiroController.update_subhiro(
+                user,
+                subhiroId,
+                body,
+                db.collection("subhiro")
+            );
+
+            res.status(response.status_code).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
 
 // Get Reported Users
 app.get(

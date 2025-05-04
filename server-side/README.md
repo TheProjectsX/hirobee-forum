@@ -3,32 +3,45 @@
 ### Routes:
 
 -   `/auth`
-    -   `/register`
-    -   `/login`
-    -   `/logout`
--   `/me` \*
-    -   `/posts`
-    -   `/posts/:id`
--   `/users` \*
-    -   `/:username`
-    -   `/:username/posts`
--   `/posts` \*
-    -   `/:id`
-    -   `/:id/comments`
-    -   `/:id/:target/:action` (`/:id/upvote/add`)
+    -   `/register` (POST)
+    -   `/login` (POST)
+    -   `/logout` (POST)
+-   `/me` \* (GET | PUT)
+    -   `/posts` (GET | POST)
+    -   `/posts/:id` (GET | PUT | DELETE)
+-   `/users`
+    -   `/:username` (GET)
+    -   `/:username/posts` (GET)
+    -   `/:username/comments` (GET)
+    -   `/:username/report` (POST)
+-   `/posts` \* (GET)
+    -   `/:id` (GET)
+    -   `/:id/comments` (GET)
+    -   `/:id/:target` (`/:id/upvote`) (PUT)
+    -   `/:id/report` (POST)
 -   `/comments`
-    -   `/:id`
-    -   `/:id/:target/:action` (`/:id/upvote/add`)
--   `/subhiro` \*
-    -   `/:id`
-    -   `/:id/posts`
+    -   `/:id` (PUT | DELETE)
+    -   `/:id/:target` (`/:id/upvote`) (PUT)
+    -   `/:id/report` (POST)
+-   `/subhiro`
+    -   `/search` (GET)
+    -   `/:id` (GET)
+    -   `/:id/posts` (GET)
 -   `/admin`
-    -   `/stats`
-    -   `/users`
-    -   `/users/banner`
-    -   `/users/:id/role/:role` (`/users/:id/role/moderator`)
+    -   `/stats` (GET)
+    -   `/users` (GET)
+    -   `/users/banner` (GET)
+    -   `/users/:username/role/:role` (`/users/:id/role/moderator`) (PUT)
 -   `/moderator`
-    -   `/users/:id/status/:status` (`/users/:id/status/banned`)
+    -   `/reported`
+        -   `/users` (GET)
+        -   `/posts` (GET)
+        -   `/comments` (GET)
+        -   `/:id/ignore` (PUT)
+        -   `/:id/approve` (PUT)
+    -   `/subhiro` (POST)
+    -   `/subhiro/:id` (PUT)
+    -   `/users/:username/status/:status` (`/users/:id/status/banned`)
 
 ### Structure
 
