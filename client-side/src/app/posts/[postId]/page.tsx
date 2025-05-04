@@ -1,8 +1,6 @@
-import RoundedButton from "@/components/Buttons/Rounded";
 import PageLayout, { MainDiv, Sidebar } from "@/components/PageLayout";
 import PreviewPost, { PostInterface } from "@/components/PreviewPost";
 import React from "react";
-import Link from "next/link";
 
 import { PiCakeThin } from "react-icons/pi";
 import { CiGlobe } from "react-icons/ci";
@@ -12,6 +10,8 @@ import CommentSection from "./CommentSection";
 import SidebarPost from "@/components/PreviewPost/SidebarPost";
 import { ShortNumber } from "@lytieuphong/short-number";
 import Join from "@/app/subhiro/[subhiroId]/Join";
+import { Metadata } from "next";
+import Head from "next/head";
 
 const Post = async ({ params }: { params: Promise<{ postId: string }> }) => {
     const { postId } = await params;
@@ -27,6 +27,10 @@ const Post = async ({ params }: { params: Promise<{ postId: string }> }) => {
 
     return (
         <PageLayout breakpoint="770px">
+            <Head>
+                <title>Another Head</title>
+            </Head>
+
             <MainDiv className="py-2">
                 {/* Post Preview (Client Component) */}
                 <PreviewPost className="mb-3" postData={postData} fullPreview />

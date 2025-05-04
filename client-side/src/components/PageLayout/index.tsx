@@ -19,7 +19,7 @@ const PageLayout = ({
     return (
         <div
             data-name="Page Layout Parent"
-            className={`relative grid overflow-visible grid-cols-[1fr_320px] gap-6 w-full max-width mx-auto px-3 pt-3 ${
+            className={`relative grid overflow-visible grid-cols-[1fr_320px] gap-6 w-full max-width mx-auto px-3 py-3 ${
                 wrap
                     ? global__breakpoint === "770px"
                         ? "max-[770px]:grid-cols-1 !gap-10"

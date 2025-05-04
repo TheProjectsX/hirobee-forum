@@ -10,7 +10,6 @@ export const fetchUserInfoViaThunk = createAsyncThunk(
                 { forceRefetch: true }
             )
         );
-        console.log(result);
 
         if (result.isSuccess) {
             return result.data;

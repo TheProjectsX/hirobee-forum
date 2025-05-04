@@ -5,10 +5,8 @@ import StatCard from "./StatCard";
 import { PiUsersThree } from "react-icons/pi";
 import { TbFileDescription, TbMessageCircle } from "react-icons/tb";
 import Title from "@/components/Title";
-// import { redirect } from "next/navigation";
 import { ShortNumber } from "@lytieuphong/short-number";
 import { useFetchStatsQuery } from "@/store/features/admin/adminApiSlice";
-import LoadingPlaceholder from "@/components/LoadingPlaceholder";
 import { RiUserCommunityLine } from "react-icons/ri";
 import { LuUserPlus } from "react-icons/lu";
 import { FiFilePlus } from "react-icons/fi";
@@ -109,26 +107,6 @@ const Dashboard = () => {
                     }
                 />
             </div>
-
-            {/* <Title>New SubHiro</Title>
-            <div className="text-xs italic text-neutral-400 space-y-2">
-                <p>
-                    This part of the Design is left for the future me to deal
-                    with. I am not interested anymore to design more UI. I hate
-                    designing UIs. Just to show my logic creation talent, I need
-                    to write endless amount of JSX.
-                </p>
-                <p>
-                    Though I should finish this. But if I try more hard, my
-                    brain will give up in this project as well, as my other
-                    non-finished projects.
-                </p>
-                <p>
-                    So, I will just leave it at this. And while adding the APIs,
-                    if I feel like I have time or find motivation to do so, I
-                    will create this section
-                </p>
-            </div> */}
         </div>
     );
 };
